@@ -27,8 +27,8 @@
     <h1>hyper-team</h1>
     <p class="tagline">Claude Code plugins for power users. Install individually or use them all together.</p>
     <div class="install-box">
-      <span class="prompt">$</span>
-      <span>claude plugin install search@de-monkey-v/hyper-team</span>
+      <span class="prompt">&gt;</span>
+      <span>/plugin marketplace add de-monkey-v/hyper-team</span>
     </div>
   </section>
 
@@ -154,19 +154,27 @@
     <div class="install-steps">
       <div class="step">
         <div class="step-number">1</div>
-        <h3>Install a plugin</h3>
-        <p>Pick any plugin and install it with the Claude CLI.</p>
-        <pre><code><span class="code-comment"># Install individual plugins</span>
-claude plugin install search@de-monkey-v/hyper-team
-claude plugin install notification@de-monkey-v/hyper-team
-claude plugin install ai-cli-tools@de-monkey-v/hyper-team
-claude plugin install git-utils@de-monkey-v/hyper-team
-claude plugin install hyper-team@de-monkey-v/hyper-team
-claude plugin install plugin-creator@de-monkey-v/hyper-team</code></pre>
+        <h3>Add the marketplace</h3>
+        <p>Register the hyper-team marketplace in Claude Code.</p>
+        <pre><code><span class="code-comment"># Run inside Claude Code</span>
+/plugin marketplace add de-monkey-v/hyper-team</code></pre>
       </div>
 
       <div class="step">
         <div class="step-number">2</div>
+        <h3>Install plugins</h3>
+        <p>Pick any plugin and install it.</p>
+        <pre><code><span class="code-comment"># Install individual plugins</span>
+/plugin install search@hyper-team
+/plugin install notification@hyper-team
+/plugin install ai-cli-tools@hyper-team
+/plugin install git-utils@hyper-team
+/plugin install hyper-team@hyper-team
+/plugin install plugin-creator@hyper-team</code></pre>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
         <h3>Run the setup command</h3>
         <p>Each plugin has a setup wizard that handles dependencies, environment variables, and configuration.</p>
         <pre><code><span class="code-comment"># Run setup for your installed plugin</span>
