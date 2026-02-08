@@ -58,6 +58,8 @@ Parallel search across multiple sources with automatic load balancing.
 - **Optional**: Tavily API (deep search, extraction) + Brave Search API (web, news)
 - Load balancing alternates between Tavily/Brave to distribute API credits evenly
 
+> **Typical usage**: The `smart-searcher` agent auto-selects the best source (Context7 / WebSearch / Brave / Tavily) — just say "search for X" and it handles the rest.
+
 **Commands**: `/search:search`, `/search:deep-research`, `/search:status`, `/search:setup`
 
 ### notification
@@ -69,6 +71,8 @@ Automatic notifications on Claude Code events (task complete, waiting, session e
 - **Desktop**: OS-native notifications (Linux/macOS/Windows)
 - Includes work summary, experience extraction, and next-step suggestions
 
+> **Typical usage**: Runs automatically via hooks — no manual commands needed. Notifications fire on task completion, user attention needed, and session end.
+
 **Commands**: `/notification:send`, `/notification:setup`
 
 ### ai-cli-tools
@@ -79,6 +83,8 @@ Use other AI CLIs from within Claude Code.
 - **Codex CLI**: `npm install -g @openai/codex`
 - Delegate code review and analysis via the `@llms` agent
 
+> **Typical usage**: Invoke the `@llms` subagent to get a second opinion from Gemini or Codex — useful for code review and analysis.
+
 **Commands**: `/ai-cli-tools:setup`
 
 ### git-utils
@@ -88,6 +94,8 @@ Git workflow automation with smart commit message generation.
 - Follows Conventional Commits (`<feat>`, `<fix>`, `<refactor>`, etc.)
 - Learns commit style from project history
 - Detects secrets before committing
+
+> **Typical usage**: Mostly just `/git-utils:commit` — it analyzes staged changes, generates a Conventional Commits message, and commits in one step.
 
 **Commands**: `/git-utils:commit`, `/git-utils:setup`
 **Skills**: commit, branch, log, diff, status
@@ -100,7 +108,9 @@ Streamline Agent Teams workflows.
 - Verify implementations with scoring (tests, code quality, integration)
 - Requires tmux for split-pane teammate display
 
-**Commands**: `/hyper-team:setup`, `/hyper-team:make-prompt`, `/hyper-team:verify`
+> **Typical usage**: `/hyper-team:make-prompt` → open a clean context → paste the generated prompt. Or use `/hyper-team:just-do-it` for end-to-end automation. Then `/hyper-team:verify` to score the result.
+
+**Commands**: `/hyper-team:setup`, `/hyper-team:make-prompt`, `/hyper-team:just-do-it`, `/hyper-team:verify`
 
 ### plugin-creator
 
@@ -109,6 +119,8 @@ Create Claude Code plugins interactively.
 - 7 agents + 7 skills + 4 commands
 - Supports full lifecycle: create, modify, validate
 - Skill -> Agent -> Command architecture pattern
+
+> **Typical usage**: `create-plugin` for new plugins/commands/skills, `modify-plugin` for existing ones. Handles plugins, project commands, skills, agents, and hooks.
 
 **Commands**: `/plugin-creator:create-plugin`, `/plugin-creator:modify-plugin`, `/plugin-creator:validate`, `/plugin-creator:setup`
 

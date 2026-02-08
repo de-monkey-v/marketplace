@@ -49,6 +49,7 @@
           Unified web &amp; documentation search with Tavily/Brave load balancing.
           Free built-in WebSearch + Context7 MCP, with optional Tavily and Brave APIs.
         </p>
+        <p class="plugin-tip"><strong>Typical usage:</strong> The <code>smart-searcher</code> agent auto-selects the best source (Context7 / WebSearch / Brave / Tavily) — just say "search for X" and it handles the rest.</p>
         <div class="plugin-commands">
           <span class="cmd-tag">/search:search</span>
           <span class="cmd-tag">/search:deep-research</span>
@@ -67,6 +68,7 @@
           Multi-channel notifications for Slack, Discord, and Desktop.
           Automatic alerts on task completion, waiting, and session end.
         </p>
+        <p class="plugin-tip"><strong>Typical usage:</strong> Runs automatically via hooks — no manual commands needed. Notifications fire on task completion, user attention needed, and session end.</p>
         <div class="plugin-commands">
           <span class="cmd-tag">/notification:send</span>
           <span class="cmd-tag">/notification:setup</span>
@@ -83,6 +85,7 @@
           Gemini CLI &amp; Codex CLI integration for code review.
           Delegate analysis to other AI models via the <code>@llms</code> agent.
         </p>
+        <p class="plugin-tip"><strong>Typical usage:</strong> Invoke the <code>@llms</code> subagent to get a second opinion from Gemini or Codex — useful for code review and analysis.</p>
         <div class="plugin-commands">
           <span class="cmd-tag">/ai-cli-tools:setup</span>
         </div>
@@ -98,6 +101,7 @@
           Git workflow automation with smart commit messages.
           Follows Conventional Commits, learns from project history, detects secrets.
         </p>
+        <p class="plugin-tip"><strong>Typical usage:</strong> Mostly just <code>/git-utils:commit</code> — it analyzes staged changes, generates a Conventional Commits message, and commits in one step.</p>
         <div class="plugin-commands">
           <span class="cmd-tag">/git-utils:commit</span>
           <span class="cmd-tag">/git-utils:setup</span>
@@ -118,8 +122,10 @@
           Agent Teams workflow helper. Generate todo specs and team prompts from
           natural language, then verify implementations with scoring.
         </p>
+        <p class="plugin-tip"><strong>Typical usage:</strong> <code>/hyper-team:make-prompt</code> &rarr; open a clean context &rarr; paste the generated prompt. Or use <code>/hyper-team:just-do-it</code> for end-to-end automation. Then <code>/hyper-team:verify</code> to score the result.</p>
         <div class="plugin-commands">
           <span class="cmd-tag">/hyper-team:make-prompt</span>
+          <span class="cmd-tag">/hyper-team:just-do-it</span>
           <span class="cmd-tag">/hyper-team:verify</span>
           <span class="cmd-tag">/hyper-team:setup</span>
         </div>
@@ -135,6 +141,7 @@
           Plugin scaffolding &amp; validation toolkit.
           7 agents, 7 skills, 4 commands for the full plugin lifecycle.
         </p>
+        <p class="plugin-tip"><strong>Typical usage:</strong> <code>create-plugin</code> for new plugins/commands/skills, <code>modify-plugin</code> for existing ones. Handles plugins, project commands, skills, agents, and hooks.</p>
         <div class="plugin-commands">
           <span class="cmd-tag">/plugin-creator:create-plugin</span>
           <span class="cmd-tag">/plugin-creator:modify-plugin</span>

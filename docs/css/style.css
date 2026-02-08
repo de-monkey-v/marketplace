@@ -218,6 +218,29 @@ a:hover {
   line-height: 1.5;
 }
 
+.plugin-tip {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+  padding: 0.6rem 0.8rem;
+  background: rgba(88, 166, 255, 0.05);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+}
+
+.plugin-tip strong {
+  color: var(--accent);
+}
+
+.plugin-tip code {
+  background: var(--bg-tertiary);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  color: var(--green);
+}
+
 .plugin-commands {
   display: flex;
   flex-wrap: wrap;
