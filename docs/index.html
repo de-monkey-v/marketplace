@@ -27,9 +27,13 @@
   <section class="hero">
     <h1>hyper-team</h1>
     <p class="tagline">Claude Code plugins for power users. Install individually or use them all together.</p>
-    <div class="install-box">
+    <div class="install-box" id="install-cmd">
       <span class="prompt">&gt;</span>
-      <span>/plugin marketplace add de-monkey-v/hyper-team</span>
+      <span class="install-text">/plugin marketplace add de-monkey-v/hyper-team</span>
+      <button class="copy-btn" onclick="copyInstall(this)" title="Copy to clipboard">
+        <svg class="icon-copy" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 10V2.5A1.5 1.5 0 0 1 4.5 1H10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <svg class="icon-check" width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:none"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
   </section>
 
@@ -259,5 +263,20 @@
     </div>
   </footer>
 
+  <script>
+    function copyInstall(btn) {
+      const text = btn.parentElement.querySelector('.install-text').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.querySelector('.icon-copy').style.display = 'none';
+        btn.querySelector('.icon-check').style.display = 'block';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.querySelector('.icon-copy').style.display = 'block';
+          btn.querySelector('.icon-check').style.display = 'none';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
 </body>
 </html>

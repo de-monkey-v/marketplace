@@ -134,11 +134,39 @@ a:hover {
   font-size: 0.9rem;
   color: var(--green);
   cursor: default;
+  position: relative;
+  transition: border-color 0.2s;
+}
+
+.install-box:hover {
+  border-color: var(--accent);
 }
 
 .install-box .prompt {
   color: var(--text-muted);
   user-select: none;
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: color 0.2s, background 0.2s;
+  margin-left: 0.25rem;
+}
+
+.copy-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255,255,255,0.08);
+}
+
+.copy-btn.copied {
+  color: var(--green);
 }
 
 /* Sections */
