@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.DS_Store
+.search-state.json
+.log/
+.playwright-mcp/
+*.png

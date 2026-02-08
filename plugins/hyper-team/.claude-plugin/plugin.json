@@ -1,0 +1,9 @@
+{
+  "name": "hyper-team",
+  "version": "0.1.0",
+  "description": "Agent Teams workflow helper - setup, prompt generation, and verification",
+  "author": {
+    "name": "de-monkey-v"
+  },
+  "repository": "https://github.com/de-monkey-v/hyper-team"
+}

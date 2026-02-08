@@ -1,0 +1,42 @@
+{
+  "name": "hyper-team",
+  "metadata": {
+    "description": "Custom Claude Code plugins marketplace",
+    "version": "0.1.0"
+  },
+  "owner": {
+    "name": "de-monkey-v"
+  },
+  "plugins": [
+    {
+      "name": "hyper-team",
+      "source": "./plugins/hyper-team",
+      "description": "Agent Teams workflow helper - setup, prompt generation, and verification for parallel development"
+    },
+    {
+      "name": "notification",
+      "source": "./plugins/notification",
+      "description": "Multi-channel notification plugin (Slack, Discord, Windows popup, etc.)"
+    },
+    {
+      "name": "ai-cli-tools",
+      "source": "./plugins/ai-cli-tools",
+      "description": "Plugin for leveraging AI CLI tools within Claude Code (Gemini, GPT, etc.)"
+    },
+    {
+      "name": "git-utils",
+      "source": "./plugins/git-utils",
+      "description": "Git workflow automation - commit, branch, merge with smart message generation"
+    },
+    {
+      "name": "plugin-creator",
+      "source": "./plugins/plugin-creator",
+      "description": "Claude Code plugin component (plugin, agent, skill, command, hook) creation tool"
+    },
+    {
+      "name": "search",
+      "source": "./plugins/search",
+      "description": "Parallel search across web and official docs with unified answers (includes Tavily deep search)"
+    }
+  ]
+}

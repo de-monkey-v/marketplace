@@ -1,0 +1,11 @@
+{
+  "name": "notification",
+  "version": "0.1.0",
+  "description": "Multi-channel notification plugin - Slack, Discord, Windows popup, and more",
+  "author": {
+    "name": "de-monkey-v"
+  },
+  "license": "MIT",
+  "keywords": ["notification", "slack", "discord", "windows", "alert"],
+  "repository": "https://github.com/de-monkey-v/hyper-team"
+}

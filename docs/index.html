@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hyper-team — Claude Code Plugins for Power Users</title>
+  <meta name="description" content="A collection of Claude Code plugins for power users. Search, notifications, AI CLI tools, git automation, team workflows, and plugin scaffolding.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">hyper-team</a>
+      <ul class="nav-links">
+        <li><a href="#plugins">Plugins</a></li>
+        <li><a href="#installation">Installation</a></li>
+        <li><a href="#env">Environment</a></li>
+        <li><a href="https://github.com/de-monkey-v/hyper-team">GitHub</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>hyper-team</h1>
+    <p class="tagline">Claude Code plugins for power users. Install individually or use them all together.</p>
+    <div class="install-box">
+      <span class="prompt">$</span>
+      <span>claude plugin install search@de-monkey-v/hyper-team</span>
+    </div>
+  </section>
+
+  <!-- Plugins -->
+  <section class="section" id="plugins">
+    <h2 class="section-title">Plugins</h2>
+    <p class="section-desc">Six plugins to supercharge your Claude Code workflow.</p>
+
+    <div class="plugin-grid">
+
+      <!-- search -->
+      <div class="plugin-card">
+        <div class="plugin-header">
+          <div class="plugin-icon search">&#128269;</div>
+          <span class="plugin-name">search</span>
+        </div>
+        <p class="plugin-desc">
+          Unified web &amp; documentation search with Tavily/Brave load balancing.
+          Free built-in WebSearch + Context7 MCP, with optional Tavily and Brave APIs.
+        </p>
+        <div class="plugin-commands">
+          <span class="cmd-tag">/search:search</span>
+          <span class="cmd-tag">/search:deep-research</span>
+          <span class="cmd-tag">/search:status</span>
+          <span class="cmd-tag">/search:setup</span>
+        </div>
+      </div>
+
+      <!-- notification -->
+      <div class="plugin-card">
+        <div class="plugin-header">
+          <div class="plugin-icon notification">&#128276;</div>
+          <span class="plugin-name">notification</span>
+        </div>
+        <p class="plugin-desc">
+          Multi-channel notifications for Slack, Discord, and Desktop.
+          Automatic alerts on task completion, waiting, and session end.
+        </p>
+        <div class="plugin-commands">
+          <span class="cmd-tag">/notification:send</span>
+          <span class="cmd-tag">/notification:setup</span>
+        </div>
+      </div>
+
+      <!-- ai-cli-tools -->
+      <div class="plugin-card">
+        <div class="plugin-header">
+          <div class="plugin-icon ai-cli">&#129302;</div>
+          <span class="plugin-name">ai-cli-tools</span>
+        </div>
+        <p class="plugin-desc">
+          Gemini CLI &amp; Codex CLI integration for code review.
+          Delegate analysis to other AI models via the <code>@llms</code> agent.
+        </p>
+        <div class="plugin-commands">
+          <span class="cmd-tag">/ai-cli-tools:setup</span>
+        </div>
+      </div>
+
+      <!-- git-utils -->
+      <div class="plugin-card">
+        <div class="plugin-header">
+          <div class="plugin-icon git">&#9881;&#65039;</div>
+          <span class="plugin-name">git-utils</span>
+        </div>
+        <p class="plugin-desc">
+          Git workflow automation with smart commit messages.
+          Follows Conventional Commits, learns from project history, detects secrets.
+        </p>
+        <div class="plugin-commands">
+          <span class="cmd-tag">/git-utils:commit</span>
+          <span class="cmd-tag">/git-utils:setup</span>
+          <span class="cmd-tag">branch</span>
+          <span class="cmd-tag">diff</span>
+          <span class="cmd-tag">log</span>
+          <span class="cmd-tag">status</span>
+        </div>
+      </div>
+
+      <!-- hyper-team -->
+      <div class="plugin-card">
+        <div class="plugin-header">
+          <div class="plugin-icon hyper">&#9889;</div>
+          <span class="plugin-name">hyper-team</span>
+        </div>
+        <p class="plugin-desc">
+          Agent Teams workflow helper. Generate todo specs and team prompts from
+          natural language, then verify implementations with scoring.
+        </p>
+        <div class="plugin-commands">
+          <span class="cmd-tag">/hyper-team:make-prompt</span>
+          <span class="cmd-tag">/hyper-team:verify</span>
+          <span class="cmd-tag">/hyper-team:setup</span>
+        </div>
+      </div>
+
+      <!-- plugin-creator -->
+      <div class="plugin-card">
+        <div class="plugin-header">
+          <div class="plugin-icon creator">&#128736;&#65039;</div>
+          <span class="plugin-name">plugin-creator</span>
+        </div>
+        <p class="plugin-desc">
+          Plugin scaffolding &amp; validation toolkit.
+          7 agents, 7 skills, 4 commands for the full plugin lifecycle.
+        </p>
+        <div class="plugin-commands">
+          <span class="cmd-tag">/plugin-creator:create-plugin</span>
+          <span class="cmd-tag">/plugin-creator:modify-plugin</span>
+          <span class="cmd-tag">/plugin-creator:validate</span>
+          <span class="cmd-tag">/plugin-creator:setup</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Installation -->
+  <section class="section" id="installation">
+    <h2 class="section-title">Installation</h2>
+    <p class="section-desc">Get started in two steps.</p>
+
+    <div class="install-steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Install a plugin</h3>
+        <p>Pick any plugin and install it with the Claude CLI.</p>
+        <pre><code><span class="code-comment"># Install individual plugins</span>
+claude plugin install search@de-monkey-v/hyper-team
+claude plugin install notification@de-monkey-v/hyper-team
+claude plugin install ai-cli-tools@de-monkey-v/hyper-team
+claude plugin install git-utils@de-monkey-v/hyper-team
+claude plugin install hyper-team@de-monkey-v/hyper-team
+claude plugin install plugin-creator@de-monkey-v/hyper-team</code></pre>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Run the setup command</h3>
+        <p>Each plugin has a setup wizard that handles dependencies, environment variables, and configuration.</p>
+        <pre><code><span class="code-comment"># Run setup for your installed plugin</span>
+/search:setup
+/notification:setup
+/ai-cli-tools:setup
+/git-utils:setup
+/hyper-team:setup
+/plugin-creator:setup</code></pre>
+        <p>All setup commands support <code>--language=eng</code> and <code>--language=kor</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Environment Variables -->
+  <section class="section" id="env">
+    <h2 class="section-title">Environment Variables</h2>
+    <p class="section-desc">API keys used by the plugins. All are optional — the setup wizard will guide you.</p>
+
+    <div class="env-table-wrapper">
+      <table class="env-table">
+        <thead>
+          <tr>
+            <th>Variable</th>
+            <th>Plugin</th>
+            <th>Required</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>TAVILY_API_KEY</code></td>
+            <td>search</td>
+            <td><span class="badge optional">Optional</span></td>
+            <td><a href="https://app.tavily.com">app.tavily.com</a></td>
+          </tr>
+          <tr>
+            <td><code>BRAVE_API_KEY</code></td>
+            <td>search</td>
+            <td><span class="badge optional">Optional</span></td>
+            <td><a href="https://brave.com/search/api/">brave.com/search/api</a></td>
+          </tr>
+          <tr>
+            <td><code>SLACK_WEBHOOK_URL</code></td>
+            <td>notification</td>
+            <td><span class="badge optional">Optional</span></td>
+            <td><a href="https://api.slack.com/messaging/webhooks">Slack Webhooks</a></td>
+          </tr>
+          <tr>
+            <td><code>DISCORD_WEBHOOK_URL</code></td>
+            <td>notification</td>
+            <td><span class="badge optional">Optional</span></td>
+            <td>Discord Server Settings</td>
+          </tr>
+          <tr>
+            <td><code>ENABLE_DESKTOP_NOTIFICATION</code></td>
+            <td>notification</td>
+            <td><span class="badge optional">Optional</span></td>
+            <td>Set to <code>true</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <span class="footer-text">MIT License</span>
+      <div class="footer-links">
+        <a href="https://github.com/de-monkey-v/hyper-team">GitHub</a>
+        <a href="https://github.com/de-monkey-v/hyper-team/issues">Issues</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

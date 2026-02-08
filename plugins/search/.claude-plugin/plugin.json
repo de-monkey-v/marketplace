@@ -1,0 +1,24 @@
+{
+  "name": "search",
+  "version": "1.2.1",
+  "description": "Parallel search across web and official docs with unified answers (Brave/Tavily load balancing)",
+  "author": {
+    "name": "de-monkey-v"
+  },
+  "keywords": [
+    "search",
+    "web-search",
+    "documentation",
+    "context7",
+    "parallel-search",
+    "tavily",
+    "brave",
+    "load-balancing",
+    "crawl",
+    "extract",
+    "claude-code",
+    "claude-api",
+    "agent-sdk"
+  ],
+  "repository": "https://github.com/de-monkey-v/hyper-team"
+}

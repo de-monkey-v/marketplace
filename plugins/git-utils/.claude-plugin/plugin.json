@@ -1,0 +1,11 @@
+{
+  "name": "git-utils",
+  "version": "1.0.0",
+  "description": "Git workflow automation plugin - commit, branch, merge, and more",
+  "author": {
+    "name": "de-monkey-v"
+  },
+  "license": "MIT",
+  "keywords": ["git", "commit", "version-control", "automation"],
+  "repository": "https://github.com/de-monkey-v/hyper-team"
+}
