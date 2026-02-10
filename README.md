@@ -1,8 +1,8 @@
-# hyper-team
+# de-monkey-v
 
 A collection of Claude Code plugins for power users. Install individually or use them all together.
 
-**Documentation**: https://de-monkey-v.github.io/hyper-team/
+**Documentation**: https://marketplace.github.io/de-monkey-v/
 
 ## Plugins
 
@@ -20,14 +20,14 @@ A collection of Claude Code plugins for power users. Install individually or use
 ### Install a single plugin
 
 ```bash
-claude plugin install <plugin-name>@de-monkey-v/hyper-team
+claude plugin install <plugin-name>@marketplace/de-monkey-v
 ```
 
 For example:
 
 ```bash
-claude plugin install search@de-monkey-v/hyper-team
-claude plugin install notification@de-monkey-v/hyper-team
+claude plugin install search@marketplace/de-monkey-v
+claude plugin install notification@marketplace/de-monkey-v
 ```
 
 ### First-time setup
