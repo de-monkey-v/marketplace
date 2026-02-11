@@ -10,12 +10,12 @@ Non-interactive execution using the `gemini -p` option.
 
 ## Default Model
 
-Default model: `gemini-2.5-pro`
+Default model: `gemini-3.0-pro-preview`
 
 ## Basic Usage
 
 ```bash
-gemini -m gemini-2.5-pro -p "your prompt"
+gemini -m gemini-3.0-pro-preview -p "your prompt"
 ```
 
 ## Key Options
@@ -31,11 +31,11 @@ gemini -m gemini-2.5-pro -p "your prompt"
 
 ```bash
 # File analysis
-cat file.py | gemini -m gemini-2.5-pro -p "Analyze this"
+cat file.py | gemini -m gemini-3.0-pro-preview -p "Analyze this"
 
 # Git diff review
-git diff | gemini -m gemini-2.5-pro -p "Review this"
+git diff | gemini -m gemini-3.0-pro-preview -p "Review this"
 
 # JSON response
-gemini -m gemini-2.5-pro -p "your prompt" -o json | jq '.response'
+gemini -m gemini-3.0-pro-preview -p "your prompt" -o json | jq '.response'
 ```

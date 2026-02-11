@@ -150,7 +150,7 @@ Bash: echo "gemini: $(which gemini 2>/dev/null && gemini --version 2>/dev/null |
 - **Codex**: Run `codex` in your terminal to authenticate with your OpenAI account
 
 ### How to Use in Claude Code
-- `@llms` - Delegate tasks to Gemini for code review/analysis
+- `@llms` - Gemini/Codex에게 코드 리뷰/분석 위임
 
 ### Links
 - Gemini CLI: https://github.com/google-gemini/gemini-cli
@@ -172,7 +172,7 @@ Bash: echo "gemini: $(which gemini 2>/dev/null && gemini --version 2>/dev/null |
 - **Codex**: 터미널에서 `codex` 실행하여 OpenAI 계정 인증
 
 ### Claude Code에서 사용법
-- `@llms` - Gemini에게 코드 리뷰/분석 위임
+- `@llms` - Gemini/Codex에게 코드 리뷰/분석 위임
 
 ### 링크
 - Gemini CLI: https://github.com/google-gemini/gemini-cli
