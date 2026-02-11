@@ -5,7 +5,7 @@ Git workflow automation plugin - commit, branch, status check, and more.
 ## Installation
 
 ```bash
-/plugin install git-utils@de-monkey-v-marketplace
+/plugin install git-utils@de-monkey-v/marketplace
 ```
 
 ## Usage

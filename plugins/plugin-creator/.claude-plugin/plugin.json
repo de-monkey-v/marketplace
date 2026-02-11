@@ -7,6 +7,6 @@
   },
   "keywords": ["plugin", "development", "generator", "scaffold", "toolkit"],
   "license": "MIT",
-  "repository": "https://github.com/marketplace/de-monkey-v",
-  "homepage": "https://github.com/marketplace/de-monkey-v/tree/main/plugins/plugin-creator"
+  "repository": "https://github.com/de-monkey-v/marketplace",
+  "homepage": "https://github.com/de-monkey-v/marketplace/tree/main/plugins/plugin-creator"
 }

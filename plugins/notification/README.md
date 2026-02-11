@@ -16,7 +16,7 @@ A hooks-only plugin that automatically sends notifications when Claude Code even
 ## Installation
 
 ```bash
-/plugin install notification@de-monkey-v-marketplace
+/plugin install notification@de-monkey-v/marketplace
 ```
 
 ## Usage

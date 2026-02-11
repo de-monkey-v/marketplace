@@ -11,7 +11,7 @@ A plugin for leveraging AI CLI tools within Claude Code.
 ## Installation
 
 ```bash
-/plugin install ai-cli-tools@de-monkey-v-marketplace
+/plugin install ai-cli-tools@de-monkey-v/marketplace
 /plugin enable ai-cli-tools
 ```
 

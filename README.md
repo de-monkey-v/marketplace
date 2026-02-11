@@ -1,8 +1,8 @@
-# de-monkey-v
+# marketplace
 
 A collection of Claude Code plugins for power users. Install individually or use them all together.
 
-**Documentation**: https://marketplace.github.io/de-monkey-v/
+**Documentation**: https://de-monkey-v.github.io/marketplace/
 
 ## Plugins
 
@@ -20,14 +20,14 @@ A collection of Claude Code plugins for power users. Install individually or use
 ### Install a single plugin
 
 ```bash
-claude plugin install <plugin-name>@marketplace/de-monkey-v
+claude plugin install <plugin-name>@de-monkey-v/marketplace
 ```
 
 For example:
 
 ```bash
-claude plugin install search@marketplace/de-monkey-v
-claude plugin install notification@marketplace/de-monkey-v
+claude plugin install search@de-monkey-v/marketplace
+claude plugin install notification@de-monkey-v/marketplace
 ```
 
 ### First-time setup

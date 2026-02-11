@@ -96,7 +96,7 @@ python3 ${CLAUDE_PLUGIN_ROOT}/scripts/search-state.py reset
 ## Installation
 
 ```bash
-/plugin install search@de-monkey-v-marketplace
+/plugin install search@de-monkey-v/marketplace
 ```
 
 ### Dependencies
