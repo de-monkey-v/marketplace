@@ -98,37 +98,31 @@ Read tool:
 
 ### Step 2.6: Spec ID 결정
 
-기존 specs 디렉토리에서 다음 ID를 결정한다. 아래 알고리즘을 **정확히** 따를 것:
+**1) 다음 번호 자동 계산 (Bash):**
 
-**1) 기존 spec 디렉토리 목록 조회:**
-
-```
-Glob tool:
-- pattern: "${PROJECT_ROOT}/.specify/specs/*"
-```
-
-**2) 다음 번호 계산:**
-
-- Glob 결과에서 각 디렉토리명의 **앞 3자리 숫자를 추출** (정규식: `^(\d{3})-`)
-- 추출된 숫자들 중 **최댓값(max)을 구하고 +1** → 3자리 zero-pad (예: max=1 → `002`, max=12 → `013`)
-- Glob 결과가 비어있으면 `001`부터 시작
-
-**3) 기능명 결정:**
-
-- 사용자 요청에서 핵심 기능명을 추출하여 **kebab-case**로 변환
-
-**4) 최종 ID 조합:**
-
-- 형식: `{NNN}-{feature-name}` (예: `002-user-authentication`)
-
-**5) 중복 방지 검증:**
-
-```
-Glob tool:
-- pattern: "${PROJECT_ROOT}/.specify/specs/{NNN}-{feature-name}"
+```bash
+NEXT_ID=$(ls -1d ${PROJECT_ROOT}/.specify/specs/[0-9][0-9][0-9]-* 2>/dev/null \
+  | sed 's/.*\/\([0-9]\{3\}\)-.*/\1/' \
+  | sort -n | tail -1 \
+  | awk '{printf "%03d\n", $1 + 1}')
+[ -z "$NEXT_ID" ] && NEXT_ID="001"
+echo $NEXT_ID
 ```
 
-- 동일 디렉토리가 이미 존재하면 번호를 +1 증가시켜 재시도
+Bash 출력(예: `010`)을 NEXT_ID로 사용. **AI가 직접 계산하지 않는다.**
+
+**2) 기능명 결정:** 사용자 요청에서 핵심 기능명을 추출 → **kebab-case**
+
+**3) 최종 ID 조합:** `{NEXT_ID}-{feature-name}` (예: `010-user-authentication`)
+
+**4) 중복 방지 검증 (Bash):**
+
+```bash
+ls -1d ${PROJECT_ROOT}/.specify/specs/${NEXT_ID}-* 2>/dev/null
+```
+
+- 출력 없음 → 사용 가능
+- 출력 있음 → NEXT_ID를 +1 증가 후 재검증
 
 ### Step 3: 기존 태스크 정리
 

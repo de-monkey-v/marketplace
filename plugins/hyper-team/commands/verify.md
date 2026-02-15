@@ -81,36 +81,100 @@ Spawn the following teammates:
 ### Teammate 1: tester
 
 <task>
-Run all tests, start the dev server if applicable, and verify functional requirements against the acceptance criteria in the todo spec.
+Run build and tests with exit code capture, verify functional requirements against the acceptance criteria in the todo spec.
 </task>
 
 <instructions>
 1. Read the spec file to understand acceptance criteria.
-2. Find and run existing tests:
+
+2. **Detect package manager:**
+   ```
+   Bash: if [ -f "pnpm-lock.yaml" ]; then echo "PM=pnpm"; elif [ -f "yarn.lock" ]; then echo "PM=yarn"; else echo "PM=npm"; fi
+   ```
+   Use the detected PM for all subsequent commands.
+
+3. Find existing test files:
    ```
    Glob: **/*.{test,spec}.{ts,tsx,js,jsx,py}
    ```
-3. If a test script exists in package.json, run it:
+
+4. **Run build** (if `build` script exists in package.json):
    ```
-   Bash: npm test 2>&1 || yarn test 2>&1 || pnpm test 2>&1
+   Bash: $PM run build 2>&1; echo "BUILD_EXIT_CODE=$?"
    ```
-4. If a dev server can be started, start it and verify the feature works:
+   - If `BUILD_EXIT_CODE != 0` → mark build as CRITICAL failure, skip test execution, report immediately.
+
+5. **Run tests** (if build passed or no build script):
    ```
-   Bash: timeout 30 npm run dev 2>&1 &
+   Bash: $PM test 2>&1; echo "TEST_EXIT_CODE=$?"
    ```
-5. Check each acceptance criterion from the spec.
-6. Report results back to the leader.
+   Do NOT use `||` chains between package managers. Use the single detected PM.
+
+6. If a dev server can be started, start it and verify the feature works:
+   ```
+   Bash: timeout 30 $PM run dev 2>&1 &
+   ```
+
+7. Check each acceptance criterion from the spec.
+
+8. **Report to leader in this exact structure:**
+
+   ```
+   ## Tester Report
+
+   ### Exit Codes
+   - BUILD_EXIT_CODE: {0 or N, or N/A if no build script}
+   - TEST_EXIT_CODE: {0 or N, or N/A if no tests}
+
+   ### Build Output (if failed)
+   ```
+   {raw build error output}
+   ```
+
+   ### Test Output (last 20 lines)
+   ```
+   {raw test output — last 20 lines}
+   ```
+
+   ### Acceptance Criteria
+   | # | Criterion | Result | Evidence |
+   |---|-----------|--------|----------|
+   | 1 | {criterion} | PASS/FAIL | {specific evidence} |
+
+   ### Judgment
+   - Build: PASS/FAIL (based on BUILD_EXIT_CODE)
+   - Tests: PASS/FAIL (based on TEST_EXIT_CODE)
+   ```
+
+   **Judgment rules (mandatory):**
+   - `BUILD_EXIT_CODE != 0` → Build: FAIL, entire verification: FAIL, skip tests
+   - `TEST_EXIT_CODE != 0` → Tests: FAIL (regardless of your interpretation of output)
+   - Even if exit code is 0, flag a WARNING if output contains `FAIL`, `Error`, or `failed`
 </instructions>
 
 ### Teammate 2: code-reviewer
 
 <task>
-Analyze code quality, patterns, and potential issues in all files listed in the implementation plan.
+Analyze code quality with static analysis tools, then review patterns and potential issues in all files listed in the implementation plan.
 </task>
 
 <instructions>
 1. Read all files listed in the spec's implementation plan.
-2. Analyze code quality on these criteria:
+
+2. **Run static analysis tools** (capture exit codes):
+
+   a) **Type check** (if `tsconfig.json` exists):
+   ```
+   Bash: npx tsc --noEmit 2>&1; echo "TYPECHECK_EXIT_CODE=$?"
+   ```
+
+   b) **Lint** (if `lint` script exists in package.json):
+   ```
+   Bash: $PM run lint 2>&1; echo "LINT_EXIT_CODE=$?"
+   ```
+   (Use the same PM detection as tester: check lock files)
+
+3. Analyze code quality on these criteria:
 
    <scoring_criteria>
    - **Readability** (0-20): Clear naming, proper formatting, comments where needed
@@ -120,14 +184,42 @@ Analyze code quality, patterns, and potential issues in all files listed in the 
    - **Performance** (0-20): No obvious bottlenecks, efficient algorithms, proper caching
    </scoring_criteria>
 
-3. Check for code smells:
+4. Check for code smells:
    - Duplicated code
    - Long functions (>50 lines)
    - Deep nesting (>3 levels)
    - Magic numbers/strings
    - Missing type annotations (if typed language)
 
-4. Report findings and scores back to the leader.
+5. **Report to leader in this exact structure:**
+
+   ```
+   ## Code Review Report
+
+   ### Static Analysis Results
+   | Tool | Exit Code | Errors | Warnings |
+   |------|-----------|--------|----------|
+   | Type Check (tsc) | {0/N/N/A} | {count} | {count} |
+   | Lint | {0/N/N/A} | {count} | {count} |
+
+   ### Static Analysis Output (if errors found)
+   ```
+   {raw error output}
+   ```
+
+   ### Code Quality Score
+   | Criteria | Score | Notes |
+   |----------|-------|-------|
+   | Readability | /20 | {notes} |
+   | Maintainability | /20 | {notes} |
+   | Error Handling | /20 | {notes} |
+   | Security | /20 | {notes} |
+   | Performance | /20 | {notes} |
+   | **Total** | **/100** | |
+
+   ### Code Smells
+   {list of findings}
+   ```
 </instructions>
 
 ### Teammate 3: integration-checker
@@ -161,6 +253,27 @@ After all teammates complete their work, compile a final verification report:
 
 ## Verification Report: NNN-subject
 
+### Evidence (검증 증거)
+
+**Exit code 기반 판정** — teammate의 자연어 해석과 exit code가 불일치하면 **exit code를 우선**합니다.
+
+| 항목 | Exit Code | 상태 |
+|------|-----------|------|
+| Build | {BUILD_EXIT_CODE} | PASS/FAIL/N/A |
+| Test | {TEST_EXIT_CODE} | PASS/FAIL/N/A |
+| Type Check | {TYPECHECK_EXIT_CODE} | PASS/FAIL/N/A |
+| Lint | {LINT_EXIT_CODE} | PASS/FAIL/N/A |
+
+#### 테스트 출력 (마지막 20줄)
+```
+{raw test output from tester report}
+```
+
+#### 빌드/타입체크/린트 에러 (해당 시)
+```
+{raw error output from tester and code-reviewer reports}
+```
+
 ### Test Results
 - Tests Passed: X/Y
 - Acceptance Criteria Met: X/Y
@@ -175,6 +288,12 @@ After all teammates complete their work, compile a final verification report:
 | Security | /20 | {notes} |
 | Performance | /20 | {notes} |
 | **Total** | **/100** | |
+
+### Static Analysis
+| Tool | Exit Code | Errors | Warnings |
+|------|-----------|--------|----------|
+| Type Check (tsc) | {0/N/N/A} | {count} | {count} |
+| Lint | {0/N/N/A} | {count} | {count} |
 
 ### Grade
 - 90-100: A (Excellent)
@@ -195,18 +314,23 @@ After all teammates complete their work, compile a final verification report:
 </output_format>
 
 <instructions>
+**Exit code 기반 자동 판정 규칙 (필수):**
+- exit code가 0이 아닌 항목이 하나라도 있으면 해당 항목은 FAIL
+- teammate 메시지에서 "통과"라고 했더라도 exit code가 0이 아니면 FAIL로 판정
+- exit code가 0인데 출력에 `FAIL`, `Error`, `failed`가 포함되면 WARNING 표시
+
 After presenting the report, extract structured issues from each teammate's findings.
 
 Categorize issues by source and severity:
 
 **Test Issues** (from tester):
-- CRITICAL: Tests that fail and block functionality
-- MAJOR: Acceptance criteria not met
+- CRITICAL: `BUILD_EXIT_CODE != 0` or `TEST_EXIT_CODE != 0`
+- MAJOR: Acceptance criteria not met (even if tests pass)
 
 **Code Quality Issues** (from code-reviewer):
-- CRITICAL: Score below 10/20 in any category
-- MAJOR: Score below 15/20 in any category
-- MINOR: Code smells, style issues
+- CRITICAL: `TYPECHECK_EXIT_CODE != 0` or score below 10/20 in any category
+- MAJOR: `LINT_EXIT_CODE != 0` or score below 15/20 in any category
+- MINOR: Code smells, style issues (lint warnings)
 
 **Integration Issues** (from integration-checker):
 - CRITICAL: Missing files from implementation plan, regressions detected
@@ -220,7 +344,7 @@ Build an issue list with this structure for each issue:
 - File: Affected file path (if applicable)
 - Suggested Fix: Brief description of how to fix it
 
-Store the initial score and issue list in context. Then clean up the team:
+Store the initial score, exit codes, and issue list in context. Then clean up the team:
 </instructions>
 
 ```
@@ -313,30 +437,59 @@ Important:
 ## Phase 7: Re-verify
 
 <instructions>
-Perform a lightweight re-verification without creating a team:
+Perform a lightweight re-verification without creating a team. Use the same exit code capture approach:
 
-1. **Re-run tests** (if test issues were fixed):
+1. **Detect package manager** (same as Phase 3):
    ```
-   Bash: {same test command used in Phase 3}
+   Bash: if [ -f "pnpm-lock.yaml" ]; then PM="pnpm"; elif [ -f "yarn.lock" ]; then PM="yarn"; else PM="npm"; fi
    ```
 
-2. **Re-evaluate code quality** on modified files only:
+2. **Re-run build** (if build issues were fixed):
+   ```
+   Bash: $PM run build 2>&1; echo "BUILD_EXIT_CODE=$?"
+   ```
+
+3. **Re-run tests** (if test issues were fixed):
+   ```
+   Bash: $PM test 2>&1; echo "TEST_EXIT_CODE=$?"
+   ```
+
+4. **Re-run type check** (if type issues were fixed and tsconfig.json exists):
+   ```
+   Bash: npx tsc --noEmit 2>&1; echo "TYPECHECK_EXIT_CODE=$?"
+   ```
+
+5. **Re-run lint** (if lint issues were fixed and lint script exists):
+   ```
+   Bash: $PM run lint 2>&1; echo "LINT_EXIT_CODE=$?"
+   ```
+
+6. **Re-evaluate code quality** on modified files only:
    - Read each file that was modified in Phase 6
    - Re-score using the same 5 criteria (Readability, Maintainability, Error Handling, Security, Performance)
 
-3. **Check integration status**:
+7. **Check integration status**:
    ```
    Bash: git status
    Bash: git diff --stat
    ```
 
-4. Present a comparison table:
+8. Present a comparison table with exit codes:
 </instructions>
 
 <output_format>
 
 ## Re-verification Results (Iteration {N})
 
+### Exit Code Comparison
+| 항목 | Before | After |
+|------|--------|-------|
+| Build Exit Code | {N} | {N} |
+| Test Exit Code | {N} | {N} |
+| Type Check Exit Code | {N/N/A} | {N/N/A} |
+| Lint Exit Code | {N/N/A} | {N/N/A} |
+
+### Metrics Comparison
 | Metric | Before | After | Change |
 |--------|--------|-------|--------|
 | Tests Passed | X/Y | X/Y | {+/-} |
