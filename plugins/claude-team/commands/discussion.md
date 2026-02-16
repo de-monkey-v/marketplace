@@ -1,5 +1,5 @@
 ---
-description: Multi-LLM 토론 팀 생성. Gemini와 GPT teammate를 스폰하여 다양한 LLM 관점으로 주제를 토론합니다.
+description: Multi-LLM 토론 팀 생성. Gemini/GPT teammate를 스폰하여 다양한 LLM 관점으로 주제를 토론합니다.
 allowed-tools: Bash, Read, Write, AskUserQuestion, Task, TeamCreate, TeamDelete, SendMessage, TaskCreate, TaskUpdate, TaskList
 namespace: team
 argument-hint: [topic]
@@ -7,7 +7,7 @@ argument-hint: [topic]
 
 # Multi-LLM Discussion Workflow
 
-Create a discussion team with Gemini and GPT teammates to analyze a topic from multiple AI perspectives. Gemini is spawned via haiku proxy (Task), GPT is spawned natively via tmux (gpt-claude-code). This command orchestrates team creation, teammate spawning, and facilitates multi-viewpoint discussion.
+Create a discussion team with a Gemini teammate to analyze a topic from multiple AI perspectives. Gemini is spawned via haiku proxy (Task). This command orchestrates team creation, teammate spawning, and facilitates multi-viewpoint discussion.
 
 <task-context>
 <plugin-path>./plugins/claude-team</plugin-path>
@@ -83,57 +83,14 @@ Create a discussion team with Gemini and GPT teammates to analyze a topic from m
 
 ---
 
-## Phase 2.5: GPT Prerequisites Check
-
-**Goal**: Verify GPT native spawn prerequisites before proceeding.
-
-**Actions**:
-
-1. **Check tmux session availability**:
-
-   Verify `$CLAUDE_CODE_TMUX_SESSION` environment variable exists:
-   ```bash
-   if [ -z "$CLAUDE_CODE_TMUX_SESSION" ]; then
-     echo "ERROR: CLAUDE_CODE_TMUX_SESSION is not set"
-     exit 1
-   fi
-   ```
-
-2. **Check cli-proxy-api is running**:
-
-   ```bash
-   curl -s --connect-timeout 3 http://localhost:8317/
-   ```
-
-   If this fails, cli-proxy-api is not running.
-
-3. **Check gpt-claude-code function exists**:
-
-   ```bash
-   zsh -c 'source ~/.zshrc && type gpt-claude-code'
-   ```
-
-   If this fails, the function is not defined.
-
-4. **On any failure**:
-
-   - Display which prerequisite(s) failed with specific guidance
-   - Clean up team: `TeamDelete("discussion")`
-   - Abort execution
-
-**Output**: All GPT prerequisites verified
-
----
-
 ## Phase 3: Spawn Teammates
 
-**Goal**: Spawn Gemini and GPT teammates in parallel.
+**Goal**: Spawn Gemini and/or GPT teammates.
 
 **Actions**:
 
-1. **Spawn Both Teammates IN PARALLEL**:
+1. **Spawn Gemini Teammate** (haiku proxy via Task):
 
-   **Gemini Teammate** (haiku proxy via Task):
    ```
    Task(
      subagent_type: "claude-team:gemini",
@@ -154,68 +111,39 @@ Create a discussion team with Gemini and GPT teammates to analyze a topic from m
    )
    ```
 
-   **GPT Teammate** (native tmux spawn via Bash):
+2. **Spawn GPT Teammate** (optional, via spawn-teammate Skill):
 
-   Execute the following steps sequentially in a single Bash call:
+   GPT 팀메이트를 추가하려면 spawn-teammate Skill을 사용:
 
-   ```bash
-   # 1. Create inbox file
-   echo '[]' > ~/.claude/teams/discussion/inboxes/gpt.json
+   ```
+   Skill tool:
+   - skill: "claude-team:spawn-teammate"
+   - args: "gpt --team discussion"
 
-   # 2. Extract leadSessionId from config
-   LEAD_SESSION_ID=$(jq -r '.leadSessionId' ~/.claude/teams/discussion/config.json)
+   → 스폰 완료 후:
+   SendMessage tool:
+   - type: "message"
+   - recipient: "gpt"
+   - content: |
+       You are a discussion teammate. Analyze the following topic and
+       provide your perspective as GPT-5.3 Codex.
 
-   # 3. Spawn tmux pane
-   PANE_ID=$(tmux split-window -t "$CLAUDE_CODE_TMUX_SESSION" -c "$PWD" -dP -F '#{pane_id}' \
-     "zsh -c 'source ~/.zshrc && gpt-claude-code \
-       --agent-id gpt@discussion \
-       --agent-name gpt \
-       --team-name discussion \
-       --agent-color \"#10A37F\" \
-       --parent-session-id ${LEAD_SESSION_ID} \
-       --agent-type claude-team:gpt \
-       --model sonnet \
-       --dangerously-skip-permissions'")
+       Discussion topic: {topic}
 
-   # 4. Register member in config.json
-   jq --arg paneId "$PANE_ID" \
-     '.members += [{
-       "agentId": "gpt@discussion", "name": "gpt",
-       "agentType": "claude-team:gpt", "model": "gpt-5.3-codex(high)",
-       "color": "#10A37F", "tmuxPaneId": $paneId,
-       "backendType": "tmux", "isActive": true,
-       "joinedAt": (now * 1000 | floor), "cwd": env.PWD, "subscriptions": []
-     }]' ~/.claude/teams/discussion/config.json > /tmp/config-tmp-gpt.json \
-     && mv /tmp/config-tmp-gpt.json ~/.claude/teams/discussion/config.json
+       Please analyze and include:
+       - Key points and insights
+       - Pros and cons if applicable
+       - Your recommendations
+       - Any concerns or considerations
+   - summary: "GPT 토론 주제 전달"
    ```
 
-   GPT is spawned as a tmux pane, so `run_in_background: true` is NOT needed — tmux handles background execution.
-
-   After spawning, send the discussion topic to GPT:
-   ```
-   SendMessage(
-     type: "message",
-     recipient: "gpt",
-     content: "You are a discussion teammate. Analyze the following topic and
-               provide your perspective.
-
-               Discussion topic: {topic}
-
-               Please analyze and include:
-               - Key points and insights
-               - Pros and cons if applicable
-               - Your recommendations
-               - Any concerns or considerations",
-     summary: "토론 주제 전달"
-   )
-   ```
-
-2. **Verify Spawns**:
+3. **Verify Spawn**:
 
    - Read `~/.claude/teams/discussion/config.json`
-   - Verify both members are registered with `isActive: true`
+   - Verify members are registered with `isActive: true`
 
-**Output**: Two active teammates ready for discussion
+**Output**: Teammates ready for discussion
 
 ---
 
@@ -228,8 +156,8 @@ Create a discussion team with Gemini and GPT teammates to analyze a topic from m
 1. **Wait for Responses**:
    - Topic is already included in spawn prompts (Phase 3)
    - No separate broadcast needed
-   - Expected response time: Gemini ~10-30s, GPT ~10-60s
-   - Maximum wait: 3 minutes per teammate
+   - Expected response time: Gemini ~10-30s
+   - Maximum wait: 3 minutes
    - If only one teammate responds within 3 minutes, present that
      response and note the other teammate timed out
    - Do NOT resend the topic — teammates already have it
@@ -256,29 +184,13 @@ Create a discussion team with Gemini and GPT teammates to analyze a topic from m
 
    ---
 
-   ### ⚡ GPT's Perspective
-
-   {gpt response summary or full response}
-
-   ---
-
    ### How to Continue
 
    The discussion team is active. You can:
 
-   - **Continue discussion with both**:
+   - **Ask Gemini a follow-up**:
      ```
-     SendMessage(type: "broadcast", content: "Follow-up question...")
-     ```
-
-   - **Ask Gemini specifically**:
-     ```
-     SendMessage(recipient: "gemini", content: "Question for Gemini...")
-     ```
-
-   - **Ask GPT specifically**:
-     ```
-     SendMessage(recipient: "gpt", content: "Question for GPT...")
+     SendMessage(recipient: "gemini", content: "Follow-up question...")
      ```
 
    - **End discussion**:
@@ -289,7 +201,7 @@ Create a discussion team with Gemini and GPT teammates to analyze a topic from m
    ### Team Status
 
    - **Team**: discussion
-   - **Members**: gemini (haiku), gpt (gpt-5.3-codex)
+   - **Members**: gemini (haiku), gpt (optional, via spawn-teammate)
    - **Config**: `~/.claude/teams/discussion/config.json`
    - **Inboxes**: `~/.claude/teams/discussion/inboxes/`
    ```
@@ -298,8 +210,8 @@ Create a discussion team with Gemini and GPT teammates to analyze a topic from m
 
    ```
    ✅ Discussion team created
-   ✅ Gemini and GPT teammates spawned
-   ✅ Responses collected
+   ✅ Gemini teammate spawned
+   ✅ Response collected
    ```
 
 **Output**: Complete discussion summary with next steps guide
@@ -313,30 +225,6 @@ Create a discussion team with Gemini and GPT teammates to analyze a topic from m
 If Gemini CLI is not installed:
 1. Show warning: "Gemini CLI not found. Please install it first."
 2. Suggest: `/ai-cli-tools:setup` to install Gemini CLI
-3. Abort discussion creation
-4. Clean up team if partially created: `TeamDelete("discussion")`
-
-### cli-proxy-api Not Running
-
-If cli-proxy-api is not running (curl to localhost:8317 fails):
-1. Show warning: "cli-proxy-api is not running. GPT teammate requires it."
-2. Suggest: Start cli-proxy-api with `cli-proxy-api` or check if the process is running
-3. Abort discussion creation
-4. Clean up team if partially created: `TeamDelete("discussion")`
-
-### gpt-claude-code Function Not Found
-
-If `gpt-claude-code` function is not defined:
-1. Show warning: "gpt-claude-code function not found."
-2. Suggest: Check `~/.zshrc` for the function definition
-3. Abort discussion creation
-4. Clean up team if partially created: `TeamDelete("discussion")`
-
-### tmux Session Not Available
-
-If `$CLAUDE_CODE_TMUX_SESSION` is not set:
-1. Show warning: "CLAUDE_CODE_TMUX_SESSION is not set. GPT teammate requires tmux."
-2. Suggest: Run `/hyper-team:setup` to configure tmux session, or set the env variable manually
 3. Abort discussion creation
 4. Clean up team if partially created: `TeamDelete("discussion")`
 
@@ -358,25 +246,15 @@ If discussion team already exists:
 ### Teammate Spawn Failure
 
 If any teammate fails to spawn:
-1. Note which teammate failed (gemini or gpt)
-2. Show error with details
-3. Ask user:
+1. Show error with details
+2. Ask user:
    - header: "Spawn failed"
-   - question: "{teammate} failed to spawn. Continue with available teammate?"
+   - question: "Gemini failed to spawn. Retry or abort?"
    - options:
-     - Yes (continue with one teammate)
-     - No (abort and clean up)
-4. If continuing with one, adjust Phase 4 to send to available teammate only
+     - Retry
+     - Abort (clean up)
 
-### GPT tmux Pane Immediately Exits
-
-If the GPT tmux pane exits immediately after spawning:
-1. Verify cli-proxy-api authentication is working: `curl -s http://localhost:8317/`
-2. Test `gpt-claude-code` function manually in a terminal
-3. Check tmux pane output for error messages: `tmux capture-pane -p -t {pane_id}`
-4. Suggest: Run `gpt-claude-code` manually to diagnose the issue
-
-### No Response from Teammates
+### No Response from Teammate
 
 If teammates don't respond within 3 minutes:
 1. Show warning: "No response received from {teammate} within 3 minutes."
@@ -406,8 +284,7 @@ If teammates don't respond within 3 minutes:
 - Include topic directly in spawn prompts (no separate broadcast needed)
 - Show full perspective summaries for clarity
 - Provide clear next-step commands
-- Verify cli-proxy-api and gpt-claude-code availability before spawning
-- Use follow-up broadcasts only for NEW questions after initial discussion
+- Use follow-up messages only for NEW questions after initial discussion
 
 **DON'T**:
 - Don't spawn teammates sequentially (use parallel spawning)

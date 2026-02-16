@@ -1,6 +1,6 @@
 ---
 description: 구현 검증 및 대화형 수정 (Agent Teams, 병렬 검증)
-argument-hint: [spec-id] [--quick|--full] [--gpt]
+argument-hint: [spec-id] [--quick|--full]
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, Task, Skill, TaskCreate, TaskUpdate, TaskList, TeamCreate, TeamDelete, SendMessage
 ---
 
@@ -14,9 +14,6 @@ Agent Teams 기반으로 팀을 구성하고, 팀메이트에게 검증을 병�
 - **모든 검증은 팀메이트(qa, critic, architect)가 수행**
 - **병렬 검증으로 속도 최적화**
 - **문제 발견 시 수정 방법 선택 가능 (자동/가이드/스킵)**
-
-**LLM 옵션** (선택):
-- `--gpt`: 모든 팀메이트를 GPT-5.3 Codex (xhigh) 네이티브로 실행 (전체 도구 접근)
 
 **Spec ID:** {{arguments}}
 
@@ -62,11 +59,10 @@ Phase 4: 최종 리포트 + 팀 해산
 ### Step 1: Spec/Plan 로드
 
 **Spec ID 파싱:**
-- arguments에서 spec-id 추출 (`--quick`, `--full`, `--gpt` 옵션 제거)
+- arguments에서 spec-id 추출 (`--quick`, `--full` 옵션 제거)
 - `--quick` -> SCOPE = "quick"
 - `--full` -> SCOPE = "full"
 - 기본값 -> SCOPE = "standard"
-- `--gpt` 포함 -> GPT_MODE = true (이후 모든 팀메이트: `subagent_type: "claude-team:gpt"`, `model: "opus"`)
 
 **spec-id 미지정 시:**
 ```
@@ -200,13 +196,24 @@ Skill tool:
 | Medium / 표준 | qa + critic |
 | Large / 완전 | qa + architect + critic |
 
+**LLM 모드 설정:**
+
+arguments에서 `--gpt` 옵션 확인:
+- `--gpt` 포함 → GPT_MODE = true
+- 기본값 → GPT_MODE = false
+
+| GPT_MODE | 스폰 방식 |
+|----------|---------|
+| false (기본) | Task tool + `subagent_type: "general-purpose"` |
+| true (`--gpt`) | `Skill: claude-team:spawn-teammate` + SendMessage |
+
+**GPT 모드**: 각 팀메이트를 spawn-teammate Skill로 생성한 뒤, SendMessage로 초기 작업을 지시합니다.
+
 ### Step 3: 팀메이트 생성 + 검증 지시 (병렬)
 
-> **GPT 모드 (`--gpt`)**: GPT_MODE가 true이면, 아래 모든 팀메이트의 `subagent_type`을
-> `"claude-team:gpt"`으로, `model`을 `"opus"`로 변경합니다.
-> GPT 네이티브 팀메이트는 전체 도구에 접근 가능하므로 프롬프트는 동일하게 유지합니다.
-
 **qa 생성 (필수):**
+
+**기본 모드:**
 ```
 Task tool:
 - subagent_type: "general-purpose"
@@ -258,7 +265,24 @@ Task tool:
     작업 완료 시 반드시 SendMessage로 리더에게 결과를 보고하세요.
 ```
 
+**GPT 모드 (`--gpt`):**
+```
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "qa --team verify-{spec-id}"
+
+→ 스폰 완료 후:
+SendMessage tool:
+- type: "message"
+- recipient: "qa"
+- content: |
+    [위 Task tool의 prompt와 동일 내용]
+- summary: "qa 초기 작업 지시"
+```
+
 **critic 생성 (Medium 이상):**
+
+**기본 모드:**
 ```
 Task tool:
 - subagent_type: "general-purpose"
@@ -307,7 +331,24 @@ Task tool:
     작업 완료 시 반드시 SendMessage로 리더에게 결과를 보고하세요.
 ```
 
+**GPT 모드 (`--gpt`):**
+```
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "critic --team verify-{spec-id}"
+
+→ 스폰 완료 후:
+SendMessage tool:
+- type: "message"
+- recipient: "critic"
+- content: |
+    [위 Task tool의 prompt와 동일 내용]
+- summary: "critic 초기 작업 지시"
+```
+
 **architect 생성 (Large만):**
+
+**기본 모드:**
 ```
 Task tool:
 - subagent_type: "general-purpose"
@@ -337,6 +378,21 @@ Task tool:
     ### 개선 제안
 
     작업 완료 시 반드시 SendMessage로 리더에게 결과를 보고하세요.
+```
+
+**GPT 모드 (`--gpt`):**
+```
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "architect --team verify-{spec-id}"
+
+→ 스폰 완료 후:
+SendMessage tool:
+- type: "message"
+- recipient: "architect"
+- content: |
+    [위 Task tool의 prompt와 동일 내용]
+- summary: "architect 초기 작업 지시"
 ```
 
 ### Step 4: 결과 수집
@@ -393,14 +449,14 @@ AskUserQuestion:
 
 ### Step 3: 수정 실행
 
-자동 수정이 필요한 경우 developer 팀메이트를 생성 (GPT_MODE 시 `subagent_type: "claude-team:gpt"`, `model: "opus"` 적용):
+자동 수정이 필요한 경우 developer 팀메이트를 생성:
 
+**기본 모드:**
 ```
 Task tool:
-- subagent_type: "general-purpose"  ← GPT_MODE 시 "claude-team:gpt"
+- subagent_type: "general-purpose"
 - team_name: "verify-{spec-id}"
 - name: "developer"
-- model: (GPT_MODE 시 "opus")
 - description: "검증 실패 수정"
 - prompt: |
     너는 코드 구현 전문가이다.
@@ -409,6 +465,21 @@ Task tool:
     기존 패턴 유지, 최소한의 수정으로 문제 해결.
 
     작업 완료 시 반드시 SendMessage로 리더에게 결과를 보고하세요.
+```
+
+**GPT 모드 (`--gpt`):**
+```
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "developer --team verify-{spec-id}"
+
+→ 스폰 완료 후:
+SendMessage tool:
+- type: "message"
+- recipient: "developer"
+- content: |
+    [위 Task tool의 prompt와 동일 내용]
+- summary: "developer 초기 작업 지시"
 ```
 
 **수정 지시:**

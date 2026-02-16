@@ -1,6 +1,6 @@
 ---
 description: plan.md 기반 코드 구현 (Agent Teams, 자동/대화형)
-argument-hint: [spec-id] [--interactive] [--gpt]
+argument-hint: [spec-id] [--interactive]
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, Task, Skill, TaskCreate, TaskUpdate, TaskList, TeamCreate, TeamDelete, SendMessage
 ---
 
@@ -14,9 +14,6 @@ Agent Teams 기반으로 팀을 구성하고, 팀메이트에게 구현/테스�
 - **모든 코드 작성/수정은 팀메이트(developer, qa)가 수행**
 - **Phase Group 단위로 구현 -> 검증 반복**
 - **자동 모드(기본): 에러 시에만 중단 / 대화형 모드: Group별 확인**
-
-**LLM 옵션** (선택):
-- `--gpt`: 모든 팀메이트를 GPT-5.3 Codex (xhigh) 네이티브로 실행 (전체 도구 접근)
 
 **Spec ID:** {{arguments}}
 
@@ -82,9 +79,8 @@ code-generation 스킬의 지식(기존 코드 우선 원칙, 패턴 준수)을 
 ### Step 2: Spec/Plan 로드
 
 **Spec ID 파싱:**
-- arguments에서 spec-id 추출 (`--interactive`, `--gpt` 등 옵션 제거)
+- arguments에서 spec-id 추출 (`--interactive` 옵션 제거)
 - `--interactive` 포함 -> AUTO_MODE = false
-- `--gpt` 포함 -> GPT_MODE = true (이후 모든 팀메이트: `subagent_type: "claude-team:gpt"`, `model: "opus"`)
 
 **spec-id 미지정 시:**
 ```
@@ -188,6 +184,19 @@ plan.md의 규모(변경 파일 수, Phase 수)를 기반으로 판단:
 | Medium | 파일 5-15개, Phase 4-6개 | developer x2 + qa |
 | Large | 파일 15개+, Phase 7개+ | architect + developer x2 + qa |
 
+**LLM 모드 설정:**
+
+arguments에서 `--gpt` 옵션 확인:
+- `--gpt` 포함 → GPT_MODE = true
+- 기본값 → GPT_MODE = false
+
+| GPT_MODE | 스폰 방식 |
+|----------|---------|
+| false (기본) | Task tool + `subagent_type: "general-purpose"` |
+| true (`--gpt`) | `Skill: claude-team:spawn-teammate` + SendMessage |
+
+**GPT 모드**: 각 팀메이트를 spawn-teammate Skill로 생성한 뒤, SendMessage로 초기 작업을 지시합니다.
+
 ### Step 2.5: Fullstack 프로젝트 감지
 
 Medium/Large에서 developer x2가 필요한 경우, fullstack 프로젝트 여부를 판단:
@@ -206,11 +215,9 @@ Medium/Large에서 developer x2가 필요한 경우, fullstack 프로젝트 여�
 
 ### Step 3: 팀메이트 생성
 
-> **GPT 모드 (`--gpt`)**: GPT_MODE가 true이면, 아래 모든 팀메이트의 `subagent_type`을
-> `"claude-team:gpt"`으로, `model`을 `"opus"`로 변경합니다.
-> GPT 네이티브 팀메이트는 전체 도구에 접근 가능하므로 프롬프트는 동일하게 유지합니다.
-
 **developer 생성 (필수 — non-fullstack):**
+
+**기본 모드:**
 ```
 Task tool:
 - subagent_type: "general-purpose"
@@ -237,7 +244,24 @@ Task tool:
     작업 완료 시 반드시 SendMessage로 리더에게 결과를 보고하세요.
 ```
 
+**GPT 모드 (`--gpt`):**
+```
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "developer --team implement-{spec-id}"
+
+→ 스폰 완료 후:
+SendMessage tool:
+- type: "message"
+- recipient: "developer"
+- content: |
+    [위 Task tool의 prompt와 동일 내용]
+- summary: "developer 초기 작업 지시"
+```
+
 **frontend-dev 생성 (fullstack 프로젝트, Medium 이상):**
+
+**기본 모드:**
 ```
 Task tool:
 - subagent_type: "general-purpose"
@@ -267,7 +291,24 @@ Task tool:
     작업 완료 시 반드시 SendMessage로 리더에게 결과를 보고하세요.
 ```
 
+**GPT 모드 (`--gpt`):**
+```
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "frontend-dev --team implement-{spec-id}"
+
+→ 스폰 완료 후:
+SendMessage tool:
+- type: "message"
+- recipient: "frontend-dev"
+- content: |
+    [위 Task tool의 prompt와 동일 내용]
+- summary: "frontend-dev 초기 작업 지시"
+```
+
 **backend-dev 생성 (fullstack 프로젝트, Medium 이상):**
+
+**기본 모드:**
 ```
 Task tool:
 - subagent_type: "general-purpose"
@@ -297,11 +338,28 @@ Task tool:
     작업 완료 시 반드시 SendMessage로 리더에게 결과를 보고하세요.
 ```
 
+**GPT 모드 (`--gpt`):**
+```
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "backend-dev --team implement-{spec-id}"
+
+→ 스폰 완료 후:
+SendMessage tool:
+- type: "message"
+- recipient: "backend-dev"
+- content: |
+    [위 Task tool의 prompt와 동일 내용]
+- summary: "backend-dev 초기 작업 지시"
+```
+
 **developer-2 생성 (non-fullstack, Medium 이상):**
 - name: "developer-2"
 - 동일한 프롬프트, 별도 Phase Group 담당
 
 **qa 생성 (필수):**
+
+**기본 모드:**
 ```
 Task tool:
 - subagent_type: "general-purpose"
@@ -334,7 +392,24 @@ Task tool:
     작업 완료 시 반드시 SendMessage로 리더에게 결과를 보고하세요.
 ```
 
+**GPT 모드 (`--gpt`):**
+```
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "qa --team implement-{spec-id}"
+
+→ 스폰 완료 후:
+SendMessage tool:
+- type: "message"
+- recipient: "qa"
+- content: |
+    [위 Task tool의 prompt와 동일 내용]
+- summary: "qa 초기 작업 지시"
+```
+
 **architect 생성 (Large만):**
+
+**기본 모드:**
 ```
 Task tool:
 - subagent_type: "general-purpose"
@@ -352,6 +427,21 @@ Task tool:
 
     리더의 지시에 따라 작업을 수행합니다.
     작업 완료 시 반드시 SendMessage로 리더에게 결과를 보고하세요.
+```
+
+**GPT 모드 (`--gpt`):**
+```
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "architect --team implement-{spec-id}"
+
+→ 스폰 완료 후:
+SendMessage tool:
+- type: "message"
+- recipient: "architect"
+- content: |
+    [위 Task tool의 prompt와 동일 내용]
+- summary: "architect 초기 작업 지시"
 ```
 
 ### Step 4: Plan에서 구현 계획 추출 및 Phase Group 분류

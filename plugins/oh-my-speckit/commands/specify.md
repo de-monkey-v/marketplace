@@ -1,6 +1,6 @@
 ---
 description: 기능 요청을 spec.md + plan.md로 통합 생성 (Agent Teams)
-argument-hint: [기능 설명] [--gpt]
+argument-hint: [기능 설명]
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, Task, Skill, TaskCreate, TaskUpdate, TaskList, TeamCreate, TeamDelete, SendMessage
 ---
 
@@ -14,9 +14,6 @@ Agent Teams 기반으로 팀을 구성하고, 팀메이트에게 분석/조사�
 - **중요 결정만 질문** (기술 선택, Breaking Change 등)
 - **세부사항은 AI가 결정**
 - **요약 중심 출력** (전체 문서는 저장 시에만)
-
-**LLM 옵션** (선택):
-- `--gpt`: 모든 팀메이트를 GPT-5.3 Codex (xhigh) 네이티브로 실행 (전체 도구 접근)
 
 **사용자 요청:** {{arguments}}
 
@@ -127,16 +124,18 @@ ls -1d ${PROJECT_ROOT}/.specify/specs/${NEXT_ID}-* 2>/dev/null
 - 출력 없음 → 사용 가능
 - 출력 있음 → NEXT_ID를 +1 증가 후 재검증
 
-### Step 2.7: LLM 옵션 파싱
+### Step 2.7: LLM 모드 설정
 
-arguments에서 `--gpt` 옵션을 추출하고 제거합니다.
-
+arguments에서 `--gpt` 옵션 확인:
 - `--gpt` 포함 → GPT_MODE = true
-- `--gpt` 미포함 → GPT_MODE = false (Claude 기본)
+- 기본값 → GPT_MODE = false
 
-GPT_MODE가 true이면, 이후 모든 팀메이트 생성 시:
-- `subagent_type: "claude-team:gpt"` (기본 `"general-purpose"` 대신)
-- `model: "opus"` (GPT-5.3 Codex xhigh 매핑)
+| GPT_MODE | 스폰 방식 |
+|----------|---------|
+| false (기본) | Task tool + `subagent_type: "general-purpose"` |
+| true (`--gpt`) | `Skill: claude-team:spawn-teammate` + SendMessage |
+
+**GPT 모드**: 각 팀메이트를 spawn-teammate Skill로 생성한 뒤, SendMessage로 초기 작업을 지시합니다.
 
 ### Step 3: 기존 태스크 정리
 
@@ -202,13 +201,11 @@ Skill tool:
 
 ### Step 3: 팀메이트 생성 (병렬)
 
-> **GPT 모드 (`--gpt`)**: GPT_MODE가 true이면, 아래 모든 팀메이트의 `subagent_type`을
-> `"claude-team:gpt"`으로, `model`을 `"opus"`로 변경합니다.
-> GPT 네이티브 팀메이트는 전체 도구에 접근 가능하므로 프롬프트는 동일하게 유지합니다.
-
 role-templates 스킬의 프롬프트 템플릿을 사용하여 팀메이트 생성:
 
 **pm 생성 (필수):**
+
+**기본 모드:**
 ```
 Task tool:
 - subagent_type: "general-purpose"
@@ -251,7 +248,24 @@ Task tool:
     작업 완료 시 반드시 SendMessage로 리더에게 결과를 보고하세요.
 ```
 
+**GPT 모드 (`--gpt`):**
+```
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "pm --team specify-{spec-id}"
+
+→ 스폰 완료 후:
+SendMessage tool:
+- type: "message"
+- recipient: "pm"
+- content: |
+    [위 Task tool의 prompt와 동일 내용]
+- summary: "pm 초기 작업 지시"
+```
+
 **architect 생성 (Medium 이상):**
+
+**기본 모드:**
 ```
 Task tool:
 - subagent_type: "general-purpose"
@@ -296,7 +310,24 @@ Task tool:
     작업 완료 시 반드시 SendMessage로 리더에게 결과를 보고하세요.
 ```
 
+**GPT 모드 (`--gpt`):**
+```
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "architect --team specify-{spec-id}"
+
+→ 스폰 완료 후:
+SendMessage tool:
+- type: "message"
+- recipient: "architect"
+- content: |
+    [위 Task tool의 prompt와 동일 내용]
+- summary: "architect 초기 작업 지시"
+```
+
 **critic 생성 (Large만):**
+
+**기본 모드:**
 ```
 Task tool:
 - subagent_type: "general-purpose"
@@ -336,6 +367,21 @@ Task tool:
     - 판정 근거: [한 줄]
 
     작업 완료 시 반드시 SendMessage로 리더에게 결과를 보고하세요.
+```
+
+**GPT 모드 (`--gpt`):**
+```
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "critic --team specify-{spec-id}"
+
+→ 스폰 완료 후:
+SendMessage tool:
+- type: "message"
+- recipient: "critic"
+- content: |
+    [위 Task tool의 prompt와 동일 내용]
+- summary: "critic 초기 작업 지시"
 ```
 
 ### Step 4: 팀메이트 결과 수집

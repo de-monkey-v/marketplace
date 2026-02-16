@@ -10,13 +10,30 @@ Agent Teams의 팀메이트 역할 정의. 커맨드(리더)가 TeamCreate 후 T
 
 ## 사용법
 
+**기본 모드:**
 ```
 Task tool:
 - subagent_type: "general-purpose"
 - team_name: "{team-name}"
 - name: "{role-name}"
+- description: "역할 설명"
 - prompt: |
     [아래 역할 템플릿 기반 프롬프트]
+```
+
+**GPT 모드 (`--gpt`):**
+```
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "{role-name} --team {team-name}"
+
+→ 스폰 완료 후:
+SendMessage tool:
+- type: "message"
+- recipient: "{role-name}"
+- content: |
+    [아래 역할 템플릿 기반 프롬프트]
+- summary: "{role-name} 초기 작업 지시"
 ```
 
 ## 프로젝트 규모 판단 기준
@@ -66,33 +83,30 @@ developer를 frontend-dev + backend-dev로 분리할지 판단하는 기준:
 - FE + BE 디렉토리 모두 존재 → fullstack → frontend-dev + backend-dev
 - 그 외 → developer로 통합
 
+---
+
 ## LLM 팀메이트 옵션
 
-커맨드에 `--gpt` 옵션을 지정하면 모든 팀메이트를 GPT-5.3 Codex (xhigh) 네이티브로 실행합니다.
+커맨드에 `--gpt` 옵션이 지정되면, Task tool 대신 spawn-teammate Skill로 팀메이트를 생성합니다.
 
-### 옵션
-
-| 옵션 | subagent_type | model | LLM | 특징 |
-|------|--------------|-------|-----|------|
-| (기본) | general-purpose | (미지정) | Claude | 기본 모드, 전체 도구 |
-| `--gpt` | claude-team:gpt | opus | GPT-5.3 Codex xhigh | 네이티브, 전체 도구 |
+| GPT_MODE | 스폰 방식 |
+|----------|---------|
+| false (기본) | Task tool + `subagent_type: "general-purpose"` |
+| true (`--gpt`) | `Skill: claude-team:spawn-teammate` + SendMessage |
 
 ### 적용 방법
 
-`--gpt` 옵션이 지정되면, 팀메이트 생성 시:
-- `subagent_type`을 `"claude-team:gpt"`로 변경
-- `model`을 `"opus"`로 지정
+`--gpt` 옵션이 지정되면, Task tool 대신 spawn-teammate Skill로 팀메이트를 생성합니다:
 
 ```
-Task tool:
-- subagent_type: "claude-team:gpt"  ← --gpt 시
-- model: "opus"                      ← GPT-5.3 Codex xhigh 매핑
-- team_name: "{team-name}"
-- name: "{role-name}"
-- prompt: [기존 프롬프트와 동일]
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "{role-name} --team {team-name}"
+
+→ 스폰 완료 후 SendMessage로 초기 작업 지시
 ```
 
-GPT 네이티브 팀메이트는 Claude와 동일한 전체 도구(Read, Write, Edit, Glob, Grep, Bash, SendMessage 등)에 접근할 수 있으므로 모든 역할에 적용 가능합니다.
+spawn-teammate Skill이 `gpt-claude-code` + tmux + cli-proxy-api를 올바르게 처리하여 GPT-5.3 Codex 네이티브 팀메이트가 스폰됩니다.
 
 ---
 
