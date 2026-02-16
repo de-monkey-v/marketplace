@@ -66,6 +66,36 @@ developer를 frontend-dev + backend-dev로 분리할지 판단하는 기준:
 - FE + BE 디렉토리 모두 존재 → fullstack → frontend-dev + backend-dev
 - 그 외 → developer로 통합
 
+## LLM 팀메이트 옵션
+
+커맨드에 `--gpt` 옵션을 지정하면 모든 팀메이트를 GPT-5.3 Codex (xhigh) 네이티브로 실행합니다.
+
+### 옵션
+
+| 옵션 | subagent_type | model | LLM | 특징 |
+|------|--------------|-------|-----|------|
+| (기본) | general-purpose | (미지정) | Claude | 기본 모드, 전체 도구 |
+| `--gpt` | claude-team:gpt | opus | GPT-5.3 Codex xhigh | 네이티브, 전체 도구 |
+
+### 적용 방법
+
+`--gpt` 옵션이 지정되면, 팀메이트 생성 시:
+- `subagent_type`을 `"claude-team:gpt"`로 변경
+- `model`을 `"opus"`로 지정
+
+```
+Task tool:
+- subagent_type: "claude-team:gpt"  ← --gpt 시
+- model: "opus"                      ← GPT-5.3 Codex xhigh 매핑
+- team_name: "{team-name}"
+- name: "{role-name}"
+- prompt: [기존 프롬프트와 동일]
+```
+
+GPT 네이티브 팀메이트는 Claude와 동일한 전체 도구(Read, Write, Edit, Glob, Grep, Bash, SendMessage 등)에 접근할 수 있으므로 모든 역할에 적용 가능합니다.
+
+---
+
 ## 역할 템플릿
 
 ### 1. pm (기획자 — 요구사항 분석 + 제품 관점)

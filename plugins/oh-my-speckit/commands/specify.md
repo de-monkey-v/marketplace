@@ -1,6 +1,6 @@
 ---
 description: 기능 요청을 spec.md + plan.md로 통합 생성 (Agent Teams)
-argument-hint: [기능 설명]
+argument-hint: [기능 설명] [--gpt]
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, Task, Skill, TaskCreate, TaskUpdate, TaskList, TeamCreate, TeamDelete, SendMessage
 ---
 
@@ -14,6 +14,9 @@ Agent Teams 기반으로 팀을 구성하고, 팀메이트에게 분석/조사�
 - **중요 결정만 질문** (기술 선택, Breaking Change 등)
 - **세부사항은 AI가 결정**
 - **요약 중심 출력** (전체 문서는 저장 시에만)
+
+**LLM 옵션** (선택):
+- `--gpt`: 모든 팀메이트를 GPT-5.3 Codex (xhigh) 네이티브로 실행 (전체 도구 접근)
 
 **사용자 요청:** {{arguments}}
 
@@ -124,6 +127,17 @@ ls -1d ${PROJECT_ROOT}/.specify/specs/${NEXT_ID}-* 2>/dev/null
 - 출력 없음 → 사용 가능
 - 출력 있음 → NEXT_ID를 +1 증가 후 재검증
 
+### Step 2.7: LLM 옵션 파싱
+
+arguments에서 `--gpt` 옵션을 추출하고 제거합니다.
+
+- `--gpt` 포함 → GPT_MODE = true
+- `--gpt` 미포함 → GPT_MODE = false (Claude 기본)
+
+GPT_MODE가 true이면, 이후 모든 팀메이트 생성 시:
+- `subagent_type: "claude-team:gpt"` (기본 `"general-purpose"` 대신)
+- `model: "opus"` (GPT-5.3 Codex xhigh 매핑)
+
 ### Step 3: 기존 태스크 정리
 
 ```
@@ -187,6 +201,10 @@ Skill tool:
 | Large | 대규모 기능, 파일 15개+ | pm + architect + critic |
 
 ### Step 3: 팀메이트 생성 (병렬)
+
+> **GPT 모드 (`--gpt`)**: GPT_MODE가 true이면, 아래 모든 팀메이트의 `subagent_type`을
+> `"claude-team:gpt"`으로, `model`을 `"opus"`로 변경합니다.
+> GPT 네이티브 팀메이트는 전체 도구에 접근 가능하므로 프롬프트는 동일하게 유지합니다.
 
 role-templates 스킬의 프롬프트 템플릿을 사용하여 팀메이트 생성:
 

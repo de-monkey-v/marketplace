@@ -1,6 +1,6 @@
 ---
 description: 구현 검증 및 대화형 수정 (Agent Teams, 병렬 검증)
-argument-hint: [spec-id] [--quick|--full]
+argument-hint: [spec-id] [--quick|--full] [--gpt]
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, Task, Skill, TaskCreate, TaskUpdate, TaskList, TeamCreate, TeamDelete, SendMessage
 ---
 
@@ -14,6 +14,9 @@ Agent Teams 기반으로 팀을 구성하고, 팀메이트에게 검증을 병�
 - **모든 검증은 팀메이트(qa, critic, architect)가 수행**
 - **병렬 검증으로 속도 최적화**
 - **문제 발견 시 수정 방법 선택 가능 (자동/가이드/스킵)**
+
+**LLM 옵션** (선택):
+- `--gpt`: 모든 팀메이트를 GPT-5.3 Codex (xhigh) 네이티브로 실행 (전체 도구 접근)
 
 **Spec ID:** {{arguments}}
 
@@ -59,10 +62,11 @@ Phase 4: 최종 리포트 + 팀 해산
 ### Step 1: Spec/Plan 로드
 
 **Spec ID 파싱:**
-- arguments에서 spec-id 추출 (`--quick`, `--full` 옵션 제거)
+- arguments에서 spec-id 추출 (`--quick`, `--full`, `--gpt` 옵션 제거)
 - `--quick` -> SCOPE = "quick"
 - `--full` -> SCOPE = "full"
 - 기본값 -> SCOPE = "standard"
+- `--gpt` 포함 -> GPT_MODE = true (이후 모든 팀메이트: `subagent_type: "claude-team:gpt"`, `model: "opus"`)
 
 **spec-id 미지정 시:**
 ```
@@ -197,6 +201,10 @@ Skill tool:
 | Large / 완전 | qa + architect + critic |
 
 ### Step 3: 팀메이트 생성 + 검증 지시 (병렬)
+
+> **GPT 모드 (`--gpt`)**: GPT_MODE가 true이면, 아래 모든 팀메이트의 `subagent_type`을
+> `"claude-team:gpt"`으로, `model`을 `"opus"`로 변경합니다.
+> GPT 네이티브 팀메이트는 전체 도구에 접근 가능하므로 프롬프트는 동일하게 유지합니다.
 
 **qa 생성 (필수):**
 ```
@@ -385,13 +393,14 @@ AskUserQuestion:
 
 ### Step 3: 수정 실행
 
-자동 수정이 필요한 경우 developer 팀메이트를 생성:
+자동 수정이 필요한 경우 developer 팀메이트를 생성 (GPT_MODE 시 `subagent_type: "claude-team:gpt"`, `model: "opus"` 적용):
 
 ```
 Task tool:
-- subagent_type: "general-purpose"
+- subagent_type: "general-purpose"  ← GPT_MODE 시 "claude-team:gpt"
 - team_name: "verify-{spec-id}"
 - name: "developer"
+- model: (GPT_MODE 시 "opus")
 - description: "검증 실패 수정"
 - prompt: |
     너는 코드 구현 전문가이다.
