@@ -1,7 +1,7 @@
 ---
 name: event-architect
 description: "이벤트 아키텍처 구현 전문가. Domain Event 발행/구독, Event Sourcing, Saga/Choreography, Outbox 패턴, Kafka/RabbitMQ/SNS+SQS 통합을 구현합니다."
-model: opus
+model: sonnet
 color: "#FF6347"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

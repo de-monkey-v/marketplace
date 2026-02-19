@@ -1,7 +1,7 @@
 ---
 name: nuxt-expert
 description: "Nuxt 3 전문가. Auto-imports, Server Routes, Nitro 엔진, Hybrid Rendering, useFetch/useAsyncData, Nuxt Modules, Nuxt DevTools 기반 최신 구현을 담당합니다."
-model: opus
+model: sonnet
 color: "#00DC82"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

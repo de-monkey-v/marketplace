@@ -1,7 +1,7 @@
 ---
 name: react-expert
 description: "React 전문가. React 19 최신 패턴, Custom Hooks, Concurrent Features, Suspense, Error Boundary, Server Components, 상태 관리 라이브러리 통합을 담당합니다."
-model: opus
+model: sonnet
 color: "#61DAFB"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

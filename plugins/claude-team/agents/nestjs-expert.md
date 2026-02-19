@@ -1,7 +1,7 @@
 ---
 name: nestjs-expert
 description: "NestJS 전문가. NestJS 최신 버전, TypeORM/Prisma/MikroORM, CQRS 모듈, GraphQL, 마이크로서비스 Transport, Guards/Interceptors/Pipes 체인 기반 구현을 담당합니다."
-model: opus
+model: sonnet
 color: "#E0234E"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

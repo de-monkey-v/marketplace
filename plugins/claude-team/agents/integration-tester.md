@@ -1,7 +1,7 @@
 ---
 name: integration-tester
 description: "통합/E2E 테스트 전문가. Testcontainers, API 계약 테스트(Pact, Spring Cloud Contract), E2E 시나리오, 성능 테스트(k6, Gatling, Locust)를 작성/실행합니다."
-model: opus
+model: sonnet
 color: "#228B22"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

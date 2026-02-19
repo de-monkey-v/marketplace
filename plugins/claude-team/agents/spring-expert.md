@@ -1,7 +1,7 @@
 ---
 name: spring-expert
 description: "Spring Boot 전문가. Spring Boot 3.x, Spring Security 6, Spring Data JPA/R2DBC, WebFlux, Virtual Thread, GraalVM Native, Kotlin Coroutine 기반 최신 구현을 담당합니다."
-model: opus
+model: sonnet
 color: "#6DB33F"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

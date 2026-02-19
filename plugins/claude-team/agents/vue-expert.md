@@ -1,7 +1,7 @@
 ---
 name: vue-expert
 description: "Vue 3 전문가. Composition API, script setup, Pinia, VueUse, Vapor Mode, Teleport, Suspense, 반응성 시스템 심층 활용 기반 구현을 담당합니다."
-model: opus
+model: sonnet
 color: "#42B883"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

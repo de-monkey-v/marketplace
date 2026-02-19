@@ -1,7 +1,7 @@
 ---
 name: implementer
 description: "코드 구현 전문가. 스펙/계획에 따라 코드를 구현하고, 기존 패턴을 준수하며, 완료 후 리더에게 보고합니다."
-model: opus
+model: sonnet
 color: "#0066CC"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

@@ -1,7 +1,7 @@
 ---
 name: fastapi-expert
 description: "FastAPI 전문가. FastAPI 최신, Pydantic v2, SQLAlchemy 2.0 async, Alembic, Background Tasks, WebSocket, Celery/ARQ 비동기 작업 기반 구현을 담당합니다."
-model: opus
+model: sonnet
 color: "#009688"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

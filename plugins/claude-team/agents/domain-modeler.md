@@ -1,7 +1,7 @@
 ---
 name: domain-modeler
 description: "도메인 모델 구현 전문가. Aggregate Root, Entity, Value Object, Domain Event, Domain Service, Repository, Specification 패턴을 프레임워크에 맞게 코드로 구현합니다."
-model: opus
+model: sonnet
 color: "#B22222"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

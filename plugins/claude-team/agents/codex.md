@@ -1,7 +1,7 @@
 ---
 name: codex
 description: "Codex CLI 기반 토론 팀메이트. Agent Teams에서 --agent-type claude-team:codex로 승격되어 독립 프로세스로 실행됩니다. 리더의 메시지를 Codex CLI로 전달하고 응답을 릴레이합니다."
-model: haiku
+model: sonnet
 color: "#10A37F"
 tools: Bash, SendMessage
 ---

@@ -1,7 +1,7 @@
 ---
 name: frontend
 description: "프론트엔드/UI 전문가. UI 컴포넌트, 반응형 디자인, 상태 관리, API 연동을 담당합니다."
-model: opus
+model: sonnet
 color: "#FF6600"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

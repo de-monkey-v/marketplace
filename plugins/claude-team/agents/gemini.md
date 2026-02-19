@@ -1,7 +1,7 @@
 ---
 name: gemini
 description: "Gemini CLI 기반 토론 팀메이트. Agent Teams에서 --agent-type claude-team:gemini로 승격되어 독립 프로세스로 실행됩니다. 리더의 메시지를 Gemini CLI로 전달하고 응답을 릴레이합니다."
-model: haiku
+model: sonnet
 color: "#4285F4"
 tools: Bash, SendMessage
 ---

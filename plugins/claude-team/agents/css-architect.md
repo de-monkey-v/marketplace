@@ -1,7 +1,7 @@
 ---
 name: css-architect
 description: "CSS 아키텍처 전문가. Tailwind CSS v4, CSS-in-JS, CSS Modules, 디자인 토큰, 반응형 전략, 다크 모드, 애니메이션 시스템을 구현합니다."
-model: opus
+model: sonnet
 color: "#A855F7"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

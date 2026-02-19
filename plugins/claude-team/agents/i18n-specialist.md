@@ -1,7 +1,7 @@
 ---
 name: i18n-specialist
 description: "국제화 전문가. i18n 설정, 번역 키 관리, RTL 지원, 날짜/숫자/통화 포맷, 복수형 처리, 동적 로케일 전환을 구현합니다."
-model: opus
+model: sonnet
 color: "#0EA5E9"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

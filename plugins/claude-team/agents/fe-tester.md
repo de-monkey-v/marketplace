@@ -1,7 +1,7 @@
 ---
 name: fe-tester
 description: "프론트엔드 테스트 전문가. Vitest, Testing Library, Playwright, Storybook, 컴포넌트 테스트, 인터랙션 테스트, 비주얼 리그레션 테스트를 작성/실행합니다."
-model: opus
+model: sonnet
 color: "#16A34A"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

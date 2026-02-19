@@ -1,7 +1,7 @@
 ---
 name: nextjs-expert
 description: "Next.js 전문가. App Router, React Server Components, Server Actions, ISR/PPR, Middleware, Route Handlers, Turbopack 기반 최신 구현을 담당합니다."
-model: opus
+model: sonnet
 color: "#000000"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

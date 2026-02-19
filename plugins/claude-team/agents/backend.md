@@ -1,7 +1,7 @@
 ---
 name: backend
 description: "백엔드/API 전문가. API 엔드포인트, DB 스키마, 비즈니스 로직을 구현합니다."
-model: opus
+model: sonnet
 color: "#0066CC"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

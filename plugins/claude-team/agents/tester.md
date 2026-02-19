@@ -1,7 +1,7 @@
 ---
 name: tester
 description: "테스트/검증 전문가. 단위/통합 테스트 작성, 테스트 실행, 커버리지 확인, 버그 리포트를 담당합니다."
-model: opus
+model: sonnet
 color: "#00AA44"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

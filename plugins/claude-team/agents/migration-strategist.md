@@ -1,7 +1,7 @@
 ---
 name: migration-strategist
 description: "마이그레이션 전문가. DB 마이그레이션 스크립트, API 버전 마이그레이션, Strangler Fig 패턴, Feature Flag 배포, 무중단 배포 전략을 구현합니다."
-model: opus
+model: sonnet
 color: "#DAA520"
 tools: Read, Write, Edit, Glob, Grep, Bash, SendMessage
 ---

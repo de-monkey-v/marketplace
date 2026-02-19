@@ -35,8 +35,8 @@ version: 2.0.0
 "developer --team impl-003 --agent-type claude-team:implementer"
 → Claude 모드: NAME="developer", TEAM="impl-003", AGENT_TYPE="claude-team:implementer"
 
-"developer --team impl-003 --agent-type claude-team:implementer --model opus --color #0066CC"
-→ Claude 모드 + 오버라이드: NAME="developer", TEAM="impl-003", AGENT_TYPE="claude-team:implementer", MODEL="opus", COLOR="#0066CC"
+"developer --team impl-003 --agent-type claude-team:implementer --model sonnet --color #0066CC"
+→ Claude 모드 + 오버라이드: NAME="developer", TEAM="impl-003", AGENT_TYPE="claude-team:implementer", MODEL="sonnet", COLOR="#0066CC"
 ```
 
 ## 에이전트별 기본값 테이블
@@ -46,15 +46,46 @@ version: 2.0.0
 | Agent | Icon | Model | Color | 특성 |
 |-------|------|-------|-------|------|
 | Leader | 👑 | - | - | 팀 리더 |
-| `planner` | 🔵 | opus | #FF6699 | 제품 기획/요구사항 분석 (읽기 전용 + 웹 검색) |
-| `architect` | 🔵 | opus | #CC6600 | 아키텍처 분석/설계 (읽기 전용) |
-| `implementer` | 🔵 | opus | #0066CC | 코드 구현 (읽기/쓰기) |
-| `tester` | 🔵 | opus | #00AA44 | 테스트/검증 (읽기/쓰기) |
-| `reviewer` | 🔵 | opus | #8800CC | 코드 리뷰 (읽기 전용) |
-| `researcher` | 🔵 | opus | #00AACC | 기술 리서치 (읽기 전용 + 웹 검색) |
-| `backend` | 🔵 | opus | #0066CC | 백엔드/API (읽기/쓰기) |
-| `frontend` | 🔵 | opus | #FF6600 | 프론트엔드/UI (읽기/쓰기) |
-| `coordinator` | 🔵 | opus | #FFAA00 | 태스크 조율 (읽기 전용 + 태스크 관리) |
+| | | | | **읽기 전용 — 분석/설계** |
+| `architect` | 🔵 | sonnet | #CC6600 | 아키텍처 분석/설계 |
+| `reviewer` | 🔵 | sonnet | #8800CC | 코드 리뷰 |
+| `a11y-auditor` | 🔵 | sonnet | #3498DB | 접근성 감사 (WCAG 2.2) |
+| `api-designer` | 🔵 | sonnet | #1E90FF | API 설계 (REST/GraphQL/gRPC) |
+| `db-architect` | 🔵 | sonnet | #2E8B57 | DB 설계 |
+| `ddd-strategist` | 🔵 | sonnet | #8B0000 | DDD 전략 설계 |
+| `fe-performance` | 🔵 | sonnet | #F39C12 | 프론트엔드 성능 분석 |
+| `security-architect` | 🔵 | sonnet | #DC143C | 보안 아키텍처 |
+| `side-effect-analyzer` | 🔵 | sonnet | #FF4500 | 사이드이펙트/파급효과 분석 |
+| `state-designer` | 🔵 | sonnet | #E67E22 | 상태 관리 설계 |
+| `test-strategist` | 🔵 | sonnet | #32CD32 | 테스트 전략 수립 |
+| `ui-architect` | 🔵 | sonnet | #9B59B6 | UI 아키텍처 설계 |
+| | | | | **읽기 전용 — 웹 검색/태스크/특수** |
+| `planner` | 🔵 | sonnet | #FF6699 | 제품 기획/요구사항 분석 (+ 웹 검색) |
+| `researcher` | 🔵 | sonnet | #00AACC | 기술 리서치 (+ 웹 검색) |
+| `coordinator` | 🔵 | sonnet | #FFAA00 | 태스크 조율 (+ 태스크 관리) |
+| `team-architect` | 🔵 | sonnet | cyan | Teammates 구성 설계 (+ AskUserQuestion) |
+| | | | | **읽기+쓰기 — 구현** |
+| `implementer` | 🔵 | sonnet | #0066CC | 코드 구현 |
+| `backend` | 🔵 | sonnet | #0066CC | 백엔드/API |
+| `frontend` | 🔵 | sonnet | #FF6600 | 프론트엔드/UI |
+| `tester` | 🔵 | sonnet | #00AA44 | 테스트/검증 |
+| `css-architect` | 🔵 | sonnet | #A855F7 | CSS 아키텍처 구현 |
+| `domain-modeler` | 🔵 | sonnet | #B22222 | 도메인 모델 구현 |
+| `event-architect` | 🔵 | sonnet | #FF6347 | 이벤트 아키텍처 구현 |
+| `fastapi-expert` | 🔵 | sonnet | #009688 | FastAPI 전문가 |
+| `fe-tester` | 🔵 | sonnet | #16A34A | 프론트엔드 테스트 |
+| `i18n-specialist` | 🔵 | sonnet | #0EA5E9 | 국제화 |
+| `integration-tester` | 🔵 | sonnet | #228B22 | 통합/E2E 테스트 |
+| `migration-strategist` | 🔵 | sonnet | #DAA520 | 마이그레이션 전문가 |
+| `nestjs-expert` | 🔵 | sonnet | #E0234E | NestJS 전문가 |
+| `nextjs-expert` | 🔵 | sonnet | #000000 | Next.js 전문가 |
+| `nuxt-expert` | 🔵 | sonnet | #00DC82 | Nuxt 3 전문가 |
+| `react-expert` | 🔵 | sonnet | #61DAFB | React 전문가 |
+| `spring-expert` | 🔵 | sonnet | #6DB33F | Spring Boot 전문가 |
+| `vue-expert` | 🔵 | sonnet | #42B883 | Vue 3 전문가 |
+| | | | | **특수 — 외부 LLM 프록시** |
+| `codex` | 🔵 | sonnet | #10A37F | Codex CLI 프록시 |
+| `gemini` | 🔵 | sonnet | #4285F4 | Gemini CLI 프록시 |
 
 GPT 모드 기본값: `model=opus` (→ gpt-5.3-codex(xhigh) 매핑), `color=#10A37F`, `icon=🤖`
 
@@ -134,12 +165,20 @@ LEAD_SESSION_ID=$(jq -r '.leadSessionId' "$CONFIG")
 **4-1. 현재 tmux 세션 이름을 동적으로 감지:**
 ```bash
 TMUX_SESSION=$(tmux display-message -p '#S')
+LEADER_PANE_ID="$TMUX_PANE"
+LEADER_WINDOW=$(tmux display-message -t "$LEADER_PANE_ID" -p '#{window_index}')
 ```
 
 **4-2. 사전 체크:**
 ```bash
-# 터미널 너비 체크
-TERM_WIDTH=$(tmux display-message -p '#{window_width}')
+# TMUX_PANE 환경변수 확인
+if [ -z "$TMUX_PANE" ]; then
+  echo "ERROR: TMUX_PANE 환경변수가 설정되지 않았습니다. tmux 세션 내에서 실행하세요."
+  exit 1
+fi
+
+# 터미널 너비 체크 (리더 window 기준)
+TERM_WIDTH=$(tmux display-message -t "$LEADER_PANE_ID" -p '#{window_width}')
 if [ "$TERM_WIDTH" -lt 120 ]; then
   echo "터미널 너비가 ${TERM_WIDTH}열입니다 (권장: 120열 이상). pane이 좁을 수 있습니다."
 fi
@@ -153,7 +192,7 @@ PANE_HEIGHT=${SPAWN_PANE_HEIGHT:-15}
 #### GPT 모드 (`--agent-type` 없을 때)
 
 ```bash
-PANE_ID=$(tmux split-window -t "$TMUX_SESSION" -l $PANE_HEIGHT -c "$PWD" -dP -F '#{pane_id}' \
+PANE_ID=$(tmux split-window -t "${TMUX_SESSION}:${LEADER_WINDOW}" -l $PANE_HEIGHT -c "$PWD" -dP -F '#{pane_id}' \
   "zsh -c 'source ~/.zshrc && gpt-claude-code \
     --agent-id ${NAME}@${TEAM} \
     --agent-name ${NAME} \
@@ -163,7 +202,7 @@ PANE_ID=$(tmux split-window -t "$TMUX_SESSION" -l $PANE_HEIGHT -c "$PWD" -dP -F 
     --model opus \
     --dangerously-skip-permissions'")
 echo "$PANE_ID"
-tmux select-pane -t "$PANE_ID" -T "🤖 ${NAME}"
+tmux set-option -p -t "$PANE_ID" @agent_label "${NAME}"
 ```
 
 핵심 플래그 설명:
@@ -177,29 +216,60 @@ tmux select-pane -t "$PANE_ID" -T "🤖 ${NAME}"
 ```bash
 # --model 미지정 시 에이전트 기본값 사용
 if [ -z "$MODEL" ]; then
-  MODEL="opus"  # 모든 에이전트의 기본 모델
+  MODEL="sonnet"  # 모든 에이전트의 기본 모델
 fi
 
 # --color 미지정 시 에이전트 기본값 사용
 if [ -z "$COLOR" ]; then
   case "$AGENT_TYPE" in
-    *:planner)     COLOR="#FF6699" ;;
-    *:architect)   COLOR="#CC6600" ;;
-    *:implementer) COLOR="#0066CC" ;;
-    *:tester)      COLOR="#00AA44" ;;
-    *:reviewer)    COLOR="#8800CC" ;;
-    *:researcher)  COLOR="#00AACC" ;;
-    *:backend)     COLOR="#0066CC" ;;
-    *:frontend)    COLOR="#FF6600" ;;
-    *:coordinator) COLOR="#FFAA00" ;;
-    *)             COLOR="#0066CC" ;;  # fallback
+    # 읽기 전용 — 분석/설계
+    *:architect)            COLOR="#CC6600" ;;
+    *:reviewer)             COLOR="#8800CC" ;;
+    *:a11y-auditor)         COLOR="#3498DB" ;;
+    *:api-designer)         COLOR="#1E90FF" ;;
+    *:db-architect)         COLOR="#2E8B57" ;;
+    *:ddd-strategist)       COLOR="#8B0000" ;;
+    *:fe-performance)       COLOR="#F39C12" ;;
+    *:security-architect)   COLOR="#DC143C" ;;
+    *:side-effect-analyzer) COLOR="#FF4500" ;;
+    *:state-designer)       COLOR="#E67E22" ;;
+    *:test-strategist)      COLOR="#32CD32" ;;
+    *:ui-architect)         COLOR="#9B59B6" ;;
+    # 읽기 전용 — 웹 검색/태스크/특수
+    *:planner)              COLOR="#FF6699" ;;
+    *:researcher)           COLOR="#00AACC" ;;
+    *:coordinator)          COLOR="#FFAA00" ;;
+    *:team-architect)       COLOR="cyan" ;;
+    # 읽기+쓰기 — 구현
+    *:implementer)          COLOR="#0066CC" ;;
+    *:backend)              COLOR="#0066CC" ;;
+    *:frontend)             COLOR="#FF6600" ;;
+    *:tester)               COLOR="#00AA44" ;;
+    *:css-architect)        COLOR="#A855F7" ;;
+    *:domain-modeler)       COLOR="#B22222" ;;
+    *:event-architect)      COLOR="#FF6347" ;;
+    *:fastapi-expert)       COLOR="#009688" ;;
+    *:fe-tester)            COLOR="#16A34A" ;;
+    *:i18n-specialist)      COLOR="#0EA5E9" ;;
+    *:integration-tester)   COLOR="#228B22" ;;
+    *:migration-strategist) COLOR="#DAA520" ;;
+    *:nestjs-expert)        COLOR="#E0234E" ;;
+    *:nextjs-expert)        COLOR="#000000" ;;
+    *:nuxt-expert)          COLOR="#00DC82" ;;
+    *:react-expert)         COLOR="#61DAFB" ;;
+    *:spring-expert)        COLOR="#6DB33F" ;;
+    *:vue-expert)           COLOR="#42B883" ;;
+    # 특수 — 외부 LLM 프록시
+    *:codex)                COLOR="#10A37F" ;;
+    *:gemini)               COLOR="#4285F4" ;;
+    *)                      COLOR="#0066CC" ;;  # fallback
   esac
 fi
 ```
 
 스폰 명령어:
 ```bash
-PANE_ID=$(tmux split-window -t "$TMUX_SESSION" -l $PANE_HEIGHT -c "$PWD" -dP -F '#{pane_id}' \
+PANE_ID=$(tmux split-window -t "${TMUX_SESSION}:${LEADER_WINDOW}" -l $PANE_HEIGHT -c "$PWD" -dP -F '#{pane_id}' \
   "env CLAUDECODE=1 CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 \
     claude \
       --agent-id ${NAME}@${TEAM} \
@@ -211,7 +281,7 @@ PANE_ID=$(tmux split-window -t "$TMUX_SESSION" -l $PANE_HEIGHT -c "$PWD" -dP -F 
       --model ${MODEL} \
       --dangerously-skip-permissions")
 echo "$PANE_ID"
-tmux select-pane -t "$PANE_ID" -T "🔵 ${NAME}"
+tmux set-option -p -t "$PANE_ID" @agent_label "${NAME}"
 ```
 
 핵심 플래그 설명:
@@ -219,7 +289,7 @@ tmux select-pane -t "$PANE_ID" -T "🔵 ${NAME}"
 - `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`: Agent Teams 기능 활성화
 - `claude`: Claude CLI 직접 실행 (gpt-claude-code 함수 불필요)
 - `--agent-type ${AGENT_TYPE}`: 에이전트 파일의 프롬프트/도구/모델 설정 적용
-- `--model ${MODEL}`: 모델 지정 (opus → Claude Opus 4.6)
+- `--model ${MODEL}`: 모델 지정 (sonnet → Claude Sonnet 4.6)
 - `--parent-session-id`: 리더와의 메시지 라우팅 연결
 - `--dangerously-skip-permissions`: 자율적 실행 허용
 
@@ -231,15 +301,14 @@ MEMBER_COUNT=$(jq '.members | length' "$CONFIG" 2>/dev/null || echo 0)
 # 첫 번째 팀메이트일 때: border 활성화 + 리더 pane 타이틀 설정
 if [ "$MEMBER_COUNT" -eq 0 ]; then
   tmux set-option -w pane-border-status bottom
-  tmux set-option -w pane-border-format " #{pane_title} "
+  tmux set-option -w pane-border-format "#{?@agent_label, #{@agent_label} | #{pane_title}, #{pane_title}}"
   # 리더 pane에도 타이틀 설정
-  LEADER_PANE=$(tmux display-message -p '#{pane_id}')
-  tmux select-pane -t "$LEADER_PANE" -T "👑 LEADER"
+  tmux set-option -p -t "$LEADER_PANE_ID" @agent_label "LEADER"
 fi
 
 # 팀메이트가 2개 이상일 때만 레이아웃을 재배치합니다 (1개일 때 불필요한 flickering 방지)
 if [ "$MEMBER_COUNT" -ge 2 ]; then
-  tmux select-layout -t "$TMUX_SESSION" main-vertical
+  tmux select-layout -t "${TMUX_SESSION}:${LEADER_WINDOW}" main-vertical
 fi
 ```
 

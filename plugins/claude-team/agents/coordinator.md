@@ -1,7 +1,7 @@
 ---
 name: coordinator
 description: "태스크 조율 전문가 (읽기 전용). 작업 분배, 진행 모니터링, 병목 해소, 결과물 통합을 담당합니다. 코드 수정 불가."
-model: opus
+model: sonnet
 color: "#FFAA00"
 tools: Read, Glob, Grep, Bash, SendMessage, TaskCreate, TaskUpdate, TaskList, TaskGet
 disallowedTools: Write, Edit
