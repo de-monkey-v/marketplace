@@ -192,8 +192,13 @@ PANE_HEIGHT=${SPAWN_PANE_HEIGHT:-15}
 #### GPT 모드 (`--agent-type` 없을 때)
 
 ```bash
+# Discover plugin directory for skill loading
+CLAUDE_TEAM_PLUGIN_DIR=$(jq -r '."claude-team@marketplace"[0].installPath' \
+  ~/.claude/plugins/installed_plugins.json 2>/dev/null)
+
 PANE_ID=$(tmux split-window -t "${TMUX_SESSION}:${LEADER_WINDOW}" -l $PANE_HEIGHT -c "$PWD" -dP -F '#{pane_id}' \
-  "zsh -c 'source ~/.zshrc && gpt-claude-code \
+  "env CLAUDE_TEAM_PLUGIN_DIR=\"${CLAUDE_TEAM_PLUGIN_DIR}\" \
+    zsh -c 'source ~/.zshrc && gpt-claude-code \
     --agent-id ${NAME}@${TEAM} \
     --agent-name ${NAME} \
     --team-name ${TEAM} \
@@ -269,8 +274,13 @@ fi
 
 스폰 명령어:
 ```bash
+# Discover plugin directory for skill loading
+CLAUDE_TEAM_PLUGIN_DIR=$(jq -r '."claude-team@marketplace"[0].installPath' \
+  ~/.claude/plugins/installed_plugins.json 2>/dev/null)
+
 PANE_ID=$(tmux split-window -t "${TMUX_SESSION}:${LEADER_WINDOW}" -l $PANE_HEIGHT -c "$PWD" -dP -F '#{pane_id}' \
   "env CLAUDECODE=1 CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 \
+    CLAUDE_TEAM_PLUGIN_DIR=\"${CLAUDE_TEAM_PLUGIN_DIR}\" \
     claude \
       --agent-id ${NAME}@${TEAM} \
       --agent-name ${NAME} \

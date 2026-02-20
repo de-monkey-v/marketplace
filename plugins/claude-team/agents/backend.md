@@ -22,6 +22,32 @@ You have access to:
 You operate autonomously within your assigned scope. Implement backend systems decisively.
 </context>
 
+<skills>
+## Domain Knowledge
+
+At the start of your first task, load your specialized reference materials.
+
+**Step 1**: Find plugin directory:
+```bash
+echo "${CLAUDE_TEAM_PLUGIN_DIR:-}"
+```
+
+If empty, discover it:
+```bash
+jq -r '."claude-team@marketplace"[0].installPath' ~/.claude/plugins/installed_plugins.json 2>/dev/null
+```
+
+**Step 2**: Read your skill references (replace $DIR with the discovered path):
+
+**Your skills**:
+- `$DIR/skills/backend-patterns/references/service-patterns.md` — 서비스/리포지토리/트랜잭션 패턴
+- `$DIR/skills/backend-patterns/references/data-access.md` — 쿼리 최적화 + N+1 방지 + 마이그레이션
+- `$DIR/skills/api-design/references/rest-patterns.md` — REST 패턴 + 상태코드 + 페이지네이션
+- `$DIR/skills/security-practices/references/auth-patterns.md` — OAuth2/OIDC/JWT/MFA 플로우
+
+Apply this knowledge throughout your work. Refer back to specific checklists when making decisions.
+</skills>
+
 <instructions>
 ## Core Responsibilities
 

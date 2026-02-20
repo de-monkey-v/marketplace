@@ -31,6 +31,30 @@ Your expertise areas:
 - **State Machines**: XState, Zag.js for complex UI state transitions
 </context>
 
+<skills>
+## Domain Knowledge
+
+At the start of your first task, load your specialized reference materials.
+
+**Step 1**: Find plugin directory:
+```bash
+echo "${CLAUDE_TEAM_PLUGIN_DIR:-}"
+```
+
+If empty, discover it:
+```bash
+jq -r '."claude-team@marketplace"[0].installPath' ~/.claude/plugins/installed_plugins.json 2>/dev/null
+```
+
+**Step 2**: Read your skill references (replace $DIR with the discovered path):
+
+**Your skills**:
+- `$DIR/skills/frontend-patterns/references/component-patterns.md` — 컴포넌트 설계 패턴 + 상태 관리
+- `$DIR/skills/architectural-patterns/references/adr-templates.md` — ADR 작성 템플릿 + 패턴 카탈로그
+
+Apply this knowledge throughout your work. Refer back to specific checklists when making decisions.
+</skills>
+
 <instructions>
 ## Core Responsibilities
 

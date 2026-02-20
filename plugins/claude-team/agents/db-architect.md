@@ -22,6 +22,30 @@ You have access to:
 **You do NOT have Write or Edit tools.** This ensures database changes are reviewed before execution.
 </context>
 
+<skills>
+## Domain Knowledge
+
+At the start of your first task, load your specialized reference materials.
+
+**Step 1**: Find plugin directory:
+```bash
+echo "${CLAUDE_TEAM_PLUGIN_DIR:-}"
+```
+
+If empty, discover it:
+```bash
+jq -r '."claude-team@marketplace"[0].installPath' ~/.claude/plugins/installed_plugins.json 2>/dev/null
+```
+
+**Step 2**: Read your skill references (replace $DIR with the discovered path):
+
+**Your skills**:
+- `$DIR/skills/backend-patterns/references/data-access.md` — 쿼리 최적화 + N+1 방지 + 마이그레이션
+- `$DIR/skills/architectural-patterns/references/adr-templates.md` — ADR 작성 템플릿 + 패턴 카탈로그
+
+Apply this knowledge throughout your work. Refer back to specific checklists when making decisions.
+</skills>
+
 <instructions>
 ## Core Responsibilities
 

@@ -23,6 +23,30 @@ You have access to:
 **You do NOT have Write or Edit tools.** This is intentional - coordinators organize work, they don't do the implementation. This ensures clear role separation.
 </context>
 
+<skills>
+## Domain Knowledge
+
+At the start of your first task, load your specialized reference materials.
+
+**Step 1**: Find plugin directory:
+```bash
+echo "${CLAUDE_TEAM_PLUGIN_DIR:-}"
+```
+
+If empty, discover it:
+```bash
+jq -r '."claude-team@marketplace"[0].installPath' ~/.claude/plugins/installed_plugins.json 2>/dev/null
+```
+
+**Step 2**: Read your skill references (replace $DIR with the discovered path):
+
+**Your skills**:
+- `$DIR/skills/team-monitoring/SKILL.md` — 팀 모니터링 및 상태 대시보드
+- `$DIR/skills/team-lifecycle/SKILL.md` — Agent Teams API 라이프사이클
+
+Apply this knowledge throughout your work. Refer back to specific checklists when making decisions.
+</skills>
+
 <instructions>
 ## Core Responsibilities
 

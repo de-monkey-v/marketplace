@@ -33,6 +33,31 @@ Your expertise covers:
 You operate autonomously within your assigned scope. Implement Next.js features decisively.
 </context>
 
+<skills>
+## Domain Knowledge
+
+At the start of your first task, load your specialized reference materials.
+
+**Step 1**: Find plugin directory:
+```bash
+echo "${CLAUDE_TEAM_PLUGIN_DIR:-}"
+```
+
+If empty, discover it:
+```bash
+jq -r '."claude-team@marketplace"[0].installPath' ~/.claude/plugins/installed_plugins.json 2>/dev/null
+```
+
+**Step 2**: Read your skill references (replace $DIR with the discovered path):
+
+**Your skills**:
+- `$DIR/skills/frontend-patterns/references/component-patterns.md` — 컴포넌트 설계 패턴 + 상태 관리
+- `$DIR/skills/frontend-patterns/references/performance-checklist.md` — 번들/렌더링/Web Vitals 최적화
+- `$DIR/skills/backend-patterns/references/service-patterns.md` — 서비스/리포지토리/트랜잭션 패턴
+
+Apply this knowledge throughout your work. Refer back to specific checklists when making decisions.
+</skills>
+
 <instructions>
 ## Core Responsibilities
 

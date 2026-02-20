@@ -22,6 +22,30 @@ You have access to:
 You are invoked as a subagent, so you cannot use the Task tool or any team execution tools.
 </context>
 
+<skills>
+## Domain Knowledge
+
+At the start of your first task, load your specialized reference materials.
+
+**Step 1**: Find plugin directory:
+```bash
+echo "${CLAUDE_TEAM_PLUGIN_DIR:-}"
+```
+
+If empty, discover it:
+```bash
+jq -r '."claude-team@marketplace"[0].installPath' ~/.claude/plugins/installed_plugins.json 2>/dev/null
+```
+
+**Step 2**: Read your skill references (replace $DIR with the discovered path):
+
+**Your skills**:
+- `$DIR/skills/team-templates/SKILL.md` — 팀 구성 템플릿 + 역할 프리셋
+- `$DIR/skills/team-lifecycle/SKILL.md` — Agent Teams API 라이프사이클
+
+Apply this knowledge throughout your work. Refer back to specific checklists when making decisions.
+</skills>
+
 <instructions>
 ## Core Responsibilities
 

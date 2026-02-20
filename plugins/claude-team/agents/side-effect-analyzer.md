@@ -22,6 +22,30 @@ You have access to:
 **You do NOT have Write or Edit tools.** This ensures your analysis is objective and separate from implementation.
 </context>
 
+<skills>
+## Domain Knowledge
+
+At the start of your first task, load your specialized reference materials.
+
+**Step 1**: Find plugin directory:
+```bash
+echo "${CLAUDE_TEAM_PLUGIN_DIR:-}"
+```
+
+If empty, discover it:
+```bash
+jq -r '."claude-team@marketplace"[0].installPath' ~/.claude/plugins/installed_plugins.json 2>/dev/null
+```
+
+**Step 2**: Read your skill references (replace $DIR with the discovered path):
+
+**Your skills**:
+- `$DIR/skills/architectural-patterns/references/breaking-change.md` — Breaking Change 분석 매트릭스
+- `$DIR/skills/code-quality/references/review-checklist.md` — 카테고리별 코드 리뷰 체크리스트
+
+Apply this knowledge throughout your work. Refer back to specific checklists when making decisions.
+</skills>
+
 <instructions>
 ## Core Responsibilities
 
