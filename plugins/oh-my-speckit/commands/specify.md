@@ -62,6 +62,9 @@ Phase 5: 팀 해산 + 완료 안내
 
 ## Phase 0: 초기화
 
+> **⚠️ 순차 실행 필수**: Phase 0의 모든 Step은 **반드시 순서대로 하나씩** 실행합니다.
+> 병렬 tool call 금지 — 각 Step의 결과가 다음 Step의 입력이 됩니다.
+
 ### Step 1: 스킬 로드
 
 ```
@@ -95,20 +98,16 @@ Read tool:
 - file_path: ${PROJECT_ROOT}/.specify/memory/constitution.md
 ```
 
-- constitution.md 있으면 -> 원칙을 스펙/설계 작성에 반영
-- 없으면 -> 선택적으로 생성 안내
+- constitution.md 있으면 → 원칙을 스펙/설계 작성에 반영
+- **Read가 실패(파일 미존재)하면 → 정상. 에러 무시하고 다음 Step으로 진행**
+- 선택적으로 생성 안내는 Phase 4에서
 
 ### Step 2.6: Spec ID 결정
 
 **1) 다음 번호 자동 계산 (Bash):**
 
 ```bash
-NEXT_ID=$(ls -1d ${PROJECT_ROOT}/.specify/specs/[0-9][0-9][0-9]-* 2>/dev/null \
-  | sed 's/.*\/\([0-9]\{3\}\)-.*/\1/' \
-  | sort -n | tail -1 \
-  | awk '{printf "%03d\n", $1 + 1}')
-[ -z "$NEXT_ID" ] && NEXT_ID="001"
-echo $NEXT_ID
+NEXT_ID=$(ls -1d ${PROJECT_ROOT}/.specify/specs/[0-9][0-9][0-9]-* 2>/dev/null | sed 's/.*\/\([0-9]\{3\}\)-.*/\1/' | sort -n | tail -1 | awk '{printf "%03d\n", $1 + 1}'); [ -z "$NEXT_ID" ] && NEXT_ID="001"; echo $NEXT_ID
 ```
 
 Bash 출력(예: `010`)을 NEXT_ID로 사용. **AI가 직접 계산하지 않는다.**
