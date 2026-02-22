@@ -193,6 +193,42 @@ TaskList tool -> 기존 태스크 확인
 TaskUpdate tool (각 기존 태스크) -> status: "deleted"
 ```
 
+### Step 3.5: Pre-Flight Team Cleanup
+
+이전 실행에서 남은 팀이 있으면 자동 정리합니다.
+
+**탐지:**
+```bash
+TEAM_NAME="implement-{spec-id}"
+[ -d ~/.claude/teams/$TEAM_NAME ] && echo "exists" || echo "none"
+```
+
+**팀이 존재하면 자동 정리:**
+
+```bash
+CONFIG="$HOME/.claude/teams/$TEAM_NAME/config.json"
+if [ -f "$CONFIG" ]; then
+  # 활성 멤버 tmux pane 종료
+  jq -r '.members[] | select(.isActive==true and .tmuxPaneId!=null and .tmuxPaneId!="") | .tmuxPaneId' "$CONFIG" 2>/dev/null | while read -r pane_id; do
+    tmux kill-pane -t "$pane_id" 2>/dev/null || true
+  done
+  # window 모드 정리
+  tmux list-windows -a -F "#{window_id} #{window_name}" 2>/dev/null | grep "${TEAM_NAME}-" | while read -r wid _; do
+    tmux kill-window -t "$wid" 2>/dev/null || true
+  done
+fi
+# 디렉토리 정리
+rm -rf "$HOME/.claude/teams/$TEAM_NAME"
+rm -rf "$HOME/.claude/tasks/$TEAM_NAME"
+```
+
+사용자에게 알림:
+```markdown
+> 이전 실행의 팀 `{TEAM_NAME}`을 정리했습니다.
+```
+
+팀이 없으면 아무 것도 표시하지 않고 Step 4로 진행.
+
 ### Step 4: 태스크 등록
 
 ```
