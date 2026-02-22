@@ -6,8 +6,8 @@ A plugin for leveraging AI CLI tools within Claude Code.
 
 | Tool | Status | Components |
 |------|--------|-----------|
-| Gemini CLI | ✅ Supported | Skill + Agent |
-| Codex CLI | ✅ Supported | Skill + Agent |
+| Gemini CLI | ✅ Supported | Agent |
+| Codex CLI | ✅ Supported | Agent |
 
 ## Installation
 
@@ -42,20 +42,6 @@ You can also specify explicitly with `--provider=gemini` or `--provider=codex`.
 - Code review/analysis via Gemini CLI or Codex CLI
 - Solution research via web search
 - Git change analysis
-
-## Skills
-
-### gemini
-
-Guide for using Gemini CLI headless mode (`gemini -p`).
-
-**Activation keywords**: gemini cli, gemini headless, gemini -p
-
-### codex
-
-Guide for using Codex CLI headless mode (`codex exec`).
-
-**Activation keywords**: codex cli, codex headless, codex exec
 
 ## Requirements
 

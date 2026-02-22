@@ -634,6 +634,70 @@ CODEX_DEBUG=1 codex --dangerously-bypass-approvals-and-sandbox "test"
 
 ---
 
+## Model Selection Guide
+
+### When to Use Each Model
+
+| Task Type | Recommended Model | Rationale |
+|-----------|------------------|-----------|
+| Code generation (Python, JS) | Codex/GPT-4 | Superior code completion training |
+| Code generation (Rust, Go) | Claude Opus | Better understanding of systems languages |
+| Translation (human languages) | Gemini | Multilingual optimization |
+| Creative writing | Claude Opus | Nuanced, context-aware responses |
+| Data formatting | Local (llama2) | Free, fast, simple task |
+| Math/logic problems | Claude Opus | Strong reasoning |
+| API documentation | Codex/GPT-4 | Better API knowledge base |
+| Security review | Claude Opus | Careful, thorough analysis |
+| Quick prototypes | Haiku or local | Speed and cost priority |
+
+### Cost Considerations
+
+**Per-request cost estimation (2K token input, 1K token output):**
+
+```python
+# Haiku proxy (wrapper only, ~100 tokens)
+haiku_cost = (0.1 * 0.25 + 0.05 * 1.25) / 1000  # ~$0.0000875
+
+# Codex via proxy
+codex_cost = (2 * 10 + 1 * 30) / 1000  # ~$0.05
+total_cost = haiku_cost + codex_cost    # ~$0.05
+
+# Pure Claude Opus
+opus_cost = (2 * 15 + 1 * 75) / 1000   # ~$0.105
+
+# Savings: ~52% by using Codex proxy for this task type
+```
+
+**Cost comparison (approximate):**
+- Gemini: ~$0.50/MTok
+- Haiku: ~$0.25/MTok input, ~$1.25/MTok output
+- GPT-4: ~$10/MTok input, ~$30/MTok output
+- Opus: ~$15/MTok input, ~$75/MTok output
+
+### Latency Implications
+
+**Latency components:**
+1. Proxy processing: ~0.5-1s (Haiku wrapper)
+2. External LLM API call: 2-30s (depends on model and load)
+3. SendMessage delivery: <0.1s
+
+**Total latency by provider:**
+- Gemini: 3-8s
+- GPT-4: 5-15s
+- Claude Opus (direct, no proxy): 3-10s
+
+### Why Haiku Is Ideal for the Wrapper
+
+| Requirement | Haiku | Sonnet | Opus |
+|-------------|-------|--------|------|
+| Low cost | ✅ Cheapest | ❌ 3x | ❌ 10x |
+| Fast response | ✅ Fastest | Moderate | Slower |
+| Tool access | ✅ Full | ✅ Full | ✅ Full |
+| Structured tasks | ✅ Excellent | ✅ | ✅ |
+| Deep reasoning | ❌ Not needed | ✅ | ✅ Best |
+
+---
+
 ## See Also
 
 ### Related Documentation
