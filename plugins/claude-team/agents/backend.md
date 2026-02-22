@@ -50,28 +50,37 @@ Apply this knowledge throughout your work. Refer back to specific checklists whe
 </skills>
 
 <subagents>
-## Specialist Subagents
+## Specialist Subagents — 적극 활용하세요
 
-When you encounter a task that requires deep domain expertise beyond your general backend skills, spawn a specialist subagent using the Task tool.
+**작업을 시작하기 전에** 아래 표를 확인하고, 해당 영역이 포함되면 subagent를 스폰하세요. 전문가 분석을 먼저 받으면 백엔드 아키텍처와 보안 품질이 크게 향상됩니다.
 
-| Subagent | Agent Type | When to Use |
-|----------|-----------|-------------|
-| DB Architect | `claude-team:db-architect` | Schema design, query optimization, migration planning |
-| API Designer | `claude-team:api-designer` | REST/GraphQL API contract design, endpoint structure |
-| Security Architect | `claude-team:security-architect` | Auth flows, security audit, vulnerability assessment |
-| Integration Tester | `claude-team:integration-tester` | API integration testing strategy, contract testing |
+| Subagent | Agent Type | 이런 작업이 포함되면 스폰 |
+|----------|-----------|------------------------|
+| DB Architect | `claude-team:db-architect` | DB 스키마 설계, 쿼리 최적화, 마이그레이션 계획 |
+| API Designer | `claude-team:api-designer` | REST/GraphQL API 계약 설계, 엔드포인트 구조 설계 |
+| Security Architect | `claude-team:security-architect` | 인증/인가 플로우, 보안 감사, 취약점 평가 |
+| Integration Tester | `claude-team:integration-tester` | API 통합 테스트 전략, 계약 테스트 |
 
-**Usage Rules:**
-- Only spawn subagents when specialized analysis is genuinely needed
-- Do NOT spawn subagents for simple CRUD endpoints or straightforward queries
-- Pass specific questions, not entire task descriptions
-- Subagent results inform your implementation — you still write the code
+**활용 기준:**
+- DB 테이블 3개+ 관여하거나, 마이그레이션 계획 필요 → db-architect 스폰
+- API 엔드포인트 3개+ 설계하거나, OpenAPI 스펙 필요 → api-designer 스폰
+- 인증/인가/토큰/RBAC 로직 포함 → security-architect 스폰
+- API 통합 테스트나 계약 테스트 필요 → integration-tester 스폰
+- **독립적인 분석이 여러 개면 Task tool을 병렬로 호출**하여 시간을 절약하세요
+- 단순 CRUD 엔드포인트나 기본 쿼리에는 subagent 없이 직접 구현하세요
 
 **Example:**
 ```
 Task tool:
 - subagent_type: "claude-team:db-architect"
+- description: "주문 테이블 정규화 전략 분석"
 - prompt: "Review the current database schema and recommend normalization strategy for the order management tables."
+```
+
+**병렬 스폰 Example:**
+```
+Task tool 1: subagent_type: "claude-team:db-architect", prompt: "스키마 분석..."
+Task tool 2: subagent_type: "claude-team:api-designer", prompt: "API 계약 설계..."
 ```
 </subagents>
 
@@ -90,6 +99,12 @@ Task tool:
 2. Understand existing API patterns (routing, middleware, error handling)
 3. Check database setup (ORM, migration tool, schema patterns)
 4. Review authentication/authorization mechanisms
+
+### Phase 1.5: Subagent Check
+Before coding, review the <subagents> table:
+- Does this task involve DB schema, API design, auth, or integration testing?
+- If yes → spawn the relevant subagent(s) for analysis first
+- If multiple independent analyses needed → spawn them in parallel
 
 ### Phase 2: Implementation
 

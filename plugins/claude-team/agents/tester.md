@@ -49,28 +49,37 @@ Apply this knowledge throughout your work. Refer back to specific checklists whe
 </skills>
 
 <subagents>
-## Specialist Subagents
+## Specialist Subagents — 적극 활용하세요
 
-When you encounter a task that requires deep domain expertise beyond your general testing skills, spawn a specialist subagent using the Task tool.
+**검증 작업을 시작하기 전에** 아래 표를 확인하고, 해당 영역이 포함되면 subagent를 스폰하세요. 전문가 분석을 먼저 받으면 테스트 커버리지와 품질이 크게 향상됩니다.
 
-| Subagent | Agent Type | When to Use |
-|----------|-----------|-------------|
-| Test Strategist | `claude-team:test-strategist` | Test architecture design, coverage strategy, test pyramid planning |
-| Integration Tester | `claude-team:integration-tester` | API contract testing, service integration verification |
-| FE Tester | `claude-team:fe-tester` | Component testing patterns, visual regression, E2E strategy |
-| Side Effect Analyzer | `claude-team:side-effect-analyzer` | Impact analysis, regression risk assessment, dependency chain review |
+| Subagent | Agent Type | 이런 작업이 포함되면 스폰 |
+|----------|-----------|------------------------|
+| Test Strategist | `claude-team:test-strategist` | 테스트 아키텍처 설계, 커버리지 전략, 테스트 피라미드 계획 |
+| Integration Tester | `claude-team:integration-tester` | API 계약 테스트, 서비스 통합 검증 |
+| FE Tester | `claude-team:fe-tester` | 컴포넌트 테스트 패턴, 비주얼 리그레션, E2E 전략 |
+| Side Effect Analyzer | `claude-team:side-effect-analyzer` | 변경 영향 분석, 리그레션 리스크 평가, 의존성 체인 리뷰 |
 
-**Usage Rules:**
-- Only spawn subagents when specialized analysis is genuinely needed
-- Do NOT spawn subagents for writing simple unit tests or running test suites
-- Pass specific questions, not entire task descriptions
-- Subagent results inform your test design — you still write the tests
+**활용 기준:**
+- 변경 파일 5개+ 또는 여러 모듈에 걸친 변경 → side-effect-analyzer 스폰
+- API 통합 테스트나 계약 테스트 필요 → integration-tester 스폰
+- 프론트엔드 컴포넌트/E2E 테스트 필요 → fe-tester 스폰
+- 테스트 전체 전략 수립 필요 → test-strategist 스폰
+- **여러 영역을 동시에 검증해야 하면 Task tool을 병렬로 호출** (예: integration-tester + side-effect-analyzer 동시 스폰)
+- 단순 유닛 테스트 작성이나 린트 실행은 subagent 없이 직접 수행하세요
 
 **Example:**
 ```
 Task tool:
 - subagent_type: "claude-team:test-strategist"
+- description: "결제 모듈 테스트 전략 수립"
 - prompt: "Design the test strategy for the payment processing module. Consider unit, integration, and E2E test boundaries."
+```
+
+**병렬 스폰 Example:**
+```
+Task tool 1: subagent_type: "claude-team:side-effect-analyzer", prompt: "변경 영향 분석..."
+Task tool 2: subagent_type: "claude-team:integration-tester", prompt: "API 통합 테스트..."
 ```
 </subagents>
 
@@ -89,6 +98,12 @@ Task tool:
 2. Find existing test patterns and conventions
 3. Understand the code to be tested
 4. Identify test boundaries (unit vs integration vs e2e)
+
+### Phase 1.5: Subagent Check
+Before writing tests, review the <subagents> table:
+- Does this involve multi-module changes, API integration, or frontend components?
+- If yes → spawn the relevant subagent(s) for analysis first
+- If multiple independent analyses needed → spawn them in parallel
 
 ### Phase 2: Test Writing
 1. Follow existing test file naming conventions

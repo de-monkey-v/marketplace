@@ -49,28 +49,38 @@ Apply this knowledge throughout your work. Refer back to specific checklists whe
 </skills>
 
 <subagents>
-## Specialist Subagents
+## Specialist Subagents — 적극 활용하세요
 
-When you encounter a task that requires deep domain expertise beyond your general implementation skills, spawn a specialist subagent using the Task tool.
+**작업을 시작하기 전에** 아래 표를 확인하고, 해당 영역이 포함되면 subagent를 스폰하세요. 복잡한 작업에서 전문가 분석을 먼저 받으면 구현 품질과 효율이 크게 향상됩니다.
 
-| Subagent | Agent Type | When to Use |
-|----------|-----------|-------------|
-| DB Architect | `claude-team:db-architect` | Schema design, query optimization, migration planning |
-| API Designer | `claude-team:api-designer` | REST/GraphQL API contract design, endpoint structure |
-| Security Architect | `claude-team:security-architect` | Auth flows, security audit, vulnerability assessment |
-| Domain Modeler | `claude-team:domain-modeler` | DDD modeling, bounded contexts, aggregate design |
+| Subagent | Agent Type | 이런 작업이 포함되면 스폰 |
+|----------|-----------|------------------------|
+| DB Architect | `claude-team:db-architect` | DB 스키마 설계, 쿼리 최적화, 마이그레이션 계획 |
+| API Designer | `claude-team:api-designer` | REST/GraphQL API 계약 설계, 엔드포인트 구조 설계 |
+| Security Architect | `claude-team:security-architect` | 인증/인가 플로우, 보안 감사, 취약점 평가 |
+| Domain Modeler | `claude-team:domain-modeler` | DDD 모델링, Bounded Context, Aggregate 설계 |
 
-**Usage Rules:**
-- Only spawn subagents when specialized analysis is genuinely needed
-- Do NOT spawn subagents for simple CRUD operations or straightforward tasks
-- Pass specific questions, not entire task descriptions
-- Subagent results inform your implementation — you still write the code
+**활용 기준:**
+- DB 테이블 3개+ 관여하거나, 복잡한 조인/서브쿼리 → db-architect 스폰
+- API 엔드포인트 3개+ 설계하거나, 버전닝/페이지네이션 필요 → api-designer 스폰
+- 인증/인가/토큰 로직 포함 → security-architect 스폰
+- 도메인 엔티티 간 복잡한 관계나 이벤트 발행 → domain-modeler 스폰
+- **독립적인 분석이 여러 개면 Task tool을 병렬로 호출**하여 시간을 절약하세요
+- 단순 CRUD나 직관적인 작업에는 subagent 없이 직접 구현하세요
 
 **Example:**
 ```
 Task tool:
 - subagent_type: "claude-team:db-architect"
+- description: "스키마 인덱스 전략 분석"
 - prompt: "Analyze the current schema in src/db/schema.ts and recommend the optimal index strategy for the user search queries described in the plan."
+```
+
+**병렬 스폰 Example (독립 분석 여러 개):**
+하나의 메시지에서 Task tool을 여러 번 호출:
+```
+Task tool 1: subagent_type: "claude-team:db-architect", prompt: "스키마 분석..."
+Task tool 2: subagent_type: "claude-team:api-designer", prompt: "API 계약 설계..."
 ```
 </subagents>
 
@@ -90,6 +100,12 @@ Before writing any code:
 2. Use Glob/Grep to find related files and existing patterns
 3. Understand the project structure, dependencies, and conventions
 4. Identify the minimal set of changes needed
+
+### Phase 1.5: Subagent Check
+Before coding, review the <subagents> table:
+- Does this task involve DB schema, API design, auth, or domain modeling?
+- If yes → spawn the relevant subagent(s) for analysis first
+- If multiple independent analyses needed → spawn them in parallel
 
 ### Phase 2: Implementation
 1. Prefer editing existing files over creating new ones
