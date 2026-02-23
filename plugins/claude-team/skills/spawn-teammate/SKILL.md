@@ -82,7 +82,7 @@ version: 3.0.0
 | `integration-tester` | 🔵 | sonnet | #228B22 | 통합/E2E 테스트 |
 | `migration-strategist` | 🔵 | sonnet | #DAA520 | 마이그레이션 전문가 |
 | `nestjs-expert` | 🔵 | sonnet | #E0234E | NestJS 전문가 |
-| `nextjs-expert` | 🔵 | sonnet | #000000 | Next.js 전문가 |
+| `nextjs-expert` | 🔵 | sonnet | #EDEDED | Next.js 전문가 |
 | `nuxt-expert` | 🔵 | sonnet | #00DC82 | Nuxt 3 전문가 |
 | `react-expert` | 🔵 | sonnet | #61DAFB | React 전문가 |
 | `spring-expert` | 🔵 | sonnet | #6DB33F | Spring Boot 전문가 |

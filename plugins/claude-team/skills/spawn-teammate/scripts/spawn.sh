@@ -112,7 +112,7 @@ _resolve_color() {
         *:integration-tester)   COLOR="#228B22" ;;
         *:migration-strategist) COLOR="#DAA520" ;;
         *:nestjs-expert)        COLOR="#E0234E" ;;
-        *:nextjs-expert)        COLOR="#000000" ;;
+        *:nextjs-expert)        COLOR="#EDEDED" ;;
         *:nuxt-expert)          COLOR="#00DC82" ;;
         *:react-expert)         COLOR="#61DAFB" ;;
         *:spring-expert)        COLOR="#6DB33F" ;;
@@ -284,6 +284,7 @@ spawn_pane() {
 
     tmux set-option -p -t "$PANE_ID" @agent_label "${NAME}"
     tmux set-option -p -t "$PANE_ID" @agent_color "${COLOR}"
+    tmux set-option -p -t "$PANE_ID" @styled_label "#[fg=${COLOR},bold]${NAME}#[default]"
 }
 
 _spawn_basic_mode() {
@@ -347,25 +348,23 @@ setup_borders() {
     local MEMBER_COUNT
     MEMBER_COUNT=$(jq '.members | length' "$CONFIG" 2>/dev/null || echo 0)
     local LEADER_COLOR="#FFD700"
+    local BORDER_FMT="#{?@agent_label, #{@styled_label} | #{pane_title}, #{pane_title}}"
 
     if [[ "$WINDOW_MODE" == true ]]; then
         # Window mode: border on team window
         tmux set-option -w -t "${TMUX_SESSION}:${WINDOW_NAME}" pane-border-status bottom
-        tmux set-option -w -t "${TMUX_SESSION}:${WINDOW_NAME}" pane-border-format \
-            "#{?@agent_label, #[fg=#{@agent_color}]#{@agent_label}#[default] | #{pane_title}, #{pane_title}}"
+        tmux set-option -w -t "${TMUX_SESSION}:${WINDOW_NAME}" pane-border-format "$BORDER_FMT"
         tmux set-option -w -t "${TMUX_SESSION}:${WINDOW_NAME}" pane-border-style "fg=#585858"
         tmux set-option -w -t "${TMUX_SESSION}:${WINDOW_NAME}" pane-active-border-style "fg=#AAAAAA,bold"
     else
-        # Basic mode: first teammate enables border + leader pane title
-        if [[ "$MEMBER_COUNT" -eq 0 ]]; then
-            tmux set-option -w pane-border-status bottom
-            tmux set-option -w pane-border-format \
-                "#{?@agent_label, #[fg=#{@agent_color}]#{@agent_label}#[default] | #{pane_title}, #{pane_title}}"
-            tmux set-option -w pane-border-style "fg=#585858"
-            tmux set-option -w pane-active-border-style "fg=#AAAAAA,bold"
-            tmux set-option -p -t "$LEADER_PANE_ID" @agent_label "LEADER"
-            tmux set-option -p -t "$LEADER_PANE_ID" @agent_color "${LEADER_COLOR}"
-        fi
+        # Basic mode: configure border (idempotent — safe to set every spawn)
+        tmux set-option -w pane-border-status bottom
+        tmux set-option -w pane-border-format "$BORDER_FMT"
+        tmux set-option -w pane-border-style "fg=#585858"
+        tmux set-option -w pane-active-border-style "fg=#AAAAAA,bold"
+        tmux set-option -p -t "$LEADER_PANE_ID" @agent_label "LEADER"
+        tmux set-option -p -t "$LEADER_PANE_ID" @agent_color "${LEADER_COLOR}"
+        tmux set-option -p -t "$LEADER_PANE_ID" @styled_label "#[fg=${LEADER_COLOR},bold]LEADER#[default]"
 
         # 팀메이트 2개 이상일 때만 레이아웃 재배치 (flickering 방지)
         if [[ "$MEMBER_COUNT" -ge 2 ]]; then
