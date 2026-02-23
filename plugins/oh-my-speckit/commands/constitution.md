@@ -1,6 +1,6 @@
 ---
 description: 프로젝트 Constitution 초기화/업데이트 (Agent Teams)
-argument-hint: [--update] [--window]
+argument-hint: [--update] [--window] [--no-window]
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, Task, Skill, TaskCreate, TaskUpdate, TaskList, TeamCreate, TeamDelete, SendMessage
 ---
 
@@ -37,8 +37,9 @@ Phase 3: 저장 + 팀 해산 + 완료 안내
 
 | Phase | Step | 필수 액션 | Tool |
 |-------|------|----------|------|
-| 0 | 3 | 기존 태스크 정리 | TaskList, TaskUpdate |
-| 0 | 4 | 태스크 등록 | TaskCreate |
+| 0 | 3.5 | 이전 팀 정리 | Bash |
+| 0 | 4 | 기존 태스크 정리 | TaskList, TaskUpdate |
+| 0 | 5 | 태스크 등록 | TaskCreate |
 | 1 | 1 | 팀 생성 | TeamCreate |
 | 1 | 2 | 팀메이트 스폰 (researcher) | Skill (spawn-teammate) |
 | 2 | 2 | 사용자 확인 | AskUserQuestion |
@@ -108,9 +109,55 @@ AskUserQuestion:
 
 ### Step 3: 스폰 모드 설정
 
-arguments에서 `--window` 옵션 확인:
-- `--window` 포함 → WINDOW_MODE = true (spawn-teammate에 --window 전달)
-- 기본값 → WINDOW_MODE = false
+**Config 읽기:**
+```
+Read tool: ${PROJECT_ROOT}/.specify/config.json
+```
+파일이 없거나 읽기 실패 시 `{}` 으로 간주.
+
+**WINDOW_MODE 결정 (우선순위: CLI > config > default):**
+1. arguments에 `--window` 포함 → WINDOW_MODE = true
+2. arguments에 `--no-window` 포함 → WINDOW_MODE = false
+3. 위 둘 다 없으면 → config의 `spawnWindow` 필드가 `true` → WINDOW_MODE = true
+4. 기본값 → WINDOW_MODE = false
+
+WINDOW_MODE일 때: spawn-teammate에 `--window` 전달
+
+### Step 3.5: Pre-Flight Team Cleanup
+
+이전 실행에서 남은 팀이 있으면 자동 정리합니다.
+
+**탐지:**
+```bash
+TEAM_NAME="constitution"
+[ -d ~/.claude/teams/$TEAM_NAME ] && echo "exists" || echo "none"
+```
+
+**팀이 존재하면 자동 정리:**
+
+```bash
+CONFIG="$HOME/.claude/teams/$TEAM_NAME/config.json"
+if [ -f "$CONFIG" ]; then
+  # 활성 멤버 tmux pane 종료
+  jq -r '.members[] | select(.isActive==true and .tmuxPaneId!=null and .tmuxPaneId!="") | .tmuxPaneId' "$CONFIG" 2>/dev/null | while read -r pane_id; do
+    tmux kill-pane -t "$pane_id" 2>/dev/null || true
+  done
+  # window 모드 정리
+  tmux list-windows -a -F "#{window_id} #{window_name}" 2>/dev/null | grep "${TEAM_NAME}-" | while read -r wid _; do
+    tmux kill-window -t "$wid" 2>/dev/null || true
+  done
+fi
+# 디렉토리 정리
+rm -rf "$HOME/.claude/teams/$TEAM_NAME"
+rm -rf "$HOME/.claude/tasks/$TEAM_NAME"
+```
+
+사용자에게 알림:
+```markdown
+> 이전 실행의 팀 `constitution`을 정리했습니다.
+```
+
+팀이 없으면 아무 것도 표시하지 않고 Step 4로 진행.
 
 ### Step 4: 기존 태스크 정리
 
