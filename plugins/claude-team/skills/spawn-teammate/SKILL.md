@@ -170,6 +170,45 @@ SendMessage tool:
 - summary: "${NAME} 초기 작업 지시"
 ```
 
+## 복수 인스턴스 스폰
+
+같은 역할을 여러 명 스폰할 때는 번호 네이밍 규칙을 따릅니다.
+
+### 네이밍 규칙
+
+| 인스턴스 수 | 네이밍 패턴 | 예시 |
+|-----------|-----------|------|
+| 1명 | 번호 없음 | `developer` |
+| 2명 이상 | `-N` 접미사 | `developer-1`, `developer-2` |
+
+### 스폰 예시
+
+```
+# developer 2명 스폰 (non-fullstack Medium+)
+Skill: spawn-teammate
+args: "developer-1 --team impl-003 --agent-type claude-team:implementer"
+
+Skill: spawn-teammate
+args: "developer-2 --team impl-003 --agent-type claude-team:implementer"
+
+# SendMessage도 번호 이름으로 전송
+SendMessage: recipient: "developer-1"
+SendMessage: recipient: "developer-2"
+```
+
+### 중복 이름 감지
+
+spawn.sh는 같은 팀에 동일 이름의 활성 멤버가 있으면 에러로 중단합니다:
+```
+ERROR: 팀 '{TEAM}'에 이미 '{NAME}' 멤버가 존재합니다.
+번호를 붙여 스폰하세요 (예: {NAME}-1, {NAME}-2)
+```
+
+### 주의사항
+- fullstack 프로젝트의 `frontend-dev` + `backend-dev`는 이미 다른 이름이므로 번호 불필요
+- 번호는 1부터 시작 (`-0` 사용 금지)
+- 윈도우 모드에서도 동일한 네이밍 규칙 적용
+
 ## 에러 핸들링 요약
 
 ### 공통 에러

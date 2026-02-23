@@ -275,8 +275,8 @@ plan.md의 규모(변경 파일 수, Phase 수)를 기반으로 판단:
 | 규모 | 기준 | 팀 구성 |
 |------|------|--------|
 | Small | 파일 5개 미만, Phase 3개 이하 | developer + qa |
-| Medium | 파일 5-15개, Phase 4-6개 | developer x2 + qa |
-| Large | 파일 15개+, Phase 7개+ | architect + developer x2 + qa |
+| Medium | 파일 5-15개, Phase 4-6개 | developer-1 + developer-2 + qa |
+| Large | 파일 15개+, Phase 7개+ | architect + developer-1 + developer-2 + qa |
 
 ### Step 2.5: Fullstack 프로젝트 감지
 
@@ -292,7 +292,7 @@ Medium/Large에서 developer x2가 필요한 경우, fullstack 프로젝트 여�
 
 **판단:**
 - FE + BE 디렉토리 모두 존재 → fullstack → developer x2 대신 **frontend-dev + backend-dev**
-- 그 외 → **developer + developer-2** (동일 역할 병렬화)
+- 그 외 → **developer-1 + developer-2** (동일 역할 병렬화)
 
 ### Step 3: 팀메이트 스폰
 
@@ -302,10 +302,11 @@ Medium/Large에서 developer x2가 필요한 경우, fullstack 프로젝트 여�
 
 | 역할 | 기본 에이전트 | 프레임워크 오버라이드 |
 |------|-------------|---------------------|
-| developer | claude-team:implementer | BACKEND: spring→spring-expert, fastapi→fastapi-expert, nestjs→nestjs-expert |
+| developer (Small 단일) | claude-team:implementer | BACKEND: spring→spring-expert, fastapi→fastapi-expert, nestjs→nestjs-expert |
+| developer-1 (Medium+ 복수) | claude-team:implementer | BACKEND: spring→spring-expert, fastapi→fastapi-expert, nestjs→nestjs-expert |
+| developer-2 (Medium+ 복수) | claude-team:implementer | (developer-1과 동일한 오버라이드) |
 | frontend-dev | claude-team:frontend | FRONTEND: nextjs→nextjs-expert, nuxt→nuxt-expert, react→react-expert, vue→vue-expert |
 | backend-dev | claude-team:backend | BACKEND: spring→spring-expert, nestjs→nestjs-expert, fastapi→fastapi-expert |
-| developer-2 | claude-team:implementer | (developer와 동일한 오버라이드) |
 | qa | claude-team:tester | (오버라이드 없음) |
 | architect | claude-team:architect | (오버라이드 없음) |
 
@@ -315,6 +316,8 @@ Medium/Large에서 developer x2가 필요한 경우, fullstack 프로젝트 여�
 ---
 
 **developer 생성 (필수 — non-fullstack):**
+
+**Small (1명):** 번호 없이 `developer`로 스폰
 
 ```
 Skill tool:
@@ -337,6 +340,52 @@ SendMessage tool:
     qa 팀메이트와 구현 완료 시 검증을 협의하세요.
     완료되면 리더에게 변경 파일 목록과 결과를 보고해주세요.
 - summary: "developer 작업 지시"
+```
+
+**Medium+ non-fullstack (2명):** `developer-1`, `developer-2`로 스폰
+
+```
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "developer-1 --team implement-{spec-id} --agent-type claude-team:{DETECTED_AGENT}"
+  (DETECTED_AGENT: BACKEND_FRAMEWORK 감지시 해당 전문가, 미감지시 implementer)
+  (GPT_MODE일 때: "developer-1 --team implement-{spec-id}")
+  (WINDOW_MODE일 때 끝에 --window 추가)
+
+→ 스폰 완료 후:
+SendMessage tool:
+- type: "message"
+- recipient: "developer-1"
+- content: |
+    plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
+
+    plan.md의 체크리스트를 순서대로 구현해주세요.
+    재사용 분석 섹션을 먼저 확인하고, 기존 코드 패턴을 따르세요.
+    완료된 항목은 plan.md 체크박스를 업데이트해주세요.
+    qa 팀메이트와 구현 완료 시 검증을 협의하세요.
+    완료되면 리더에게 변경 파일 목록과 결과를 보고해주세요.
+- summary: "developer-1 작업 지시"
+
+Skill tool:
+- skill: "claude-team:spawn-teammate"
+- args: "developer-2 --team implement-{spec-id} --agent-type claude-team:{DETECTED_AGENT}"
+  (DETECTED_AGENT: developer-1과 동일한 오버라이드 적용)
+  (GPT_MODE일 때: "developer-2 --team implement-{spec-id}")
+  (WINDOW_MODE일 때 끝에 --window 추가)
+
+→ 스폰 완료 후:
+SendMessage tool:
+- type: "message"
+- recipient: "developer-2"
+- content: |
+    plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
+
+    plan.md의 체크리스트를 순서대로 구현해주세요.
+    재사용 분석 섹션을 먼저 확인하고, 기존 코드 패턴을 따르세요.
+    완료된 항목은 plan.md 체크박스를 업데이트해주세요.
+    qa 팀메이트와 구현 완료 시 검증을 협의하세요.
+    완료되면 리더에게 변경 파일 목록과 결과를 보고해주세요.
+- summary: "developer-2 작업 지시"
 ```
 
 **frontend-dev 생성 (fullstack 프로젝트, Medium 이상):**
@@ -391,31 +440,6 @@ SendMessage tool:
     qa 팀메이트와 구현 완료 시 검증을 협의하세요.
     완료되면 리더에게 변경 파일 목록과 결과를 보고해주세요.
 - summary: "backend-dev 작업 지시"
-```
-
-**developer-2 생성 (non-fullstack, Medium 이상):**
-
-```
-Skill tool:
-- skill: "claude-team:spawn-teammate"
-- args: "developer-2 --team implement-{spec-id} --agent-type claude-team:{DETECTED_AGENT}"
-  (DETECTED_AGENT: developer와 동일한 오버라이드 적용)
-  (GPT_MODE일 때: "developer-2 --team implement-{spec-id}")
-  (WINDOW_MODE일 때 끝에 --window 추가)
-
-→ 스폰 완료 후:
-SendMessage tool:
-- type: "message"
-- recipient: "developer-2"
-- content: |
-    plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
-
-    plan.md의 체크리스트를 순서대로 구현해주세요.
-    재사용 분석 섹션을 먼저 확인하고, 기존 코드 패턴을 따르세요.
-    완료된 항목은 plan.md 체크박스를 업데이트해주세요.
-    qa 팀메이트와 구현 완료 시 검증을 협의하세요.
-    완료되면 리더에게 변경 파일 목록과 결과를 보고해주세요.
-- summary: "developer-2 작업 지시"
 ```
 
 **qa 생성 (필수):**
@@ -528,7 +552,7 @@ plan.md에서 구현 단계를 추출하고 논리적 그룹으로 분류:
 ```
 SendMessage tool:
 - type: "message"
-- recipient: "developer"  (또는 "frontend-dev"/"backend-dev")
+- recipient: "developer" (Small) 또는 "developer-1"/"developer-2" (Medium+ non-fullstack) 또는 "frontend-dev"/"backend-dev" (fullstack)
 - content: |
     **Phase Group N 구현 시작**
 
@@ -723,7 +747,7 @@ SendMessage tool:
 - recipient: "developer"
 - content: "Implement 완료, 팀을 해산합니다."
 
-(qa, developer-2/frontend-dev/backend-dev, architect도 동일 — 생성된 팀메이트만)
+(qa, developer-1/developer-2/frontend-dev/backend-dev, architect도 동일 — 생성된 팀메이트만)
 
 TeamDelete tool
 ```

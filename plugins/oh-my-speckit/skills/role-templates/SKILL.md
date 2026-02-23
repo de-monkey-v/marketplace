@@ -115,10 +115,10 @@ architect 팀메이트와 기술적 타당성을 협의하세요.
 | 규모 | 팀원 | 에이전트 타입 |
 |------|------|-------------|
 | Small | developer + qa | implementer + tester |
-| Medium | developer x2 + qa | implementer x2 + tester |
-| Large | architect + developer x2 + qa | architect + implementer x2 + tester |
+| Medium | developer-1 + developer-2 + qa | implementer x2 + tester |
+| Large | architect + developer-1 + developer-2 + qa | architect + implementer x2 + tester |
 
-*Medium/Large fullstack 프로젝트: developer x2 → frontend-dev + backend-dev*
+*Medium/Large fullstack 프로젝트: developer-1 + developer-2 → frontend-dev + backend-dev*
 
 ### /oh-my-speckit:verify
 | 규모 | 팀원 | 에이전트 타입 |
@@ -126,6 +126,27 @@ architect 팀메이트와 기술적 타당성을 협의하세요.
 | Small | qa | tester |
 | Medium | qa + critic | tester + reviewer |
 | Large | qa + architect + critic | tester + architect + reviewer |
+
+## 복수 인스턴스 네이밍 규칙
+
+같은 역할을 여러 명 스폰할 때의 이름 규칙:
+
+| 인스턴스 수 | 네이밍 패턴 | 예시 |
+|-----------|-----------|------|
+| 1명 | 번호 없음 | `developer`, `qa` |
+| 2명 이상 | `-N` 접미사 (1부터) | `developer-1`, `developer-2` |
+
+**적용 예시:**
+- Small implement: `developer` + `qa` (각 1명이므로 번호 없음)
+- Medium implement (non-fullstack): `developer-1` + `developer-2` + `qa`
+- Medium implement (fullstack): `frontend-dev` + `backend-dev` + `qa` (다른 역할이므로 번호 없음)
+- Large implement: `architect` + `developer-1` + `developer-2` + `qa`
+
+**SendMessage 라우팅**: 번호가 붙은 이름 그대로 recipient에 사용
+```
+SendMessage: recipient: "developer-1"
+SendMessage: recipient: "developer-2"
+```
 
 ## Fullstack 프로젝트 자동 감지
 

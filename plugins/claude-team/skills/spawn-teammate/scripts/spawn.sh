@@ -186,6 +186,26 @@ check_prerequisites() {
 }
 
 ##############################################################################
+# Section 4.5: check_duplicate_name()
+##############################################################################
+
+check_duplicate_name() {
+    local config="$HOME/.claude/teams/${TEAM}/config.json"
+    if [[ ! -f "$config" ]]; then return; fi
+
+    local existing
+    existing=$(jq -r --arg name "$NAME" \
+        '.members[] | select(.name == $name and .isActive == true) | .name' \
+        "$config" 2>/dev/null)
+
+    if [[ -n "$existing" ]]; then
+        echo "ERROR: 팀 '${TEAM}'에 이미 '${NAME}' 멤버가 존재합니다." >&2
+        echo "번호를 붙여 스폰하세요 (예: ${NAME}-1, ${NAME}-2)" >&2
+        exit 1
+    fi
+}
+
+##############################################################################
 # Section 5: setup()
 ##############################################################################
 
@@ -474,6 +494,7 @@ _resolve_color
 # Execute pipeline
 check_prerequisites
 setup
+check_duplicate_name
 spawn_pane
 setup_borders
 register_config
