@@ -223,8 +223,10 @@ Skill tool:
 | 규모/범위 | 팀 구성 |
 |----------|--------|
 | Small / 빠른 | qa 1명 |
-| Medium / 표준 | qa + critic |
-| Large / 완전 | qa + architect + critic |
+| Medium / 표준 | qa + critic + llms-reviewer |
+| Large / 완전 | qa + architect + critic + llms-reviewer |
+
+> llms-reviewer는 표준/완전 범위에서만 스폰됩니다 (빠른 검증에서는 생략).
 
 ### Step 3: 팀메이트 스폰 + 검증 지시 (병렬)
 
@@ -238,6 +240,7 @@ Task tool로 팀메이트를 스폰합니다. prompt에 작업 지시를 직접 
 | qa | claude-team:tester |
 | critic | claude-team:reviewer |
 | architect | claude-team:architect |
+| llms-reviewer | ai-cli-tools:llms |
 
 ---
 
@@ -304,9 +307,54 @@ Task tool:
     완료되면 리더에게 결과를 보고해주세요.
 ```
 
+---
+
+**llms-reviewer 스폰 (표준/완전 범위 — 외부 LLM 코드 리뷰):**
+
+```
+Task tool:
+- subagent_type: "ai-cli-tools:llms"
+- team_name: "verify-{spec-id}"
+- name: "llms-reviewer"
+- description: "llms-reviewer: 외부 LLM(Gemini/Codex) 코드 리뷰"
+- run_in_background: true
+- prompt: |
+    외부 LLM(Gemini/Codex CLI)을 활용한 코드 리뷰 Second Opinion을 수행합니다.
+
+    spec.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
+    plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
+    프로젝트 루트: {PROJECT_ROOT}
+    변경 파일 목록: [plan.md에서 추출]
+
+    **수행 작업:**
+    1. spec.md를 Read하여 요구사항 파악
+    2. 변경된 파일들을 Read
+    3. Gemini CLI로 코드 리뷰:
+       - 변경 파일을 pipe하여 gemini에게 리뷰 요청
+       - 요구사항 충족 여부 검증
+    4. Codex CLI로 추가 리뷰 (설치되어 있는 경우):
+       - codex에게 동일 파일 분석 요청
+    5. 두 외부 LLM의 의견을 비교 종합
+
+    **리뷰 초점:**
+    - 요구사항 커버리지 갭
+    - 외부 LLM 관점의 코드 품질 이슈
+    - 보안 우려사항
+    - 성능 고려사항
+    - Claude 팀메이트(qa/critic)가 놓칠 수 있는 문제
+
+    한국어로 통합 결과를 보고해주세요.
+    완료되면 리더에게 결과를 보고해주세요.
+```
+
 ### Step 4: 결과 수집
 
 모든 팀메이트의 SendMessage를 수신하여 결과를 통합합니다.
+
+**llms-reviewer 결과 통합 규칙:**
+- Claude 팀메이트(qa/critic)와 동일한 이슈 -> 신뢰도 강화 ("External LLM도 동의")
+- llms-reviewer만 발견한 고유 이슈 -> `[External LLM]` 태그 추가하여 결과에 포함
+- llms-reviewer 결과가 Claude 팀메이트와 상충 -> 두 관점을 모두 표시하여 사용자 판단
 
 **Phase 2 완료 시:** TaskUpdate로 Phase 2 태스크를 `completed`로 변경
 
@@ -337,6 +385,14 @@ Task tool:
 | # | 항목 | 문제 |
 |---|------|------|
 | 5 | 미사용 import | 2개 파일에서 발견 |
+
+### External LLM Review (llms-reviewer)
+| # | Source | 항목 | 문제 |
+|---|--------|------|------|
+| E1 | Gemini | [항목] | [문제] |
+| E2 | Codex | [항목] | [문제] |
+
+> External LLM 이슈는 Claude 팀 이슈와 중복되면 통합하고, 고유 이슈만 별도 표시합니다.
 ```
 
 ### Step 2: 수정 대상 선택
@@ -564,7 +620,7 @@ SendMessage tool:
 - recipient: "qa"
 - content: "Verify 완료, 팀을 해산합니다."
 
-(critic, architect, developer도 동일 — 생성된 팀메이트만)
+(critic, architect, developer, llms-reviewer도 동일 — 생성된 팀메이트만)
 ```
 
 ```

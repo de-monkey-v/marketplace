@@ -226,6 +226,7 @@ Task tool로 팀메이트를 스폰합니다. prompt에 작업 지시를 직접 
 | pm | claude-team:planner |
 | architect | claude-team:architect |
 | critic | claude-team:reviewer |
+| llms-analyst | ai-cli-tools:llms |
 
 **pm 스폰 (필수):**
 
@@ -283,6 +284,39 @@ Task tool:
     pm과 architect의 분석 결과를 비판적으로 검토해주세요.
     팀메이트들과 직접 소통하여 도전 질문, 리스크, 대안을 논의하세요.
     완료되면 리더에게 Devil's Advocate Review를 보고해주세요.
+```
+
+**llms-analyst 스폰 (필수 — 외부 LLM Second Opinion):**
+
+```
+Task tool:
+- subagent_type: "ai-cli-tools:llms"
+- team_name: "specify-{spec-id}"
+- name: "llms-analyst"
+- description: "llms-analyst: 외부 LLM(Gemini/Codex) Second Opinion 분석"
+- run_in_background: true
+- prompt: |
+    외부 LLM(Gemini/Codex CLI)을 활용한 Second Opinion 분석을 수행합니다.
+
+    사용자 기능 요청: {사용자 요청 원문}
+    프로젝트 루트: {PROJECT_ROOT}
+
+    **수행 작업:**
+    1. 프로젝트 코드베이스의 주요 파일을 Read로 파악
+    2. Gemini CLI로 프로젝트 구조 및 기능 요청 분석:
+       - 핵심 파일을 pipe하여 gemini에게 아키텍처 분석 요청
+    3. Codex CLI로 동일 분석 수행 (설치되어 있는 경우):
+       - codex에게 구현 타당성 분석 요청
+    4. WebSearch로 유사 기능 구현 사례 조사
+
+    **분석 초점:**
+    - 유사 프로젝트의 아키텍처 패턴
+    - 이 유형의 기능에서 흔한 함정/위험 요소
+    - 외부 LLM 관점의 기술 추천 및 대안
+    - Claude 팀메이트가 놓칠 수 있는 엣지 케이스
+
+    한국어로 결과를 보고해주세요.
+    완료되면 리더에게 결과를 보고해주세요.
 ```
 
 ### Step 4: 팀메이트 결과 수집
@@ -343,7 +377,15 @@ AskUserQuestion:
 **코드베이스**: [기존 패턴 한 줄], [재사용 가능 여부]
 **기술 권장**: [베스트 프랙티스 한 줄]
 **제안 방향**: [A] vs [B] - [핵심 차이점]
+
+### External LLM Perspective (llms-analyst)
+**Gemini 분석**: [핵심 발견 한 줄]
+**Codex 분석**: [핵심 발견 한 줄] (사용 가능한 경우)
+**추가 리스크/엣지 케이스**: [Claude 팀과 다른 관점이 있으면 표시]
 ```
+
+llms-analyst 결과에서 Claude 팀메이트와 일치하는 부분은 신뢰도 강화로 표시하고,
+상충하는 부분은 사용자 결정 사항으로 Phase 2 Step 2에서 질문합니다.
 
 ### Step 2: 중요 결정만 질문
 
@@ -499,7 +541,7 @@ SendMessage tool:
 - recipient: "pm"
 - content: "Specify 완료, 팀을 해산합니다."
 
-(architect, critic도 동일 — 생성된 팀메이트만)
+(architect, critic, llms-analyst도 동일 — 생성된 팀메이트만)
 ```
 
 ### Step 2: 팀 삭제

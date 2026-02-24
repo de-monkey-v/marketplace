@@ -241,8 +241,10 @@ plan.md의 규모(변경 파일 수, Phase 수)를 기반으로 판단:
 | 규모 | 기준 | 팀 구성 |
 |------|------|--------|
 | Small | 파일 5개 미만, Phase 3개 이하 | developer + qa |
-| Medium | 파일 5-15개, Phase 4-6개 | developer-1 + developer-2 + qa |
-| Large | 파일 15개+, Phase 7개+ | architect + developer-1 + developer-2 + qa |
+| Medium | 파일 5-15개, Phase 4-6개 | developer-1 + developer-2 + qa + llms-advisor |
+| Large | 파일 15개+, Phase 7개+ | architect + developer-1 + developer-2 + qa + llms-advisor |
+
+> llms-advisor는 Medium/Large 프로젝트에서만 스폰됩니다 (Small에서는 생략).
 
 ### Step 2.5: Fullstack 프로젝트 감지
 
@@ -276,6 +278,7 @@ Task tool로 팀메이트를 스폰합니다. prompt에 작업 지시를 직접 
 | backend-dev | claude-team:backend | BACKEND: spring→spring-expert, nestjs→nestjs-expert, fastapi→fastapi-expert |
 | qa | claude-team:tester | (오버라이드 없음) |
 | architect | claude-team:architect | (오버라이드 없음) |
+| llms-advisor | ai-cli-tools:llms | (오버라이드 없음) |
 
 프레임워크 감지 결과(Step 2.7)에 따라 에이전트 타입을 동적으로 선택합니다.
 예: BACKEND_FRAMEWORK=spring → developer의 subagent_type이 `claude-team:spring-expert`로 변경
@@ -420,6 +423,41 @@ Task tool:
     완료되면 리더에게 결과를 보고해주세요.
 ```
 
+**llms-advisor 스폰 (Medium/Large — 외부 LLM 구현 자문):**
+
+```
+Task tool:
+- subagent_type: "ai-cli-tools:llms"
+- team_name: "implement-{spec-id}"
+- name: "llms-advisor"
+- description: "llms-advisor: 외부 LLM(Gemini/Codex) 구현 자문"
+- run_in_background: true
+- prompt: |
+    외부 LLM(Gemini/Codex CLI)을 활용한 구현 사전 분석 및 자문을 수행합니다.
+
+    plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
+    프로젝트 루트: {PROJECT_ROOT}
+
+    **수행 작업:**
+    1. plan.md를 Read하여 구현 계획 파악
+    2. 수정 대상 기존 코드 파일을 Read
+    3. Gemini CLI로 분석:
+       - 구현 접근법의 타당성 검증
+       - 잠재적 통합 이슈 식별
+       - 따라야 할 코드 패턴 분석
+    4. Codex CLI로 추가 분석 (설치되어 있는 경우):
+       - 동일 관점에서 교차 검증
+
+    **분석 초점:**
+    - 보존해야 할 기존 코드 패턴
+    - 의존성 순서 리스크
+    - 이 유형의 변경에서 흔한 구현 실수
+    - 외부 LLM 관점의 구현 팁 및 경고
+
+    한국어로 결과를 보고해주세요.
+    구현 시작 전에 리더에게 결과를 보고해주세요.
+```
+
 ### Step 4: Plan에서 구현 계획 추출 및 Phase Group 분류
 
 plan.md에서 구현 단계를 추출하고 논리적 그룹으로 분류:
@@ -441,6 +479,25 @@ plan.md에서 구현 단계를 추출하고 논리적 그룹으로 분류:
 ### 재사용 분석
 - 활용할 기존 코드: [목록]
 - 새로 작성: [목록]
+```
+
+### Step 4.5: llms-advisor 사전 분석 결과 공유 (Medium/Large)
+
+llms-advisor의 사전 분석 결과가 도착하면, 핵심 팁과 경고를 developer에게 공유합니다:
+
+```
+SendMessage tool:
+- type: "message"
+- recipient: "developer" (또는 "developer-1", "developer-2", "frontend-dev", "backend-dev")
+- content: |
+    **[External LLM Advisory] 구현 전 참고사항**
+
+    llms-advisor(Gemini/Codex)의 사전 분석 결과입니다:
+
+    {llms-advisor 핵심 발견사항 요약}
+
+    구현 시 참고해주세요. 특히 주의사항이 있으면 반영 부탁드립니다.
+- summary: "External LLM 사전 분석 공유"
 ```
 
 **Phase 1 완료 시:** TaskUpdate로 Phase 1 태스크를 `completed`로 변경
@@ -619,6 +676,32 @@ SendMessage tool:
 - summary: "통합 테스트 실행 요청"
 ```
 
+### Step 1.5: llms-advisor 구현 후 리뷰 요청 (Medium/Large)
+
+구현 완료 후, 통합 테스트와 병렬로 llms-advisor에게 최종 리뷰를 요청합니다:
+
+```
+SendMessage tool:
+- type: "message"
+- recipient: "llms-advisor"
+- content: |
+    **구현 완료 — 최종 리뷰 요청**
+
+    구현이 완료되었습니다. 최종 결과를 리뷰해주세요:
+
+    변경 파일 목록: [developer 보고에서 추출]
+
+    1. 변경된 파일들을 Read
+    2. Gemini/Codex CLI로 구현 품질 리뷰
+    3. plan.md 대비 구현의 정합성 확인
+    4. 마무리 전 우려사항 보고
+
+    한국어로 리뷰 결과를 보고해주세요.
+- summary: "구현 후 External LLM 리뷰 요청"
+```
+
+llms-advisor의 리뷰 결과는 Phase 3 Step 2의 통합 테스트 결과와 함께 표시합니다.
+
 ### Step 2: 결과 확인
 
 ```markdown
@@ -629,6 +712,14 @@ SendMessage tool:
 | 단위 테스트 | N/N 통과 |
 | 통합 테스트 | N/N 통과 |
 | 커버리지 | N% |
+
+### External LLM Post-Implementation Review (Medium/Large)
+| 항목 | Source | 결과 |
+|------|--------|------|
+| 코드 품질 | Gemini | [결과] |
+| Plan 정합성 | Gemini | [결과] |
+| 코드 품질 | Codex | [결과] (사용 가능한 경우) |
+| 추가 우려사항 | llms-advisor | [있으면 표시] |
 ```
 
 #### 자동 모드
@@ -681,7 +772,7 @@ SendMessage tool:
 - recipient: "developer"
 - content: "Implement 완료, 팀을 해산합니다."
 
-(qa, developer-1/developer-2/frontend-dev/backend-dev, architect도 동일 — 생성된 팀메이트만)
+(qa, developer-1/developer-2/frontend-dev/backend-dev, architect, llms-advisor도 동일 — 생성된 팀메이트만)
 ```
 
 ```
