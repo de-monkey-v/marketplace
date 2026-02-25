@@ -148,6 +148,18 @@ TEAM_NAME="specify-{spec-id}"
 **팀이 존재하면 자동 정리:**
 
 ```bash
+CONFIG="$HOME/.claude/teams/$TEAM_NAME/config.json"
+if [ -f "$CONFIG" ]; then
+  # 활성 멤버 tmux pane 종료
+  jq -r '.members[] | select(.isActive==true and .tmuxPaneId!=null and .tmuxPaneId!="") | .tmuxPaneId' "$CONFIG" 2>/dev/null | while read -r pane_id; do
+    tmux kill-pane -t "$pane_id" 2>/dev/null || true
+  done
+  # window 모드 정리
+  tmux list-windows -a -F "#{window_id} #{window_name}" 2>/dev/null | grep "${TEAM_NAME}-" | while read -r wid _; do
+    tmux kill-window -t "$wid" 2>/dev/null || true
+  done
+fi
+# 디렉토리 정리
 rm -rf "$HOME/.claude/teams/$TEAM_NAME"
 rm -rf "$HOME/.claude/tasks/$TEAM_NAME"
 ```
@@ -548,7 +560,22 @@ SendMessage tool:
 (architect, critic, llms-analyst도 동일 — 생성된 팀메이트만)
 ```
 
-### Step 2: 팀 삭제
+### Step 2: tmux 정리 + 팀 삭제
+
+shutdown_request 전송 후 tmux pane/window를 정리하고 팀을 삭제합니다:
+
+```bash
+TEAM_NAME="specify-{spec-id}"
+CONFIG="$HOME/.claude/teams/$TEAM_NAME/config.json"
+if [ -f "$CONFIG" ]; then
+  jq -r '.members[] | select(.isActive==true and .tmuxPaneId!=null and .tmuxPaneId!="") | .tmuxPaneId' "$CONFIG" 2>/dev/null | while read -r pane_id; do
+    tmux kill-pane -t "$pane_id" 2>/dev/null || true
+  done
+  tmux list-windows -a -F "#{window_id} #{window_name}" 2>/dev/null | grep "${TEAM_NAME}-" | while read -r wid _; do
+    tmux kill-window -t "$wid" 2>/dev/null || true
+  done
+fi
+```
 
 ```
 TeamDelete tool
