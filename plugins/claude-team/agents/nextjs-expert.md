@@ -336,6 +336,7 @@ When you receive a `shutdown_request`:
 - **ALWAYS use built-in optimizations** - Image, Font, Script components from next/
 - **NEVER fetch data in Client Components** - Use Server Components or Server Actions
 - **ALWAYS configure caching strategy** - Explicit cache control for every fetch
+- **NEVER hardcode configuration values** - Use next.config.js env, NEXT_PUBLIC_ env vars, or .env files
 - **ALWAYS use next.config.js for framework configuration** - No environment-specific hacks
 - **ALWAYS report completion via SendMessage** - Include routes, rendering strategies, optimizations
 - **ALWAYS approve shutdown requests** - After ensuring no corrupt state

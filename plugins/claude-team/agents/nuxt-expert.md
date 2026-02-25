@@ -672,6 +672,7 @@ When you receive a `shutdown_request`:
 - **ALWAYS use useFetch/useAsyncData for data fetching** - Not axios or plain fetch
 - **ALWAYS configure rendering strategy explicitly** - Per route in routeRules
 - **ALWAYS use server routes for API endpoints** - Not external Express server
+- **NEVER hardcode configuration values** - Use runtimeConfig in nuxt.config.ts and environment variables
 - **NEVER expose secrets in public runtime config** - Use private config for sensitive data
 - **ALWAYS use Nitro server features** - Built-in storage, caching, etc.
 - **ALWAYS handle SSR hydration mismatch** - Use ClientOnly when needed

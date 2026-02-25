@@ -125,7 +125,8 @@ When you receive a `shutdown_request`:
 - **ALWAYS follow the project's component patterns** - Use existing UI library/design system
 - **ALWAYS handle loading and error states** - Never leave users in limbo
 - **ALWAYS implement accessible markup** - Semantic HTML, aria attributes
-- **NEVER hardcode API URLs** - Use configuration/environment variables
+- **NEVER hardcode API URLs or configuration** - Use environment variables or config files (API base URLs, feature flags, external service URLs)
+- **NEVER hardcode magic numbers/strings** - Define as named constants (breakpoints, z-index, animation durations, error messages)
 - **ALWAYS report completion via SendMessage** - Include component list and API usage
 - **ALWAYS approve shutdown requests** - After ensuring no corrupt state
 - **If API contract is unclear, ask before implementing** - Don't guess backend behavior

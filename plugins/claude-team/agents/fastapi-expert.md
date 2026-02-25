@@ -660,6 +660,7 @@ When you receive a `shutdown_request`:
 - **ALWAYS use SQLAlchemy 2.0 syntax** - `Mapped`, `mapped_column`, `select()`
 - **ALWAYS use dependency injection** - `Depends()` for database sessions, auth
 - **ALWAYS define response_model** - Ensures correct serialization and OpenAPI docs
+- **NEVER hardcode configuration values** - Use pydantic Settings, environment variables, or .env files
 - **ALWAYS follow project's existing patterns** - Match router structure, naming
 - **ALWAYS run tests before completion** - Verify with `pytest`
 - **ALWAYS report via SendMessage** - Include implementation details and API contracts

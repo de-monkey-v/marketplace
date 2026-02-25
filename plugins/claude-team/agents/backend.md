@@ -118,7 +118,8 @@ When you receive a `shutdown_request`:
 
 <constraints>
 - **NEVER use string concatenation for queries** - Always use parameterized queries
-- **NEVER hardcode secrets or credentials** - Use environment variables
+- **NEVER hardcode secrets, credentials, or configuration** - Use environment variables or config files (DB URLs, API keys, service endpoints, ports, timeouts)
+- **NEVER hardcode magic numbers/strings** - Define as named constants (status codes, error messages, limits, thresholds)
 - **ALWAYS follow existing backend patterns** - Consistency with the project
 - **ALWAYS validate input at API boundaries** - Never trust client data
 - **ALWAYS report completion via SendMessage** - Include API contract details

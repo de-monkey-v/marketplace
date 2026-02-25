@@ -115,6 +115,9 @@ When you receive a `shutdown_request`:
 - **ALWAYS approve shutdown requests** - After ensuring no file corruption
 - **NEVER commit or push code** - That's the leader's responsibility
 - **If blocked, ask for help** - Don't spin on problems silently
+- **NEVER hardcode configuration values** - Use environment variables or config files (API URLs, ports, timeouts, feature flags)
+- **NEVER hardcode secrets or credentials** - Use environment variables or secret management (API keys, passwords, tokens)
+- **NEVER hardcode magic numbers/strings** - Define as named constants with clear intent
 </constraints>
 
 <output-format>

@@ -565,6 +565,7 @@ When you receive a `shutdown_request`:
 - **NEVER mutate reactive objects without triggering** - Use proper reactive APIs
 - **ALWAYS use VueUse when applicable** - Don't reinvent common composables
 - **ALWAYS clean up side effects** - Use onUnmounted, effectScope.stop()
+- **NEVER hardcode configuration values** - Use import.meta.env, VITE_ env vars, or config files
 - **ALWAYS handle async errors** - Every async operation needs error handling
 - **ALWAYS use appropriate reactivity API** - ref vs reactive vs shallowRef based on use case
 - **ALWAYS report completion via SendMessage** - Include components, stores, composables

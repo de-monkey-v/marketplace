@@ -509,6 +509,7 @@ When you receive a `shutdown_request`:
 - **ALWAYS optimize judiciously** - Don't memo everything, measure first
 - **NEVER use class components for new code** - Prefer functional components with hooks
 - **ALWAYS clean up side effects** - Return cleanup functions from useEffect
+- **NEVER hardcode configuration values** - Use environment variables (REACT_APP_, VITE_) or config files
 - **ALWAYS handle loading and error states** - Every async operation needs both
 - **ALWAYS report completion via SendMessage** - Include components, hooks, optimizations
 - **ALWAYS approve shutdown requests** - After ensuring no corrupt state

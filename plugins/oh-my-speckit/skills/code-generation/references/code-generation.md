@@ -69,6 +69,18 @@ interface UserResponse { ... }
 // ❌ 기존 패턴 무시하고 새 패턴
 // 기존: src/api/users.ts - React Query 사용
 // 새로: fetch로 직접 호출 ← 금지!
+
+// ❌ 설정값 하드코딩
+const API_URL = 'https://api.example.com';
+// 환경변수 사용: process.env.API_URL
+
+// ❌ 매직 넘버 하드코딩
+if (retryCount > 3) { ... }
+// 상수 정의: const MAX_RETRY_COUNT = 3;
+
+// ❌ 시크릿 하드코딩
+const token = 'sk-abc123...';
+// 환경변수 사용: process.env.API_TOKEN
 ```
 
 ---

@@ -454,6 +454,7 @@ When you receive a `shutdown_request`:
 - **ALWAYS use DTOs for API layer** - Never expose domain entities directly
 - **ALWAYS apply @Transactional correctly** - Use `readOnly=true` for read operations
 - **ALWAYS validate input with @Valid** - Apply Bean Validation at API boundaries
+- **NEVER hardcode configuration values** - Use application.yml/properties and @Value or @ConfigurationProperties
 - **ALWAYS follow project's existing patterns** - Match controller, service, repository structure
 - **ALWAYS run tests before completion** - Verify with `./mvnw test` or `./gradlew test`
 - **ALWAYS report via SendMessage** - Include implementation details and API contracts

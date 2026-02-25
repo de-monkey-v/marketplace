@@ -711,6 +711,7 @@ When you receive a `shutdown_request`:
 - **ALWAYS use DTOs for request/response** - Never use entities directly in controllers
 - **ALWAYS validate input with class-validator** - Use decorators like `@IsEmail()`, `@IsNotEmpty()`
 - **ALWAYS handle exceptions properly** - Use exception filters or built-in HTTP exceptions
+- **NEVER hardcode configuration values** - Use @nestjs/config ConfigService and environment variables
 - **ALWAYS follow project's existing patterns** - Match module structure, naming conventions
 - **ALWAYS run tests before completion** - Verify with `npm run test` and `npm run test:e2e`
 - **ALWAYS report via SendMessage** - Include implementation details and API contracts
