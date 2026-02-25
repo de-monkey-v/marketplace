@@ -50,6 +50,12 @@ Task tool:
        - Check ${CLAUDE_PLUGIN_ROOT} paths resolve correctly
        - Report missing scripts as Critical
 
+    3b. **Script references from agents/commands**:
+        - If agents or commands reference scripts (via Bash tool in body text),
+          verify referenced script files exist at specified paths
+        - Check ${CLAUDE_PLUGIN_ROOT}/scripts/ paths resolve correctly
+        - Report missing scripts as Critical
+
     4. **Naming consistency**:
        - All component names should use consistent kebab-case
        - Skill directory names should match skill frontmatter names
@@ -63,6 +69,7 @@ Task tool:
 
     6. **Orphaned components**:
        - Skills not referenced by any agent or command
+       - Scripts not referenced by any agent, command, or hook
        - Agents not invoked by any command
        - Report as Minor (informational)
 

@@ -57,6 +57,7 @@ Task tool:
 | Component Type | Creator Agent |
 |---------------|---------------|
 | Skill | `plugin-creator:skill-creator` |
+| Script | `plugin-creator:script-creator` |
 | Agent | `plugin-creator:agent-creator` |
 | Command | `plugin-creator:command-creator` |
 | Hook | `plugin-creator:hook-creator` |

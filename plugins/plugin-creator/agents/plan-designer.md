@@ -116,24 +116,28 @@ When additional questions are needed, proceed based on user request.
 Automatically design based on collected information.
 
 1. **Determine Required Skills**: Identify areas requiring domain knowledge and where guidelines/rules are needed
-2. **Assess Agent Needs**: Complex multi-step tasks → agents needed; Simple knowledge provision → skills alone are sufficient
-3. **Design Commands**: Define user entry points, determine command names and arguments
-4. **Assess Hook Needs**: Whether event-based automation is needed, select appropriate event types
+2. **Assess Script Needs**: Code execution required (API calls, data processing, validation logic) → scripts needed. Decide Bash vs Python, placement (plugin-level vs skill-level)
+3. **Assess Agent Needs**: Complex multi-step tasks → agents needed; Simple knowledge provision → skills alone are sufficient
+4. **Design Commands**: Define user entry points, determine command names and arguments
+5. **Assess Hook Needs**: Whether event-based automation is needed, select appropriate event types
 
 Apply mode-specific path rules:
 
 | Component | Project Mode | Plugin Mode |
 |-----------|-------------|-------------|
 | Skills | `.claude/skills/{name}/SKILL.md` | `{plugin}/skills/{name}/SKILL.md` |
+| Scripts | `.claude/scripts/` | `{plugin}/scripts/` |
 | Agents | `.claude/agents/{name}.md` | `{plugin}/agents/{name}.md` |
 | Commands | `.claude/commands/{name}.md` or `.claude/commands/{ns}/{name}.md` | `{plugin}/commands/{name}.md` |
 | Hooks | `.claude/hooks.json` | `{plugin}/hooks/hooks.json` |
 | Manifest | None | `{plugin}/.claude-plugin/plugin.json` |
 
-Apply Skill → Agent → Command pattern:
+Apply Skill → Script → Agent → Command pattern:
 ```
 Skills (Knowledge/Guides)
     ↓ referenced by
+Scripts (Executable Utilities)
+    ↓ used by
 Agents (Automated Execution)
     ↓ called by
 Commands (User Entry Points)
@@ -156,6 +160,9 @@ Display design results as text:
 **Skills** ({count})
 - `skill-name-1`: {Purpose} - {When to use}
 - `skill-name-2`: {Purpose} - {When to use}
+
+**Scripts** ({count} or "None")
+- `script-name.sh/.py`: {Purpose} - {Location: scripts/ or skills/*/scripts/}
 
 **Agents** ({count} or "None")
 - `agent-name-1`: {Purpose} - {Triggers}
@@ -249,12 +256,17 @@ Use Write tool with the plan file format:
 |-------|-----------|------|---------------|
 | skill-creator | {name} | {base}/skills/{name}/SKILL.md | {purpose, triggers, key content} |
 
-### Step 2: Agents (create after skills)
+### Step 2: Scripts (create after skills, before agents)
+| Agent | Script Name | Path | Specification |
+|-------|------------|------|---------------|
+| script-creator | {name}.sh/.py | {base}/scripts/{name} or {base}/skills/{skill}/scripts/{name} | {purpose, type (bash/py), interface, dependencies} |
+
+### Step 3: Agents (create after skills and scripts)
 | Agent | Agent Name | Path | Specification |
 |-------|-----------|------|---------------|
 | agent-creator | {name} | {base}/agents/{name}.md | {purpose, triggers, model, tools, skills to load} |
 
-### Step 3: Commands (create after agents)
+### Step 4: Commands (create after agents)
 | Agent | Command Name | Path | Specification |
 |-------|-------------|------|---------------|
 | command-creator | {name} | {base}/commands/{name}.md or {base}/commands/{namespace}/{name}.md | {purpose, workflow, agents to call, namespace if used} |
@@ -263,7 +275,7 @@ Use Write tool with the plan file format:
 - With namespace: `.claude/commands/{namespace}/{name}.md` → `/{namespace}:{name}`
 - Without namespace: `.claude/commands/{name}.md` → `/{name}`
 
-### Step 4: Hooks (if needed)
+### Step 5: Hooks (if needed)
 | Agent | Event | Path | Specification |
 |-------|-------|------|---------------|
 | hook-creator | {event} | {Project: `.claude/hooks.json` | Plugin: `{base}/hooks/hooks.json`} | {matcher, action} |

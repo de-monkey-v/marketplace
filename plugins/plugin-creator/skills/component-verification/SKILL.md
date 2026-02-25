@@ -37,6 +37,7 @@ Cross-Component Validation (Phase 3)
 | Agent | 2 parallel | claude-code-guide x2 | [agent-checks.md](references/agent-checks.md) |
 | Command | 2 parallel | claude-code-guide x2 | [command-checks.md](references/command-checks.md) |
 | Hook | 2 parallel | claude-code-guide x2 | [hook-checks.md](references/hook-checks.md) |
+| Script | 2 parallel | claude-code-guide x2 | [script-checks.md](references/script-checks.md) |
 
 ### Skill Verification (3 Tasks)
 
@@ -67,9 +68,16 @@ Cross-Component Validation (Phase 3)
 | V1 | Event type validity | 17 valid events (PreToolUse, PostToolUse, etc.), matcher pattern |
 | V2 | Script security | Command injection vulnerabilities, `${CLAUDE_PLUGIN_ROOT}` path usage, execution permissions |
 
+### Script Verification (2 Tasks)
+
+| # | Focus | Key Checks |
+|---|-------|------------|
+| V1 | Structure & quality | Shebang, error handling (set -euo pipefail / try-except), documentation header, portable paths, exit codes |
+| V2 | Script security | No hardcoded secrets, input validation, command injection prevention, variable quoting, safe temp files |
+
 ## Verification Execution Pattern
 
-For each component type (Skills -> Agents -> Commands -> Hooks):
+For each component type (Skills -> Scripts -> Agents -> Commands -> Hooks):
 
 1. **Create components** — Same-type components in parallel via Creator agent Tasks
 2. **Verify each component** — Launch type-specific verification Tasks in parallel
@@ -143,5 +151,6 @@ See [cross-component.md](references/cross-component.md) for detailed patterns.
 - **[references/agent-checks.md](references/agent-checks.md)** — Agent verification: 2 parallel Task prompt templates
 - **[references/command-checks.md](references/command-checks.md)** — Command verification: 2 parallel Task prompt templates
 - **[references/hook-checks.md](references/hook-checks.md)** — Hook verification: 2 parallel Task prompt templates
+- **[references/script-checks.md](references/script-checks.md)** — Script verification: 2 parallel Task prompt templates
 - **[references/auto-fix-loop.md](references/auto-fix-loop.md)** — Auto-fix loop patterns and escalation
 - **[references/cross-component.md](references/cross-component.md)** — Phase 3 cross-component validation

@@ -185,15 +185,15 @@ Parse `## Delegation Instructions` section.
 
 ### Step 2: Create Base Structure
 
-- **Project Mode:** `mkdir -p .claude/skills .claude/agents .claude/commands`
-- **Plugin Mode:** Create dirs + Write `plugin.json`
+- **Project Mode:** `mkdir -p .claude/skills .claude/agents .claude/commands .claude/scripts`
+- **Plugin Mode:** Create dirs (including scripts/) + Write `plugin.json`
 
 ### Step 3: Create & Verify Components
 
 **Per-component verification pipeline.**
 Follow loaded `component-verification` skill guidelines.
 
-**Type-by-type sequential execution (Skills -> Agents -> Commands -> Hooks):**
+**Type-by-type sequential execution (Skills -> Scripts -> Agents -> Commands -> Hooks):**
 
 For each type:
 1. **Create** same-type components in parallel via Creator agent Task calls
@@ -201,6 +201,7 @@ For each type:
    - Prompt includes `<task-context>`, `<specification>`, `<instructions>`
 2. **Verify** each component — launch type-specific parallel verification Tasks
    - Skill: `references/skill-checks.md` — 3 parallel Tasks
+   - Script: `references/script-checks.md` — 2 parallel Tasks
    - Agent: `references/agent-checks.md` — 2 parallel Tasks
    - Command: `references/command-checks.md` — 2 parallel Tasks
    - Hook: `references/hook-checks.md` — 2 parallel Tasks

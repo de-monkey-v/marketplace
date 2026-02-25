@@ -230,6 +230,7 @@ Follow `modify-safety` skill, `references/deletion-safety.md`:
 
 **After modification, verify** per loaded `component-verification` skill:
 - Skill: `references/skill-checks.md` — 3 parallel Tasks
+- Script: `references/script-checks.md` — 2 parallel Tasks
 - Agent: `references/agent-checks.md` — 2 parallel Tasks
 - Command: `references/command-checks.md` — 2 parallel Tasks
 - Hook: `references/hook-checks.md` — 2 parallel Tasks
@@ -315,6 +316,7 @@ Update "Phase 4" task to `completed`.
 | Component | Project Mode | Plugin Mode |
 |-----------|-------------|-------------|
 | Skills | `.claude/skills/{name}/SKILL.md` | `{plugin}/skills/{name}/SKILL.md` |
+| Scripts | `.claude/scripts/` or `.claude/skills/*/scripts/` | `{plugin}/scripts/` or `{plugin}/skills/*/scripts/` |
 | Agents | `.claude/agents/{name}.md` | `{plugin}/agents/{name}.md` |
 | Commands | `.claude/commands/{name}.md` | `{plugin}/commands/{name}.md` |
 | Hooks | `.claude/hooks.json` | `{plugin}/hooks/hooks.json` |
@@ -325,6 +327,7 @@ Update "Phase 4" task to `completed`.
 | Type | Tasks | Agents |
 |------|-------|--------|
 | Skill | 3 parallel | skill-reviewer + ccg x2 |
+| Script | 2 parallel | ccg x2 |
 | Agent | 2 parallel | ccg x2 |
 | Command | 2 parallel | ccg x2 |
 | Hook | 2 parallel | ccg x2 |
@@ -335,6 +338,7 @@ Update "Phase 4" task to `completed`.
 | Operation | Check | Skill Reference |
 |-----------|-------|-----------------|
 | Delete | Pre + Post check | modify-safety/deletion-safety.md |
+| Modify/Add Script | Script-specific verification | component-verification/script-checks.md |
 | Modify/Add | Type-specific verification | component-verification/{type}-checks.md |
 | All | Cross-component + Regression | cross-component.md + regression-check.md |
 
@@ -343,6 +347,7 @@ Update "Phase 4" task to `completed`.
 | Component | Dependencies |
 |-----------|-------------|
 | Skills | Referenced by agents, commands |
+| Scripts | Referenced by agents, commands, hooks |
 | Agents | Called from commands via Task |
 | Hooks | Depend on script files |
 | Commands | May reference agents/skills |
