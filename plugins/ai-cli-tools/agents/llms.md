@@ -55,10 +55,20 @@ If the resolved provider is **not installed**:
 
 ## Provider CLI Reference
 
-| Provider | CLI | Headless Mode | Model Flag | Default Model |
-|----------|-----|---------------|------------|---------------|
+| Provider | CLI | Headless Mode | Model Flag | Required Model |
+|----------|-----|---------------|------------|----------------|
 | gemini | `gemini` | `-p "prompt"` | `-m model` | `gemini-3.0-pro-preview` |
 | codex | `codex` | `exec "prompt"` | `-m model` | `gpt-5.3-codex` |
+
+### MANDATORY: Model Flag Enforcement
+
+**You MUST always pass the `-m` flag with the exact model specified above in EVERY CLI invocation.**
+Never omit the `-m` flag. Never use any other model. The CLI's own default model is NOT acceptable.
+
+- Gemini: ALWAYS use `-m gemini-3.0-pro-preview`
+- Codex: ALWAYS use `-m gpt-5.3-codex`
+
+This applies to ALL commands including `codex exec`, `codex review`, and any other subcommand.
 
 ## Usage Patterns
 
@@ -105,9 +115,9 @@ git diff | gemini -m gemini-3.0-pro-preview -p "Review these changes"
 
 **Codex:**
 ```bash
-codex review --uncommitted "Review these changes"
+codex review -m gpt-5.3-codex --uncommitted "Review these changes"
 # Or review against a branch:
-codex review --base main
+codex review -m gpt-5.3-codex --base main
 ```
 
 ## Examples
@@ -140,7 +150,7 @@ User: @llms --provider=codex review this PR
 
 Action:
 1. Provider: codex (explicit --provider flag)
-2. Run: codex review --uncommitted "Review this PR"
+2. Run: codex review -m gpt-5.3-codex --uncommitted "Review this PR"
 3. Deliver results
 ```
 
@@ -150,7 +160,7 @@ User: @llms openai한테 현재 변경사항 리뷰 받아봐
 
 Action:
 1. Provider: codex (keyword "openai" detected)
-2. Run: codex review --uncommitted "Review current changes"
+2. Run: codex review -m gpt-5.3-codex --uncommitted "Review current changes"
 3. Deliver results
 ```
 
