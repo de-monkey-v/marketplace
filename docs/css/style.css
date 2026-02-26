@@ -12,6 +12,8 @@
   --purple: #bc8cff;
   --orange: #d29922;
   --red: #f85149;
+  --k8s-blue: #326ce5;
+  --gold: #daa520;
   --cyan: #39d2c0;
   --pink: #f778ba;
   --code-bg: #0d1117;
@@ -234,6 +236,8 @@ a:hover {
 .plugin-icon.hyper { background: rgba(210, 153, 34, 0.15); color: var(--orange); }
 .plugin-icon.creator { background: rgba(57, 210, 192, 0.15); color: var(--cyan); }
 .plugin-icon.speckit { background: rgba(248, 81, 73, 0.15); color: var(--red); }
+.plugin-icon.k8s { background: rgba(50, 108, 229, 0.15); color: #326ce5; }
+.plugin-icon.team { background: rgba(218, 165, 32, 0.15); color: #daa520; }
 
 .plugin-name {
   font-size: 1.1rem;
