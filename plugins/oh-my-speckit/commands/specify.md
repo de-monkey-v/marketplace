@@ -247,6 +247,7 @@ Task tool:
 - subagent_type: "claude-team:planner"
 - team_name: "specify-{spec-id}"
 - name: "pm"
+- model: "opus"
 - description: "pm: 요구사항 분석"
 - run_in_background: true
 - prompt: |
@@ -267,6 +268,7 @@ Task tool:
 - subagent_type: "claude-team:architect"
 - team_name: "specify-{spec-id}"
 - name: "architect"
+- model: "opus"
 - description: "architect: 코드베이스 분석"
 - run_in_background: true
 - prompt: |
@@ -286,6 +288,7 @@ Task tool:
 - subagent_type: "claude-team:reviewer"
 - team_name: "specify-{spec-id}"
 - name: "critic"
+- model: "opus"
 - description: "critic: 비판적 검토"
 - run_in_background: true
 - prompt: |

@@ -263,6 +263,7 @@ Task tool:
 - subagent_type: "claude-team:tester"
 - team_name: "verify-{spec-id}"
 - name: "qa"
+- model: "opus"
 - description: "qa: 테스트 검증"
 - run_in_background: true
 - prompt: |
@@ -296,6 +297,7 @@ Task tool:
 - subagent_type: "claude-team:reviewer"
 - team_name: "verify-{spec-id}"
 - name: "critic"
+- model: "opus"
 - description: "critic: 비판적 검토"
 - run_in_background: true
 - prompt: |
@@ -323,6 +325,7 @@ Task tool:
 - subagent_type: "claude-team:architect"
 - team_name: "verify-{spec-id}"
 - name: "architect"
+- model: "opus"
 - description: "architect: 아키텍처 검증"
 - run_in_background: true
 - prompt: |

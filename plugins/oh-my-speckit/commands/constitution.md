@@ -207,6 +207,7 @@ Task tool:
 - subagent_type: "claude-team:researcher"
 - team_name: "constitution"
 - name: "researcher"
+- model: "opus"
 - description: "researcher: 프로젝트 분석"
 - run_in_background: true
 - prompt: |
@@ -290,6 +291,7 @@ Task tool:
 - subagent_type: "claude-team:researcher"
 - team_name: "constitution"
 - name: "researcher"
+- model: "opus"
 - description: "researcher: 업데이트 분석"
 - run_in_background: true
 - prompt: |

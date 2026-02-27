@@ -426,6 +426,7 @@ Task tool:
 - subagent_type: "claude-team:tester"
 - team_name: "implement-{spec-id}"
 - name: "qa"
+- model: "opus"
 - description: "qa: 테스트 + 요구사항 검증"
 - run_in_background: true
 - prompt: |
@@ -456,6 +457,7 @@ Task tool:
 - subagent_type: "claude-team:architect"
 - team_name: "implement-{spec-id}"
 - name: "architect"
+- model: "opus"
 - description: "architect: 아키텍처 가이드"
 - run_in_background: true
 - prompt: |
