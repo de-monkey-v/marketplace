@@ -1,20 +1,23 @@
 ---
 name: git-utils:commit
 description: Analyze changes and create a commit with auto-generated message
-argument-hint: "[--simple|-s] [--auto|-a] [message]"
+argument-hint: "[--simple|-s] [--auto|-a] [--push] [message]"
 allowed-tools: Bash, Read, Grep, Glob, AskUserQuestion
 ---
 
 <!--
 Usage: /git-utils:commit [options] [message]
 Examples:
-  /git-utils:commit                     # Detailed (default)
-  /git-utils:commit --simple            # Simple format
-  /git-utils:commit -s                  # Simple format (short)
-  /git-utils:commit "Fix bug"           # Detailed with title
-  /git-utils:commit -s "Fix bug"        # Simple with title
-  /git-utils:commit --auto               # Auto commit without confirmation
-  /git-utils:commit -a -s "Fix bug"      # Auto + Simple
+  /git-utils:commit                          # Detailed (default)
+  /git-utils:commit --simple                 # Simple format
+  /git-utils:commit -s                       # Simple format (short)
+  /git-utils:commit "Fix bug"                # Detailed with title
+  /git-utils:commit -s "Fix bug"             # Simple with title
+  /git-utils:commit --auto                   # Auto commit without confirmation
+  /git-utils:commit -a -s "Fix bug"          # Auto + Simple
+  /git-utils:commit --push                   # Commit + push
+  /git-utils:commit -a --all --push          # Auto commit all + push
+  /git-utils:commit -a --split --push        # Auto split commits + push
 -->
 
 Analyze Git changes and create a commit following Conventional Commits.
@@ -46,24 +49,35 @@ git diff --stat
 git diff --name-status
 ```
 
+If `--push` is present, also check remote tracking:
+```bash
+git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "NO_UPSTREAM"
+```
+
 ## Arguments Parsing
+
+**FIRST: Parse `$ARGUMENTS` and determine mode BEFORE doing anything else.**
 
 Parse `$ARGUMENTS`:
 - `--simple` or `-s`: Use simple format (numbered list)
-- `--auto` or `-a`: **Auto-commit only files modified by Claude** (no confirmation)
+- `--auto` or `-a`: Auto-commit mode (NO confirmation, NO preview)
 - `--all`: Include all changed files (use with `-a`: `-a --all`)
 - `--split`: Split commits by change type (use with `-a`: `-a --split`)
+- `--push`: Push to remote after commit completes
 - Remaining text: User-provided commit message/title
 
 **Default is DETAILED format (Conventional Commits with body).**
 
-### Auto Mode Behavior
+### Auto Mode (`-a`) — CRITICAL
 
-| Option | Behavior |
-|--------|----------|
-| `-a` | Commit only files Claude modified via Edit/Write in current session |
-| `-a --all` | Commit all changed files (legacy behavior) |
-| `-a --split` | Group related files and create separate commits per group |
+**When `-a` is present, you MUST NOT ask for confirmation. Proceed directly to commit.**
+
+| Option | File Scope | Confirmation |
+|--------|-----------|--------------|
+| `-a` | Only files Claude modified via Edit/Write in current session | **NEVER ask** |
+| `-a --all` | **ALL** changed files (staged + unstaged + untracked) | **NEVER ask** |
+| `-a --split` | Group related files, separate commits per group | **NEVER ask** |
+| *(no `-a`)* | All changed files | Ask user |
 
 ## Workflow
 
@@ -143,7 +157,7 @@ Parse `$ARGUMENTS`:
    - Look for issue numbers in recent context
 
 4. **User Confirmation**
-   - If `--auto` or `-a`: Skip confirmation, proceed directly
+   - **If `-a` (auto mode): SKIP this step entirely. Do NOT show preview. Go directly to Step 5.**
    - Otherwise: Show preview with message and files, request approval
 
 5. **Execute Commit**
@@ -159,8 +173,23 @@ Parse `$ARGUMENTS`:
    )"
    ```
 
-6. **Report Result**
-   Show commit hash, branch, and next steps
+6. **Push (if `--push`)**
+
+   Only execute this step when `--push` is present. Run after ALL commits are complete (including `--split`).
+
+   ```bash
+   # If no upstream, set it:
+   git push -u origin $(git branch --show-current)
+   # If upstream exists:
+   git push
+   ```
+
+   - `--split --push`: Create all split commits first, then push once at the end
+   - Push failure: Show error and suggest manual resolution (do NOT retry with `--force`)
+
+7. **Report Result**
+   Show commit hash, branch, and next steps.
+   If `--push` was used, include push result (remote URL, branch).
 
 ## Critical Rules
 
@@ -197,4 +226,4 @@ feat: subject          ← missing <>
 feat(scope): subject   ← missing <>
 ```
 
-**Always get user approval before executing commit.**
+**Get user approval before executing commit — UNLESS `-a` (auto mode) is present.**
