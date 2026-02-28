@@ -29,7 +29,7 @@ Detailed technical reference for the LLM proxy pattern, including architectural 
 ┌─────────────────────────────────────────────────────────────────┐
 │                    External LLM (CLI Tool)                      │
 │  • Codex CLI: codex --dangerously-bypass-approvals...          │
-│  • Gemini CLI: gemini -p "prompt"                              │
+│  • Gemini CLI: gemini -m gemini-3.1-pro-preview -p "prompt"                              │
 │  • Any CLI that accepts prompt and returns text                │
 └────────────────────────────┬────────────────────────────────────┘
                              │

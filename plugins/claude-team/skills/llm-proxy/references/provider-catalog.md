@@ -276,7 +276,7 @@ gemini [flags] -p "prompt"
 
 #### Example 1: Simple Research Query
 ```bash
-gemini -p "What are the key differences between REST and GraphQL APIs?"
+gemini -m gemini-3.1-pro-preview -p "What are the key differences between REST and GraphQL APIs?"
 ```
 
 #### Example 2: Summarize Large Document
@@ -300,7 +300,7 @@ gemini --json \
 
 #### Example 5: Multi-File Context
 ```bash
-gemini -p "Compare these two implementations:
+gemini -m gemini-3.1-pro-preview -p "Compare these two implementations:
 Implementation A: $(cat impl-a.js)
 Implementation B: $(cat impl-b.js)
 
@@ -524,7 +524,7 @@ llm_call() {
         fi
         ;;
       "gemini")
-        if gemini -p "$prompt"; then
+        if gemini -m gemini-3.1-pro-preview -p "$prompt"; then
           return 0
         fi
         ;;
@@ -606,7 +606,7 @@ env | grep -E 'OPENAI|GEMINI'
 3. **Test with Minimal Example**
 ```bash
 codex --dangerously-bypass-approvals-and-sandbox "echo hello"
-gemini -p "echo hello"
+gemini -m gemini-3.1-pro-preview -p "echo hello"
 ```
 
 4. **Enable Debug Logging**

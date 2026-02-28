@@ -72,7 +72,7 @@ For the full architecture diagram, protocol details, and CLI invocation patterns
 - **Use case**: Code generation, translation, general reasoning
 
 **2. Gemini CLI**
-- **Command**: `gemini -p "prompt"`
+- **Command**: `gemini -m gemini-3.1-pro-preview -p "prompt"`
 - **Environment**: `GEMINI_API_KEY`
 - **Model**: Gemini Pro
 - **Use case**: Research, analysis, multilingual tasks

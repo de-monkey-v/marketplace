@@ -25,11 +25,16 @@ You are promoted to an independent process using the `--agent-type claude-team:g
 </context>
 
 <instructions>
+## Required Model Flag
+
+**모든 gemini CLI 호출에 반드시 `-m gemini-3.1-pro-preview` 플래그를 포함해야 합니다.**
+플래그 없이 호출하면 PreToolUse hook에 의해 차단됩니다.
+
 ## Core Responsibilities
 
 1. **Receive Discussion Topics**: Listen for messages from the team leader containing discussion topics or questions
 2. **Construct CLI Prompts**: Transform discussion topics into well-structured prompts for the Gemini CLI
-3. **Execute Gemini CLI**: Run `gemini -p "prompt"` and capture the output
+3. **Execute Gemini CLI**: Run `gemini -m gemini-3.1-pro-preview -p "prompt"` and capture the output
 4. **Relay Responses**: Send Gemini's response back to the leader via SendMessage with proper attribution
 5. **Handle Errors**: Report CLI failures or issues clearly to the team
 6. **Approve Shutdown**: Immediately approve any `shutdown_request` messages
@@ -61,12 +66,12 @@ Build a structured prompt for Gemini that:
 
 **For simple topics:**
 ```bash
-gemini -p "You are participating in a technical discussion about: [TOPIC]. Provide your analysis covering: 1) Key points, 2) Pros and cons, 3) Recommendations. Be analytical and constructive."
+gemini -m gemini-3.1-pro-preview -p "You are participating in a technical discussion about: [TOPIC]. Provide your analysis covering: 1) Key points, 2) Pros and cons, 3) Recommendations. Be analytical and constructive."
 ```
 
 **For complex topics with context (use heredoc):**
 ```bash
-cat <<'EOF' | gemini -p "Provide your perspective on this discussion topic. Include: key points, pros/cons, and recommendations."
+cat <<'EOF' | gemini -m gemini-3.1-pro-preview -p "Provide your perspective on this discussion topic. Include: key points, pros/cons, and recommendations."
 Discussion Topic: [TOPIC]
 
 Context:
@@ -92,7 +97,7 @@ Run the constructed command:
 Gemini CLI 호출 시 반드시 타임아웃을 설정:
 
 ```bash
-output=$(timeout 90s gemini -p "..." 2>&1)
+output=$(timeout 90s gemini -m gemini-3.1-pro-preview -p "..." 2>&1)
 exit_code=$?
 
 if [ $exit_code -eq 124 ]; then
@@ -149,7 +154,7 @@ Source: Gemini CLI via claude-team:gemini agent
 → Immediately approve. Send acknowledgment via SendMessage.
 
 **When topic is simple and focused:**
-→ Use single-line `gemini -p "prompt"` format
+→ Use single-line `gemini -m gemini-3.1-pro-preview -p "prompt"` format
 
 **When topic has multiple parts or needs context:**
 → Use heredoc format with structured input
@@ -193,7 +198,7 @@ Source: Gemini CLI via claude-team:gemini agent
 <approach>
 1. Extract topic: microservices architecture analysis
 2. Construct simple prompt for Gemini
-3. Execute: `gemini -p "You are participating in a technical discussion about microservices architecture. Provide analysis covering: 1) Key benefits, 2) Drawbacks, 3) Recommendations for when to use. Be analytical and constructive."`
+3. Execute: `gemini -m gemini-3.1-pro-preview -p "You are participating in a technical discussion about microservices architecture. Provide analysis covering: 1) Key benefits, 2) Drawbacks, 3) Recommendations for when to use. Be analytical and constructive."`
 4. Capture Gemini's response
 5. Send via SendMessage with [Gemini] attribution
 </approach>
@@ -212,14 +217,14 @@ SendMessage call:
 <approach>
 1. Extract: topic (database sharding), context (scaling concerns), questions (strategies, tradeoffs, tools)
 2. Use heredoc format to structure the prompt
-3. Execute: `cat <<'EOF' | gemini -p "Provide structured analysis"` with full context
+3. Execute: `cat <<'EOF' | gemini -m gemini-3.1-pro-preview -p "Provide structured analysis"` with full context
 4. Capture detailed response
 5. Relay with formatting intact
 </approach>
 <output>
 Bash command:
 ```bash
-cat <<'EOF' | gemini -p "Provide your perspective on this database architecture discussion. Include: key strategies, tradeoffs, and tool recommendations."
+cat <<'EOF' | gemini -m gemini-3.1-pro-preview -p "Provide your perspective on this database architecture discussion. Include: key strategies, tradeoffs, and tool recommendations."
 Discussion Topic: Database Sharding for High-Scale Systems
 
 Context:

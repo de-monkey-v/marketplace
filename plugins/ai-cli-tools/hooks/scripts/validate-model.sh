@@ -21,11 +21,23 @@ fi
 # command가 비어있으면 통과
 [[ -z "$COMMAND" ]] && exit 0
 
-# is_cli_invocation: 주어진 도구명이 커맨드 위치에서 실행되는지 확인
-# 커맨드 위치 = 줄 시작, | 뒤, ; 뒤, && 뒤, || 뒤
+# is_cli_invocation: 주어진 도구명이 실제 CLI 인보케이션인지 확인
+# 1) 따옴표 내부 제거 → grep/find 인자 등 문자열로 전달된 경우 무시
+# 2) 비-인보케이션 패턴 제거 (command -v, which, type)
+# 3) 정리된 명령어에서 tool이 독립 단어로 남아있으면 인보케이션
 is_cli_invocation() {
   local tool="$1"
-  echo "$COMMAND" | grep -qE "(^|[|;&]\s*)${tool}(\s|$)"
+
+  # Step 1: 따옴표 내부 제거 (grep/find 인자 등 무시)
+  local stripped
+  stripped=$(echo "$COMMAND" | sed "s/'[^']*'//g; s/\"[^\"]*\"//g")
+
+  # Step 2: 비-인보케이션 패턴 제거 (command -v, which, type)
+  stripped=$(echo "$stripped" | sed -E "s/(command\s+-v|which|type(\s+-p)?)\s+${tool}//g")
+
+  # Step 3: 커맨드 위치에서 tool이 존재하는지 확인
+  # 커맨드 위치 = 줄 시작 또는 셸 구분자(|, ;, &&, ||) 뒤
+  echo "$stripped" | grep -qE "(^\s*|[|;&]+\s+)(sudo\s+|timeout\s+\S+\s+)*${tool}(\s|$)"
 }
 
 # gemini CLI 직접 호출 차단
