@@ -45,6 +45,76 @@ AskUserQuestion으로 탐색된 위치 확인:
 
 ---
 
+### Phase 1.5: 기술 스택 결정 (신규 프로젝트)
+
+**기존 프로젝트는 현행 스택을 우선 표시하고, 신규 프로젝트는 적극적으로 조사.**
+
+#### Step 1: 프로젝트 기존 스택 감지
+
+```bash
+# 기존 프로젝트 여부 확인
+ls package.json pyproject.toml pom.xml build.gradle Cargo.toml go.mod 2>/dev/null
+```
+
+- 기존 프로젝트면 → 현행 스택을 기본값으로 설정, 변경 필요시에만 비교
+- 신규 프로젝트면 → 아래 Step 2로 진행
+
+#### Step 2: WebSearch로 최신 프레임워크/도구 조사
+
+**smart-searcher** 에이전트 호출:
+
+```
+Task:
+- subagent_type: "search:smart-searcher"
+- description: "기술 스택 조사"
+- prompt: |
+    [영역]별 프레임워크/도구 조사:
+    - GitHub Stars, npm weekly downloads
+    - 최신 버전 및 릴리스 주기
+    - 생태계 성숙도 (플러그인, 문서, 커뮤니티)
+    - 벤치마크 성능 (해당시)
+```
+
+**조사 영역:**
+- 프론트엔드: React/Next.js vs Vue/Nuxt vs Svelte/SvelteKit vs Angular
+- 백엔드: NestJS vs FastAPI vs Spring Boot vs Go/Gin vs Rust/Axum
+- DB: PostgreSQL vs MySQL vs MongoDB vs SQLite
+- ORM: Prisma vs Drizzle vs TypeORM vs SQLAlchemy
+- 아키텍처: Clean Architecture vs DDD vs Hexagonal vs Vertical Slice
+- 인프라: Vercel vs AWS vs GCP vs Cloudflare
+- CI/CD: GitHub Actions vs GitLab CI vs CircleCI
+
+#### Step 3: 비교표 생성
+
+각 영역별 2-4개 후보를 비교표로 작성:
+
+```markdown
+#### 프론트엔드
+
+| 후보 | GitHub Stars | npm weekly | 최신 버전 | 성숙도 | 선택 |
+|------|------------|-----------|----------|--------|------|
+| Next.js | 130k | 7M | 15.x | 높음 | **선택** |
+| Nuxt | 55k | 1M | 3.x | 높음 | - |
+
+**선택**: Next.js
+**근거**: 가장 큰 생태계, React 기반 기업 채용 시장 우위
+```
+
+#### Step 4: AskUserQuestion으로 각 영역 선택 확인
+
+```
+AskUserQuestion:
+- question: "프론트엔드 프레임워크를 선택해주세요."
+- options:
+  - "Next.js (권장)"
+  - "Nuxt"
+  - "SvelteKit"
+```
+
+#### Step 5: 기술 결정을 plan.md 기술 스택 결정 섹션에 기록
+
+---
+
 ### Phase 2: 조사 및 제안
 
 **스펙을 바로 작성하지 않고, 먼저 조사 후 사용자에게 제안.**
@@ -149,22 +219,24 @@ Task tool:
 
 ---
 
-### Phase 5: 스펙 문서 작성
+### Phase 5: plan.md Part 1 작성
 
-**spec.md 핵심 섹션:**
+**plan.md Part 1: Specification 핵심 섹션:**
 
 - 메타데이터 (ID, Status, Priority, Created)
 - 요청 이력
 - 개요
 - 아키텍처 컨텍스트
 - 사용자 스토리
-- 기능 요구사항 (FR)
+- 기능 요구사항 (FR) -- AC 포함
 - 비기능 요구사항 (NFR)
 - 엣지 케이스
-- 기술 스택
+- 기술 결정 (Phase 2에서 결정된 사항)
+- 기술 스택 결정 (Phase 1.5에서 결정된 사항)
 - 제약 조건
+- 구현 범위 제한 (YAGNI)
 
-**템플릿**: `spec-template.md` 참조
+**템플릿**: `../plan-writing/references/plan-template.md` 참조
 
 ---
 
@@ -172,13 +244,13 @@ Task tool:
 
 **Verify에서 "스펙 불명확" 실패 시 재진입:**
 
-1. 기존 spec.md 읽기
-2. 불명확한 부분 목록 확인
+1. 기존 plan.md 읽기
+2. Part 1의 불명확한 부분 목록 확인
 3. AskUserQuestion으로 명확화
 4. **수정 이력 기록**:
    ```markdown
    N. **YYYY-MM-DD HH:MM** - [수정 요약]
       > [수정 요청 내용]
    ```
-5. spec.md 업데이트
+5. plan.md Part 1 업데이트
 6. design으로 재진입 안내

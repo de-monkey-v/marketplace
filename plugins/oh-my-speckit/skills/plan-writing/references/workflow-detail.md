@@ -14,18 +14,20 @@
 
 ---
 
-### Phase 1: 스펙 로드
+### Phase 1: 요구사항 파싱
+
+plan.md Part 1에서 요구사항을 파싱합니다.
 
 ```bash
-ls ${PROJECT_ROOT}/.specify/specs/
-cat ${PROJECT_ROOT}/.specify/specs/[spec-id]/spec.md
+cat ${PROJECT_ROOT}/.specify/specs/[spec-id]/plan.md
 ```
 
-**파싱 항목:**
-- 기능 요구사항 (FR) 목록
+**파싱 항목 (Part 1에서):**
+- 기능 요구사항 (FR) 목록 + AC
 - 비기능 요구사항 (NFR) 목록
 - 아키텍처 컨텍스트
-- 기술 스택
+- 기술 스택 결정
+- 기술 결정 (TD)
 
 ---
 
@@ -52,10 +54,10 @@ cat ${PROJECT_ROOT}/.specify/memory/constitution.md
 Task tool:
 - subagent_type: "oh-my-speckit:codebase-explorer"
 - prompt: |
-    프로젝트 구조와 아키텍처 패턴 분석. [spec.md 요약] 구현을 위한 관련 코드 탐색.
+    프로젝트 구조와 아키텍처 패턴 분석. plan.md Part 1 요약 구현을 위한 관련 코드 탐색.
 
     **중복 방지 분석 (CRITICAL):**
-    1. spec.md의 각 FR에 대해 유사 기능 존재 여부 확인
+    1. plan.md의 각 FR에 대해 유사 기능 존재 여부 확인
     2. 재사용 가능한 코드 목록 작성 (필수)
     3. 새로 작성 필요한 코드와 재사용 코드 구분
     4. 기존 코드 수정 시 영향 범위 분석
@@ -147,7 +149,7 @@ Task:
 Task tool:
 - subagent_type: "oh-my-speckit:architecture-planner"
 - prompt: |
-    spec.md 요구사항과 codebase-explorer 분석 결과 기반 plan.md 작성.
+    plan.md Part 1 요구사항과 codebase-explorer 분석 결과 기반 plan.md Part 2 작성.
     파일 경로: .specify/specs/[spec-id]/plan.md
 ```
 
@@ -157,18 +159,18 @@ Task tool:
 3. E2E 테스트 시나리오 정의
 4. Breaking Change 분석
 5. 기술 결정 문서화
-6. plan.md 파일 생성
+6. plan.md Part 2 작성
 
 ---
 
-### Phase 5.5: Spec/Plan 정합성 검증
+### Phase 5.5: Plan 정합성 검증
 
 **spec-plan-validator 에이전트 호출:**
 
 ```
 Task tool:
 - subagent_type: "oh-my-speckit:spec-plan-validator"
-- prompt: "spec.md: [경로], plan.md: [경로]. 정합성 검증."
+- prompt: "plan.md: [경로]. Part 1과 Part 2 정합성 검증."
 ```
 
 | 결과 | 액션 |
@@ -179,7 +181,7 @@ Task tool:
 
 ---
 
-## plan.md 필수 섹션
+## plan.md Part 2 필수 섹션
 
 ### FR 매핑 테이블
 
@@ -226,8 +228,8 @@ Task tool:
 
 **Verify에서 "요구사항 미충족 (설계)" 실패 시:**
 
-1. 기존 spec.md, plan.md 로드
+1. 기존 plan.md 로드
 2. verify 실패 리포트에서 미충족 FR 확인
-3. plan.md에 누락된 Phase/Task 추가
+3. plan.md Part 2에 누락된 Phase/Task 추가
 4. 사용자 승인 후 업데이트
 5. implement로 재진입 안내

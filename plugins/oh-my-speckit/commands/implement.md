@@ -6,7 +6,7 @@ allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, Task, Skill
 
 # Implement Command
 
-spec.md와 plan.md를 기반으로 코드를 구현합니다.
+plan.md를 기반으로 코드를 구현합니다.
 Claude Code 네이티브 Task tool로 팀메이트를 스폰하고, Agent Teams 프로토콜로 협업합니다.
 
 > GPT 모드(cli-proxy-api)가 필요하면: `/oh-my-speckit:implement-gpt [spec-id] [--interactive]`
@@ -89,14 +89,13 @@ code-generation 스킬의 지식(기존 코드 우선 원칙, 패턴 준수)을 
 **spec-id 미지정 시:**
 ```
 Glob tool:
-- pattern: "${PROJECT_ROOT}/.specify/specs/*/spec.md"
+- pattern: "${PROJECT_ROOT}/.specify/specs/*/plan.md"
 ```
 
 spec 목록을 표시하고 AskUserQuestion으로 선택 요청.
 
 **문서 로드:**
 ```
-Read tool: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
 Read tool: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 ```
 
@@ -310,10 +309,9 @@ Task tool:
 - description: "developer: 코드 구현"
 - run_in_background: true
 - prompt: |
-    spec.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 
-    **먼저 spec.md를 Read하여 FR/AC(합격 기준)를 파악하세요.**
+    **먼저 plan.md의 Part 1을 Read하여 FR/AC(합격 기준)를 파악하세요.**
     plan.md의 체크리스트를 순서대로 구현해주세요.
     재사용 분석 섹션을 먼저 확인하고, 기존 코드 패턴을 따르세요.
     **각 체크박스 완료 시 해당 FR의 AC 기준 충족 여부를 자가 확인하세요.**
@@ -334,10 +332,9 @@ Task tool:
 - description: "developer-1: 코드 구현"
 - run_in_background: true
 - prompt: |
-    spec.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 
-    **먼저 spec.md를 Read하여 FR/AC(합격 기준)를 파악하세요.**
+    **먼저 plan.md의 Part 1을 Read하여 FR/AC(합격 기준)를 파악하세요.**
     plan.md의 체크리스트를 순서대로 구현해주세요.
     재사용 분석 섹션을 먼저 확인하고, 기존 코드 패턴을 따르세요.
     **각 체크박스 완료 시 해당 FR의 AC 기준 충족 여부를 자가 확인하세요.**
@@ -354,10 +351,9 @@ Task tool:
 - description: "developer-2: 코드 구현"
 - run_in_background: true
 - prompt: |
-    spec.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 
-    **먼저 spec.md를 Read하여 FR/AC(합격 기준)를 파악하세요.**
+    **먼저 plan.md의 Part 1을 Read하여 FR/AC(합격 기준)를 파악하세요.**
     plan.md의 체크리스트를 순서대로 구현해주세요.
     재사용 분석 섹션을 먼저 확인하고, 기존 코드 패턴을 따르세요.
     **각 체크박스 완료 시 해당 FR의 AC 기준 충족 여부를 자가 확인하세요.**
@@ -378,10 +374,9 @@ Task tool:
 - description: "frontend-dev: 프론트엔드 구현"
 - run_in_background: true
 - prompt: |
-    spec.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 
-    **먼저 spec.md를 Read하여 FR/AC(합격 기준)를 파악하세요.**
+    **먼저 plan.md의 Part 1을 Read하여 FR/AC(합격 기준)를 파악하세요.**
     plan.md의 체크리스트 중 프론트엔드 관련 항목을 순서대로 구현해주세요.
     재사용 분석 섹션을 먼저 확인하고, 기존 코드 패턴을 따르세요.
     담당 영역: UI 컴포넌트, 페이지, 클라이언트 상태 관리, API 호출 레이어
@@ -404,10 +399,9 @@ Task tool:
 - description: "backend-dev: 백엔드 구현"
 - run_in_background: true
 - prompt: |
-    spec.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 
-    **먼저 spec.md를 Read하여 FR/AC(합격 기준)를 파악하세요.**
+    **먼저 plan.md의 Part 1을 Read하여 FR/AC(합격 기준)를 파악하세요.**
     plan.md의 체크리스트 중 백엔드 관련 항목을 순서대로 구현해주세요.
     재사용 분석 섹션을 먼저 확인하고, 기존 코드 패턴을 따르세요.
     담당 영역: API 엔드포인트, 비즈니스 로직, DB 스키마/쿼리, 인증/인가
@@ -430,10 +424,9 @@ Task tool:
 - description: "qa: 테스트 + 요구사항 검증"
 - run_in_background: true
 - prompt: |
-    spec.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 
-    **먼저 spec.md를 Read하여 FR/AC(합격 기준)를 파악하세요.**
+    **먼저 plan.md의 Part 1을 Read하여 FR/AC(합격 기준)를 파악하세요.**
     developer 팀메이트가 구현을 완료하면 검증해주세요.
     developer와 직접 소통하여 변경 파일과 검증 범위를 확인하세요.
 
@@ -482,12 +475,11 @@ Task tool:
     외부 LLM(Gemini/Codex CLI)을 활용한 구현 자문 및 에러 분석을 수행합니다.
     3-phase 라이프사이클로 운영됩니다.
 
-    spec.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
     프로젝트 루트: {PROJECT_ROOT}
 
     **Phase 1 — 사전 분석 (즉시 수행):**
-    1. spec.md를 Read하여 FR/AC(합격 기준) 파악
+    1. plan.md의 Part 1을 Read하여 FR/AC(합격 기준) 파악
     2. plan.md를 Read하여 구현 계획 파악
     3. 수정 대상 기존 코드 파일을 Read
     4. Gemini CLI로 분석:
@@ -750,7 +742,7 @@ AskUserQuestion:
 
 ```
 Read tool: plan.md -> [ ] vs [x] 개수 파악
-Read tool: spec.md -> FR 목록 대비 qa 보고의 FR 충족 상태 확인
+Read tool: plan.md -> Part 1의 FR 목록 대비 qa 보고의 FR 충족 상태 확인
 ```
 
 | 확인 항목 | 조건 | 액션 |

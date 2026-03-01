@@ -1,12 +1,12 @@
 ---
 name: plan-writing
 description: This skill should be used when the user asks to "설계해줘", "설계", "구현 계획", "plan 작성", "plan.md 작성", "plan 만들어", "아키텍처 설계", "아키텍처 계획", "design plan", "create plan", or mentions creating implementation plans from spec. Provides knowledge for analyzing codebase and creating plan.md from spec.
-version: 1.0.0
+version: 1.1.0
 ---
 
 # Design
 
-spec.md를 기반으로 코드베이스를 분석하고 구현 계획(plan.md)을 작성하는 지식 가이드.
+기능 요청을 분석하고, 요구사항 정의(Part 1)와 구현 계획(Part 2)을 하나의 plan.md로 작성하는 지식 가이드.
 
 **Note:** 이 스킬은 specify 커맨드에서 plan 작성 시 리더와 explorer/analyst 팀메이트가 참조합니다.
 
@@ -21,21 +21,53 @@ specify → implement → verify
 
 | 항목 | 값 |
 |------|-----|
-| **입력** | `spec.md` |
+| **입력** | 기능 요청 (자연어) + 코드베이스 분석 결과 |
 | **출력** | `.specify/specs/{id}/plan.md` |
 | **핵심 팀메이트** | explorer, analyst |
+
+## 통합 plan.md 구조
+
+plan.md는 **Part 1: Specification**(요구사항)과 **Part 2: Implementation Plan**(구현 계획)을 하나로 통합합니다.
+
+```markdown
+# Plan: [기능명]
+
+## Part 1: Specification
+### 메타데이터
+### 요청 이력
+### 개요
+### 아키텍처 컨텍스트
+### 사용자 스토리 (US)
+### 기능 요구사항 (FR) -- AC 포함
+### 비기능 요구사항 (NFR)
+### 엣지 케이스 (EC)
+### 기술 결정 (TD)
+### 기술 스택 결정
+### 제약 조건
+### 구현 범위 제한 (YAGNI)
+
+## Part 2: Implementation Plan
+### 코드베이스 분석 결과
+### 재사용 분석
+### FR 매핑
+### 변경 파일
+### Breaking Change (해당시)
+### E2E 테스트 시나리오
+### 구현 단계 (Phase별 체크박스)
+### 검증 기준
+```
 
 ## 핵심 Phase
 
 | Phase | 내용 | 사용자 승인 |
 |-------|------|------------|
-| 1 | 스펙 로드 및 파싱 | - |
-| **1.5** | **기술 결정 파싱** | - |
+| 1 | 요구사항 분석 + 기능 파싱 | - |
+| **1.5** | **기술 결정 파싱 + 기술 스택 결정** | - |
 | 2 | Constitution 확인 | - |
 | 3 | 코드베이스 분석 (팀메이트) | - |
 | 3.5 | Breaking Change 분석 | ✅ 설계 방향 (기술 결정에 없을 때만) |
 | 4 | Plan 작성 (팀메이트) | ✅ Plan 초안 |
-| 5.5 | Spec/Plan 정합성 검증 | - |
+| 5.5 | Plan 정합성 검증 | - |
 
 ## 기술 결정 파싱 (Phase 1.5)
 
@@ -55,51 +87,25 @@ specify → implement → verify
 - `아키텍처 패턴` 결정 있음 → DDD 질문 건너뛰기
 - `인증 방식` 결정 있음 → 인증 방식 질문 건너뛰기
 
-## plan.md 핵심 구조
+## 기술 스택 결정 파싱 (Phase 1.5)
 
+**목적**: specify 단계에서 WebSearch를 통해 조사하고 결정된 기술 스택을 plan.md에 반영
+
+**파싱 대상:**
 ```markdown
-# [기능명] Plan
+### 기술 스택 결정
 
-## 메타데이터
-- Spec ID: {spec-id}
-- Status: Draft | Approved
-- Created: YYYY-MM-DD
+#### 프론트엔드
+| 후보 | GitHub Stars | npm weekly | 최신 버전 | 성숙도 | 선택 |
 
-## FR 매핑
+#### 백엔드
+| 후보 | GitHub Stars | 최신 버전 | 생태계 | 성숙도 | 선택 |
 
-| FR | AC (합격 기준) | Phase | 파일 | 검증 방법 |
-|-----|---------------|-------|------|----------|
-| FR-001 | [spec.md AC 인용] | 1 | src/... | 단위 테스트 / 통합 테스트 |
+#### 데이터베이스 / ORM
+| 영역 | 선택 | 버전 | 근거 |
 
-## 재사용 분석
-
-| 기존 코드 | 위치 | 재사용 방법 |
-|----------|------|------------|
-| helper() | src/utils/... | import |
-
-## 변경 파일
-
-### 생성
-- src/features/.../new.ts
-
-### 수정
-- src/services/existing.ts
-
-## 구현 단계
-
-### Phase 1: [제목]
-- [ ] Task 1.1
-- [ ] Task 1.2
-
-## E2E 테스트 시나리오
-
-| 시나리오 | 사전조건 | 액션 | 예상 결과 |
-|---------|---------|------|----------|
-| ... | ... | ... | ... |
-
-## Breaking Change (해당시)
-- V2 API: [목록]
-- Deprecated: [목록]
+#### 아키텍처 패턴
+| 항목 | 선택 | 근거 |
 ```
 
 ## 설계 방향 (Phase 2.5)
@@ -140,7 +146,7 @@ plan.md의 검증 기준은 implement에서 developer/qa가 직접 사용하는 
 
 ```
 verify 실패 → specify 재진입 (plan 작성)
-  1. 기존 spec.md, plan.md 로드
+  1. 기존 plan.md 로드
   2. 미충족 FR 식별
   3. plan.md 보완
   4. implement로 안내
@@ -150,8 +156,7 @@ verify 실패 → specify 재진입 (plan 작성)
 
 ```
 .specify/specs/{id}/
-├── spec.md   ← 입력
-└── plan.md   ← 산출물
+└── plan.md   ← 산출물 (Part 1 + Part 2 통합)
 ```
 
 ## 다음 단계
@@ -164,5 +169,5 @@ verify 실패 → specify 재진입 (plan 작성)
 
 | 파일 | 설명 |
 |------|------|
-| `references/plan-template.md` | Plan 문서 전체 템플릿 |
+| `references/plan-template.md` | 통합 Plan 문서 전체 템플릿 |
 | `references/workflow-detail.md` | Phase별 상세 절차 |

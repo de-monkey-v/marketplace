@@ -72,14 +72,13 @@ Phase 4: 최종 리포트 + 팀 해산
 **spec-id 미지정 시:**
 ```
 Glob tool:
-- pattern: "${PROJECT_ROOT}/.specify/specs/*/spec.md"
+- pattern: "${PROJECT_ROOT}/.specify/specs/*/plan.md"
 ```
 
 spec 목록을 표시하고 AskUserQuestion으로 선택 요청.
 
 **문서 로드:**
 ```
-Read tool: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
 Read tool: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 ```
 
@@ -281,7 +280,6 @@ SendMessage tool:
 - type: "message"
 - recipient: "qa"
 - content: |
-    spec.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
     프로젝트 루트: {PROJECT_ROOT}
     constitution 규칙: {constitution 내용 또는 "없음"}
@@ -308,7 +306,6 @@ SendMessage tool:
 - type: "message"
 - recipient: "critic"
 - content: |
-    spec.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
     프로젝트 루트: {PROJECT_ROOT}
 
@@ -333,7 +330,6 @@ SendMessage tool:
 - type: "message"
 - recipient: "architect"
 - content: |
-    spec.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
     프로젝트 루트: {PROJECT_ROOT}
 

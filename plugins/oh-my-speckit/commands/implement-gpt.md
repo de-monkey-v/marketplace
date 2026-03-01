@@ -6,7 +6,7 @@ allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, Task, Skill
 
 # Implement GPT Command
 
-spec.md와 plan.md를 기반으로 코드를 구현합니다.
+plan.md를 기반으로 코드를 구현합니다.
 GPT 모드(cli-proxy-api)로 팀메이트를 스폰하고, Agent Teams 프로토콜로 협업합니다.
 
 > Claude 네이티브 모드가 필요하면: `/oh-my-speckit:implement [spec-id] [--interactive]`
@@ -104,14 +104,13 @@ WINDOW_MODE일 때: spawn-teammate에 `--window` 전달
 **spec-id 미지정 시:**
 ```
 Glob tool:
-- pattern: "${PROJECT_ROOT}/.specify/specs/*/spec.md"
+- pattern: "${PROJECT_ROOT}/.specify/specs/*/plan.md"
 ```
 
 spec 목록을 표시하고 AskUserQuestion으로 선택 요청.
 
 **문서 로드:**
 ```
-Read tool: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
 Read tool: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 ```
 

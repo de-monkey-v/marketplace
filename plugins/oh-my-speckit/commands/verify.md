@@ -73,14 +73,13 @@ Phase 4: 최종 리포트 + 팀 해산
 **spec-id 미지정 시:**
 ```
 Glob tool:
-- pattern: "${PROJECT_ROOT}/.specify/specs/*/spec.md"
+- pattern: "${PROJECT_ROOT}/.specify/specs/*/plan.md"
 ```
 
 spec 목록을 표시하고 AskUserQuestion으로 선택 요청.
 
 **문서 로드:**
 ```
-Read tool: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
 Read tool: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 ```
 
@@ -267,7 +266,6 @@ Task tool:
 - description: "qa: 테스트 검증"
 - run_in_background: true
 - prompt: |
-    spec.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
     프로젝트 루트: {PROJECT_ROOT}
     constitution 규칙: {constitution 내용 또는 "없음"}
@@ -279,7 +277,7 @@ Task tool:
     verify의 qa는 implement에서 누락된 것을 잡는 **safety net** 역할입니다.
 
     **검증 항목:**
-    1. **FR/AC 재확인** -- spec.md의 각 FR에 대해 AC 기준이 실제로 충족되었는지 코드로 확인
+    1. **FR/AC 재확인** -- plan.md Part 1의 각 FR에 대해 AC 기준이 실제로 충족되었는지 코드로 확인
     2. 타입 체크, 린트, 테스트 실행, 커버리지 -- implement qa가 통과시킨 것의 재확인
     3. **코드 품질 심층 분석** -- implement에서 놓칠 수 있는 패턴 위반, 보안 이슈
     4. **implement에서 누락된 FR이 없는지 교차 검증**
@@ -301,15 +299,14 @@ Task tool:
 - description: "critic: 비판적 검토"
 - run_in_background: true
 - prompt: |
-    spec.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
     프로젝트 루트: {PROJECT_ROOT}
 
-    **spec.md의 각 FR/AC를 기준으로** 구현이 요구사항을 충족하는지 비판적으로 검토해주세요.
+    **plan.md Part 1의 각 FR/AC를 기준으로** 구현이 요구사항을 충족하는지 비판적으로 검토해주세요.
 
     **비판적 검토 초점:**
     1. AC를 형식적으로만 충족하고 실질적으로 미충족하는 경우 식별
-    2. spec.md EC(엣지 케이스)가 실제로 처리되었는지 확인
+    2. plan.md Part 1의 EC(엣지 케이스)가 실제로 처리되었는지 확인
     3. FR 간 상호작용에서 발생하는 미충족 시나리오 탐색
 
     qa 팀메이트와 검증 결과를 공유하고 누락된 테스트 시나리오를 찾아주세요.
@@ -329,7 +326,6 @@ Task tool:
 - description: "architect: 아키텍처 검증"
 - run_in_background: true
 - prompt: |
-    spec.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
     프로젝트 루트: {PROJECT_ROOT}
 
@@ -352,13 +348,12 @@ Task tool:
 - prompt: |
     외부 LLM(Gemini/Codex CLI)을 활용한 코드 리뷰 및 수정 분석을 수행합니다.
 
-    spec.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/spec.md
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
     프로젝트 루트: {PROJECT_ROOT}
     변경 파일 목록: [plan.md에서 추출]
 
     **검증 시 — 코드 리뷰 (즉시 수행):**
-    1. spec.md를 Read하여 **FR/AC(합격 기준)** 파악
+    1. plan.md의 Part 1을 Read하여 **FR/AC(합격 기준)** 파악
     2. 변경된 파일들을 Read
     3. Gemini CLI로 코드 리뷰:
        - 변경 파일을 pipe하여 gemini에게 리뷰 요청
