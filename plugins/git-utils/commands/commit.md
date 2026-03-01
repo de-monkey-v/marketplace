@@ -25,10 +25,11 @@ Analyze Git changes and create a commit following Conventional Commits.
 ## Language Resolution
 
 1. Check `$ARGUMENTS` for `--language=eng` or `--language=kor` → use if present
-2. Read `.hyper-team/metadata.json` → use `language` field if file exists
-3. Default: `eng`
+2. Check current conversation language and recent `git log` style
+3. Read `.hyper-team/metadata.json` only as a fallback hint when 1-2 are inconclusive
+4. Default: `kor`
 
-Produce all user-facing output in the resolved language. Write commit messages in the resolved language.
+Produce all user-facing output in the resolved language. Write the commit subject and body content in the resolved language. Keep section labels such as `What`, `Why`, `Impact`, and `Notes` in English unless the repository explicitly defines different labels.
 
 ## CRITICAL — Never Forget
 
@@ -106,41 +107,41 @@ Parse `$ARGUMENTS`:
 
    ### If `--simple` or `-s` flag:
    ```
-   <feat>: concise subject (max 50 chars)
+   <feat>: 간결한 제목 (50자 내외)
 
-   1. Primary change
-   2. Secondary change
-   3. Additional details (if needed)
+   1. 주요 변경 사항
+   2. 보조 변경 사항
+   3. 추가 설명 (필요 시)
    ```
 
    ### Default (Detailed Conventional Commits):
    ```
-   <feat>(scope): concise subject (max 50 chars)
+   <feat>(scope): 간결한 제목 (50자 내외)
 
-   ## What
-   Describe the specific changes made.
+   What
+   구체적으로 무엇을 바꿨는지 작성한다.
 
-   - `path/to/file.ts`: change summary
-   - Added classes/functions/methods
-   - Modified core logic
-   - Removed elements
+   - `path/to/file.ts`: 변경 요약
+   - 추가한 클래스/함수/메서드
+   - 수정한 핵심 로직
+   - 제거한 요소
 
-   ## Why
-   Explain the motivation and how it differs from previous behavior.
+   Why
+   왜 바꿨는지와 이전 동작 대비 차이를 작성한다.
 
-   - Background: context that led to the change
-   - Problem: specific issue being resolved
-   - Effect: expected improvements after the change
+   - Background: 변경 배경
+   - Problem: 해결하려는 문제
+   - Effect: 기대 효과
 
-   ## Impact — if applicable
-   - Affected features/modules
-   - Dependency changes (added/removed/updated)
-   - Performance impact
+   Impact — if applicable
+   - 영향 받는 기능/모듈
+   - 의존성 변경 (추가/제거/수정)
+   - 성능 영향
 
-   ## Notes — if applicable
-   - Test scenarios to verify
-   - Caveats
-   - Related documentation links
+   Notes — if applicable
+   - 확인할 테스트 시나리오
+   - 주의 사항
+   - 관련 문서 링크
 
    Fixes: #123
    Related: #456
@@ -194,8 +195,10 @@ Parse `$ARGUMENTS`:
 ## Critical Rules
 
 **Commit message language follows resolved language:**
-- Write the subject, What, and Why sections in the resolved language
+- Write the subject and bullet contents in the resolved language
+- Keep section labels such as `What`, `Why`, `Impact`, and `Notes` in English unless repo docs say otherwise
 - Code paths, issue numbers, and technical terms remain in their original form
+- If the user asks in Korean, keep the commit message content in Korean unless the repository explicitly requires another language
 
 **Signatures are NEVER allowed:**
 - `generated with [Claude Code]` — forbidden
@@ -215,9 +218,9 @@ Parse `$ARGUMENTS`:
 
 **Correct subject examples:**
 ```
-<feat>(auth): implement JWT authentication middleware
-<fix>(api): fix null error on user lookup
-<refactor>(domain): improve entity structure
+<feat>(auth): JWT 인증 미들웨어 추가
+<fix>(api): 사용자 조회 null 오류 수정
+<refactor>(domain): 엔티티 구조 정리
 ```
 
 **Wrong examples (NEVER do this):**

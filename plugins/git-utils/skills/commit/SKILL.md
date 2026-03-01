@@ -11,10 +11,11 @@ Analyze changes and generate meaningful commit messages following Conventional C
 ## Language Resolution
 
 1. Check `$ARGUMENTS` for `--language=eng` or `--language=kor` → use if present
-2. Read `.hyper-team/metadata.json` → use `language` field if file exists
-3. Default: `eng`
+2. Check current conversation language and recent `git log` style
+3. Read `.hyper-team/metadata.json` only as a fallback hint when 1-2 are inconclusive
+4. Default: `kor`
 
-Produce all user-facing output in the resolved language. Write commit messages in the resolved language.
+Produce all user-facing output in the resolved language. Write the commit subject and body content in the resolved language. Keep section labels such as `What`, `Why`, `Impact`, and `Notes` in English unless the repository explicitly defines different labels.
 
 ## Core Workflow
 
@@ -84,32 +85,32 @@ Also read CONTRIBUTING.md if present for commit conventions.
 **Default: Detailed Conventional Commits** (see `references/message-format.md`)
 
 ```
-<type>(scope): concise subject (max 50 chars)
+<type>(scope): 간결한 제목 (50자 내외)
 
-## What
-Describe the specific changes made.
+What
+구체적으로 무엇을 바꿨는지 작성한다.
 
-- `path/to/file.ts`: change summary
-- Added classes/functions/methods
-- Modified core logic
-- Removed elements
+- `path/to/file.ts`: 변경 요약
+- 추가한 클래스/함수/메서드
+- 수정한 핵심 로직
+- 제거한 요소
 
-## Why
-Explain the motivation and how it differs from previous behavior.
+Why
+왜 바꿨는지와 이전 동작 대비 차이를 작성한다.
 
-- Background: context that led to the change
-- Problem: specific issue being resolved
-- Effect: expected improvements after the change
+- Background: 변경 배경
+- Problem: 해결하려는 문제
+- Effect: 기대 효과
 
-## Impact — if applicable
-- Affected features/modules
-- Dependency changes (added/removed/updated)
-- Performance impact
+Impact — if applicable
+- 영향 받는 기능/모듈
+- 의존성 변경 (추가/제거/수정)
+- 성능 영향
 
-## Notes — if applicable
-- Test scenarios to verify
-- Caveats
-- Related documentation links
+Notes — if applicable
+- 확인할 테스트 시나리오
+- 주의 사항
+- 관련 문서 링크
 
 Fixes: #123
 Related: #456
@@ -124,11 +125,11 @@ BREAKING CHANGE: description of API change (if applicable)
 **Simple format (`--simple` flag):**
 
 ```
-<type>: concise subject (max 50 chars)
+<type>: 간결한 제목 (50자 내외)
 
-1. Primary change
-2. Secondary change
-3. Additional details (if needed)
+1. 주요 변경 사항
+2. 보조 변경 사항
+3. 추가 설명 (필요 시)
 ```
 
 Select commit type from `references/commit-types.md`.
@@ -156,11 +157,15 @@ If detected, warn and request confirmation.
 === Commit Preview ===
 
 Message:
-<feat>: Add user authentication API
+<feat>: 취미 정리 확인 플로우 추가
 
-1. Implement JWT token-based auth
-2. Add login/logout endpoints
-3. Integrate Spring Security
+What
+- 웹, rust-api, ai-service에 취미 제안 엔드포인트와 확인 UI를 추가함
+- 저장 후 재진입과 재저장 시 확정 취미 메타데이터가 유지되도록 read/write 계약을 정리함
+
+Why
+- 질문 수정 화면에서 카테고리와 근거 표현이 유실되는 회귀를 막기 위해
+- 취미 정규화 결과를 저장 전에 사용자가 확인하고 수정할 수 있게 하기 위해
 
 Files to commit:
 - src/main/java/UserService.java
@@ -179,11 +184,15 @@ Proceed with commit? (y/n)
 ```bash
 git add <selected-files>
 git commit -m "$(cat <<'EOF'
-<feat>: Add user authentication API
+<feat>: 취미 정리 확인 플로우 추가
 
-1. Implement JWT token-based auth
-2. Add login/logout endpoints
-3. Integrate Spring Security
+What
+- 웹, rust-api, ai-service에 취미 제안 엔드포인트와 확인 UI를 추가함
+- 저장 후 재진입과 재저장 시 확정 취미 메타데이터가 유지되도록 read/write 계약을 정리함
+
+Why
+- 질문 수정 화면에서 카테고리와 근거 표현이 유실되는 회귀를 막기 위해
+- 취미 정규화 결과를 저장 전에 사용자가 확인하고 수정할 수 있게 하기 위해
 EOF
 )"
 git status
@@ -207,10 +216,12 @@ Next steps:
 ### Commit message language follows metadata
 
 **Commit messages are written in the resolved language:**
-- Subject, What, Why sections — all in the resolved language
+- Subject and bullet contents — in the resolved language
+- Keep section labels such as `What`, `Why`, `Impact`, and `Notes` in English unless repo docs say otherwise
 - Code paths, issue numbers, and technical terms remain as-is
 - Example (eng): `<feat>(auth): implement user authentication`
-- Example (kor): `<feat>(auth): 사용자 인증 기능 추가`
+- Example (kor): `<feat>: 취미 정리 확인 플로우 추가`
+- If the user asks in Korean, keep the commit message content in Korean unless the repository explicitly requires another language
 
 ### Signatures are NEVER Allowed
 
@@ -226,8 +237,8 @@ Next steps:
 - Select from 11 valid types only
 - Space after colon
 
-**Correct:** `<feat>: add user authentication`
-**Wrong:** `feat: Add user auth` (no brackets)
+**Correct:** `<feat>: 사용자 인증 기능 추가`
+**Wrong:** `feat: 사용자 인증 기능 추가` (no brackets)
 
 ### User Confirmation Required
 

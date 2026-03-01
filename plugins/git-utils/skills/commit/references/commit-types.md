@@ -6,17 +6,17 @@ Complete list of commit types following CONTRIBUTING.md conventions.
 
 | Type | When to Use | Example |
 |------|-------------|---------|
-| `<feat>` | New feature | `<feat>: Add OAuth2 login` |
-| `<fix>` | Bug fix | `<fix>: Resolve null pointer in UserService` |
-| `<refactor>` | Code restructure (no behavior change) | `<refactor>: Extract validation logic` |
-| `<test>` | Add/modify tests | `<test>: Add unit tests for AuthService` |
-| `<docs>` | Documentation only | `<docs>: Update API documentation` |
-| `<style>` | Formatting (no logic change) | `<style>: Fix indentation in config` |
-| `<perf>` | Performance improvement | `<perf>: Optimize database queries` |
-| `<build>` | Build config changes | `<build>: Update Gradle dependencies` |
-| `<ci>` | CI configuration | `<ci>: Add GitHub Actions workflow` |
-| `<chore>` | Miscellaneous tasks | `<chore>: Update .gitignore` |
-| `<revert>` | Revert previous commit | `<revert>: Revert "Add OAuth2 login"` |
+| `<feat>` | New feature | `<feat>: OAuth2 로그인 추가` |
+| `<fix>` | Bug fix | `<fix>: UserService null 처리 수정` |
+| `<refactor>` | Code restructure (no behavior change) | `<refactor>: 검증 로직 분리` |
+| `<test>` | Add/modify tests | `<test>: AuthService 단위 테스트 추가` |
+| `<docs>` | Documentation only | `<docs>: API 문서 업데이트` |
+| `<style>` | Formatting (no logic change) | `<style>: config 들여쓰기 정리` |
+| `<perf>` | Performance improvement | `<perf>: 데이터베이스 조회 최적화` |
+| `<build>` | Build config changes | `<build>: Gradle 의존성 업데이트` |
+| `<ci>` | CI configuration | `<ci>: GitHub Actions 워크플로 추가` |
+| `<chore>` | Miscellaneous tasks | `<chore>: .gitignore 업데이트` |
+| `<revert>` | Revert previous commit | `<revert>: "OAuth2 로그인 추가" 되돌리기` |
 
 ## Type Selection Guide
 

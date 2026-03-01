@@ -73,4 +73,4 @@ Git workflow automation plugin - commit, branch, status check, and more.
 
 git, commit, branch, status, diff, log, version-control, automation
 
-> This plugin respects the language setting in `.hyper-team/metadata.json`. Run `/hyper-team:setup` to configure.
+> This plugin defaults commit content to Korean, keeps section labels like `What` and `Why` in English, and can use `.hyper-team/metadata.json` or `--language` as an override when needed.
