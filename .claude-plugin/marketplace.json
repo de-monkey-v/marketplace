@@ -52,6 +52,11 @@
       "name": "k8s-toolkit",
       "source": "./plugins/k8s-toolkit",
       "description": "Kubernetes, k3s, Helm 종합 인프라 지식 플러그인"
+    },
+    {
+      "name": "bkit",
+      "source": "./plugins/bkit",
+      "description": "Vibecoding Kit - PDCA methodology + CTO-Led Agent Teams for AI-native development"
     }
   ]
 }

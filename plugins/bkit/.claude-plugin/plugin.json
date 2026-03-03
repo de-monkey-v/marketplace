@@ -1,0 +1,28 @@
+{
+  "name": "bkit",
+  "version": "1.5.8",
+  "description": "Vibecoding Kit - PDCA methodology + CTO-Led Agent Teams + Claude Code mastery for AI-native development",
+  "author": {
+    "name": "POPUP STUDIO PTE. LTD.",
+    "email": "contact@popupstudio.ai",
+    "url": "https://popupstudio.ai"
+  },
+  "repository": "https://github.com/de-monkey-v/marketplace",
+  "homepage": "https://github.com/de-monkey-v/marketplace/tree/main/plugins/bkit",
+  "license": "Apache-2.0",
+  "keywords": [
+    "vibecoding",
+    "pdca",
+    "development-pipeline",
+    "ai-native",
+    "agentic",
+    "agent",
+    "automation",
+    "workflow",
+    "fullstack",
+    "multilingual",
+    "baas",
+    "enterprise"
+  ],
+  "outputStyles": "./output-styles/"
+}
