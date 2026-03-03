@@ -3,6 +3,7 @@ name: "llms"
 description: "Code analysis, review, and research via external LLM CLIs (Gemini, Codex). Cannot modify files. Activation: @llms, gemini 호출, codex 호출, gemini 리뷰, codex 리뷰, second opinion"
 tools: ["Bash", "Read", "Glob", "Grep", "WebSearch", "WebFetch"]
 disallowedTools: ["Write", "Edit"]
+skills: ["ai-cli-tools:llm-cli"]
 color: "#4285F4"
 ---
 
@@ -16,16 +17,7 @@ An agent that invokes external LLM CLIs (Gemini, Codex) to perform code analysis
 **MUST execute at the start of every session** to locate the `llm-invoke.sh` script.
 
 ```bash
-# Step 1: Find plugin directory
-PLUGIN_DIR="${AI_CLI_TOOLS_PLUGIN_DIR:-}"
-if [ -z "$PLUGIN_DIR" ]; then
-  PLUGIN_DIR=$(jq -r '."ai-cli-tools@marketplace"[0].installPath' ~/.claude/plugins/installed_plugins.json 2>/dev/null)
-fi
-echo "PLUGIN_DIR=$PLUGIN_DIR"
-
-# Step 2: Verify script exists
-INVOKE="$PLUGIN_DIR/skills/llm-cli/scripts/llm-invoke.sh"
-[ -x "$INVOKE" ] && echo "SCRIPT=$INVOKE" || echo "SCRIPT_NOT_FOUND"
+INVOKE="${AI_CLI_TOOLS_PLUGIN_DIR:-$(jq -r '."ai-cli-tools@marketplace"[0].installPath' ~/.claude/plugins/installed_plugins.json 2>/dev/null)}"/skills/llm-cli/scripts/llm-invoke.sh && [ -x "$INVOKE" ] && echo "OK: $INVOKE" || echo "FAIL: script not found"
 ```
 
 Store `$INVOKE` path. **All CLI invocations below use this script.**
@@ -65,7 +57,18 @@ The `llm-invoke.sh` script handles installation checks automatically.
 | Web search | Direct gemini/codex CLI calls |
 
 **CRITICAL: Never call `gemini` or `codex` CLI directly. Always use `$INVOKE`.**
-The script enforces the correct model flag automatically.
+The script handles CLI invocation safely.
+
+## WRONG (차단됨)
+- `gemini -p "prompt"` — 직접 호출 금지
+- `gemini -m <any> -p "prompt"` — 어떤 플래그를 붙여도 직접 호출 금지
+- `codex exec "prompt"` — 직접 호출 금지
+
+## RIGHT (반드시 이 패턴 사용)
+- `$INVOKE gemini "prompt"`
+- `cat file | $INVOKE gemini "prompt"`
+- `$INVOKE codex exec "prompt"`
+- `$INVOKE codex review --uncommitted "prompt"`
 
 ## Usage Patterns
 
@@ -185,5 +188,5 @@ Action:
 - At least one CLI tool must be installed (Gemini CLI or Codex CLI)
 - Run `/ai-cli-tools:setup` to install both tools
 - `llm-invoke.sh` enforces `-s read-only` for Codex exec automatically
-- Model flags are managed in the script, not in this agent file
-- To change models, edit `skills/llm-cli/scripts/llm-invoke.sh`
+- CLI default (latest) models are used automatically
+- You do NOT know which model is used — do not guess or fabricate model names

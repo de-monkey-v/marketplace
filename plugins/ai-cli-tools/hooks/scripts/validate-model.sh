@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # validate-model.sh
-# PreToolUse hook: gemini/codex CLI 인보케이션의 모델 플래그를 검증한다.
-# - gemini → -m gemini-3.1-pro-preview 필수
-# - codex  → -m gpt-5.3-codex 필수
+# PreToolUse hook: gemini/codex CLI 직접 호출을 전면 차단한다.
+# 반드시 llm-invoke.sh 스크립트를 통해서만 호출해야 한다.
+# 스크립트 내부의 서브프로세스 호출은 훅이 감지하지 않으므로 안전하다.
 #
 # "command -v gemini", "which gemini" 등 CLI를 직접 실행하지 않는
 # 명령어는 차단하지 않는다.
@@ -28,20 +28,24 @@ is_cli_invocation() {
   echo "$COMMAND" | grep -qE "(^|[|;&]\s*)${tool}(\s|$)"
 }
 
-# gemini CLI 인보케이션 검증
+# gemini CLI 직접 호출 차단
 if is_cli_invocation "gemini"; then
-  if ! echo "$COMMAND" | grep -q -- "-m gemini-3.1-pro-preview"; then
-    echo "BLOCKED: gemini CLI 호출 시 '-m gemini-3.1-pro-preview' 플래그가 필요합니다. 명령어를 수정하세요." >&2
-    exit 2
-  fi
+  cat >&2 <<'MSG'
+BLOCKED: gemini CLI를 직접 호출할 수 없습니다. llm-invoke.sh 스크립트를 사용하세요.
+사용법: $INVOKE gemini "prompt"
+사용법: cat file | $INVOKE gemini "prompt"
+MSG
+  exit 2
 fi
 
-# codex CLI 인보케이션 검증
+# codex CLI 직접 호출 차단
 if is_cli_invocation "codex"; then
-  if ! echo "$COMMAND" | grep -q -- "-m gpt-5.3-codex"; then
-    echo "BLOCKED: codex CLI 호출 시 '-m gpt-5.3-codex' 플래그가 필요합니다. 명령어를 수정하세요." >&2
-    exit 2
-  fi
+  cat >&2 <<'MSG'
+BLOCKED: codex CLI를 직접 호출할 수 없습니다. llm-invoke.sh 스크립트를 사용하세요.
+사용법: $INVOKE codex exec "prompt"
+사용법: $INVOKE codex review --uncommitted "prompt"
+MSG
+  exit 2
 fi
 
 exit 0
