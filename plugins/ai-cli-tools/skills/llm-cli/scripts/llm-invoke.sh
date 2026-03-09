@@ -11,7 +11,7 @@
 # CLI 기본 모델(최신)을 사용합니다.
 # 특정 모델을 강제하려면 아래 변수를 설정하세요 (빈 값 = CLI 기본값).
 GEMINI_MODEL="gemini-3.1-pro-preview"
-CODEX_MODEL="gpt-5.3-codex"
+CODEX_MODEL="gpt-5.4"
 
 set -euo pipefail
 
