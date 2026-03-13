@@ -251,7 +251,7 @@ Task tool로 팀메이트를 스폰합니다. prompt에 작업 지시를 직접 
 | qa | claude-team:tester |
 | critic | claude-team:reviewer |
 | architect | claude-team:architect |
-| llms-reviewer | ai-cli-tools:llms |
+| llms-reviewer | ai-cli-tools:llms (독립 Agent — 팀 외부) |
 
 ---
 
@@ -336,23 +336,25 @@ Task tool:
 
 ---
 
-**llms-reviewer 스폰 (필수 — 외부 LLM 코드 리뷰 + 수정 분석):**
+**llms-reviewer 스폰 (필수 — 독립 Agent, 팀 외부):**
+
+> llms-reviewer는 팀 멤버가 아닌 독립 Agent로 실행됩니다.
+> 다른 팀메이트와 SendMessage 통신 없이 독립적으로 리뷰 후 리더에게 결과를 반환합니다.
 
 ```
-Task tool:
+Agent tool:
 - subagent_type: "ai-cli-tools:llms"
-- team_name: "verify-{spec-id}"
 - name: "llms-reviewer"
-- description: "llms-reviewer: 외부 LLM(Gemini/Codex) 코드 리뷰 + 수정 분석"
+- description: "llms-reviewer: 외부 LLM(Gemini/Codex) 코드 리뷰"
 - run_in_background: true
 - prompt: |
-    외부 LLM(Gemini/Codex CLI)을 활용한 코드 리뷰 및 수정 분석을 수행합니다.
+    외부 LLM(Gemini/Codex CLI)을 활용한 코드 리뷰를 수행합니다.
 
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
     프로젝트 루트: {PROJECT_ROOT}
     변경 파일 목록: [plan.md에서 추출]
 
-    **검증 시 — 코드 리뷰 (즉시 수행):**
+    **코드 리뷰 (즉시 수행):**
     1. plan.md의 Part 1을 Read하여 **FR/AC(합격 기준)** 파악
     2. 변경된 파일들을 Read
     3. Gemini CLI로 코드 리뷰:
@@ -362,7 +364,6 @@ Task tool:
     4. Codex CLI로 추가 리뷰 (설치되어 있는 경우):
        - codex에게 동일 파일 분석 요청
     5. 두 외부 LLM의 의견을 비교 종합
-    6. 리더에게 리뷰 결과 보고
 
     **리뷰 초점:**
     - 요구사항 커버리지 갭
@@ -371,21 +372,19 @@ Task tool:
     - 성능 고려사항
     - Claude 팀메이트(qa/critic)가 놓칠 수 있는 문제
 
-    **수정 루프 시 — 수정 분석 (리더 요청 시):**
-    리더가 수정 실패 분석을 요청하면:
-    1. 실패 항목과 관련 코드를 Read
-    2. Gemini/Codex CLI로 실패 원인 분석
-    3. 수정 가이드를 developer에게 직접 SendMessage로 전달
-    4. 리더에게 분석 완료 보고
-
-    한국어로 통합 결과를 보고해주세요.
-    코드 리뷰를 즉시 수행하고 리더에게 보고해주세요.
-    수정 분석은 리더의 요청이 있을 때 수행합니다.
+    한국어로 통합 결과를 반환해주세요.
+    코드 리뷰를 즉시 수행하고 결과를 반환해주세요.
 ```
 
 ### Step 4: 결과 수집
 
-모든 팀메이트의 SendMessage를 수신하여 결과를 통합합니다.
+**팀메이트** (qa, critic, architect)의 SendMessage를 수신합니다.
+**llms-reviewer**는 독립 Agent로 실행되며, 완료 시 자동 알림됩니다.
+
+**Phase 3 진입 조건:**
+- 필수: qa 결과
+- 선택적 대기: critic, llms-reviewer — 도착하는 대로 통합
+- llms-reviewer 미도착 시 Phase 3 진행 가능 (도착 시 결과에 통합)
 
 **implement 대비 Delta 표시:**
 
@@ -395,15 +394,15 @@ Task tool:
 ### implement 대비 Delta (verify에서 새로 발견된 이슈)
 | # | 항목 | 문제 | 발견자 |
 |---|------|------|--------|
-| D1 | [항목] | [implement에서 놓친 문제] | qa / critic / llms-reviewer |
+| D1 | [항목] | [implement에서 놓친 문제] | qa / critic / llms-reviewer Agent |
 
 > Delta가 없으면 "implement 검증이 충분했습니다. 추가 이슈 없음." 표시
 ```
 
-**llms-reviewer 결과 통합 규칙:**
+**llms-reviewer Agent 결과 통합 규칙:**
 - Claude 팀메이트(qa/critic)와 동일한 이슈 -> 신뢰도 강화 ("External LLM도 동의")
-- llms-reviewer만 발견한 고유 이슈 -> `[External LLM]` 태그 추가하여 결과에 포함
-- llms-reviewer 결과가 Claude 팀메이트와 상충 -> 두 관점을 모두 표시하여 사용자 판단
+- llms-reviewer Agent만 발견한 고유 이슈 -> `[External LLM]` 태그 추가하여 결과에 포함
+- llms-reviewer Agent 결과가 Claude 팀메이트와 상충 -> 두 관점을 모두 표시하여 사용자 판단
 
 **Phase 2 완료 시:** TaskUpdate로 Phase 2 태스크를 `completed`로 변경
 
@@ -479,23 +478,19 @@ Task tool:
     완료되면 리더에게 결과를 보고해주세요.
 ```
 
-**수정 지시 Step A: llms-reviewer에게 실패 분석 요청:**
+**수정 지시 Step A: 외부 LLM 실패 분석 Agent 스폰:**
 ```
-SendMessage tool:
-- type: "message"
-- recipient: "llms-reviewer"
-- content: |
-    **[수정 루프 — 실패 분석 요청]**
-
+Agent tool:
+- subagent_type: "ai-cli-tools:llms"
+- description: "수정 실패 분석"
+- run_in_background: true
+- prompt: |
     **실패 항목:**
     | # | 항목 | 문제 | 위치 |
     | 1 | [항목] | [문제] | [위치] |
-    | 2 | [항목] | [문제] | [위치] |
 
     Gemini/Codex CLI로 실패 원인을 분석해주세요.
-    분석 완료 후 developer에게 직접 SendMessage로 수정 가이드를 전달해주세요.
-    리더에게도 분석 결과를 보고해주세요.
-- summary: "수정 실패 분석 요청"
+    한국어로 수정 가이드를 반환해주세요.
 ```
 
 **수정 지시 Step B: developer에게 수정 요청 (llms-reviewer 분석 후):**
@@ -511,8 +506,8 @@ SendMessage tool:
     | 1 | [항목] | [문제] | [위치] |
     | 2 | [항목] | [문제] | [위치] |
 
-    llms-reviewer(Gemini/Codex)가 실패 원인을 분석했습니다.
-    llms-reviewer의 수정 가이드를 참고하여 수정해주세요.
+    외부 LLM Agent가 실패 원인을 분석했습니다.
+    외부 LLM 분석 결과를 참고하여 수정해주세요.
 
     **수정 원칙:**
     - 원인 분석 후 최소한의 수정
@@ -691,7 +686,7 @@ SendMessage tool:
 - recipient: "qa"
 - content: "Verify 완료, 팀을 해산합니다."
 
-(critic, architect, developer, llms-reviewer도 동일 — 생성된 팀메이트만)
+(critic, architect, developer도 동일 — 생성된 팀메이트만. llms-reviewer는 독립 Agent이므로 제외)
 ```
 
 shutdown_request 전송 후 tmux pane/window를 정리하고 팀을 삭제합니다:

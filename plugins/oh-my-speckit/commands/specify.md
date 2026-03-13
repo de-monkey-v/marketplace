@@ -240,7 +240,7 @@ Task tool로 팀메이트를 스폰합니다. prompt에 작업 지시를 직접 
 | pm | claude-team:planner |
 | architect | claude-team:architect |
 | critic | claude-team:reviewer |
-| llms-analyst | ai-cli-tools:llms |
+| llms-analyst | ai-cli-tools:llms (독립 Agent — 팀 외부) |
 
 **pm 스폰 (필수):**
 
@@ -303,12 +303,11 @@ Task tool:
     완료되면 리더에게 Devil's Advocate Review를 보고해주세요.
 ```
 
-**llms-analyst 스폰 (필수 — 외부 LLM Second Opinion):**
+**llms-analyst 스폰 (필수 — 독립 Agent, 팀 외부):**
 
 ```
-Task tool:
+Agent tool:
 - subagent_type: "ai-cli-tools:llms"
-- team_name: "specify-{spec-id}"
 - name: "llms-analyst"
 - description: "llms-analyst: 외부 LLM(Gemini/Codex) Second Opinion 분석"
 - run_in_background: true
@@ -333,13 +332,21 @@ Task tool:
     - Claude 팀메이트가 놓칠 수 있는 엣지 케이스
 
     한국어로 결과를 보고해주세요.
-    완료되면 리더에게 결과를 보고해주세요.
+    분석이 완료되면 결과를 반환해주세요.
 ```
 
-### Step 4: 팀메이트 결과 수집
+> llms-analyst는 팀 멤버가 아닌 독립 Agent로 실행됩니다.
+> 다른 팀메이트와 SendMessage 통신 없이 독립적으로 분석 후 리더에게 결과를 반환합니다.
 
-팀메이트들의 SendMessage를 수신하여 결과를 정리합니다.
-모든 팀메이트의 보고가 완료될 때까지 대기합니다.
+### Step 4: 결과 수집
+
+**팀메이트** (pm, architect, critic)의 SendMessage를 수신합니다.
+**llms-analyst**는 독립 Agent로 실행되며, 완료 시 자동 알림됩니다.
+
+**Phase 2 진입 조건:**
+- 필수: pm 결과 + architect 결과 (있는 경우)
+- 선택적 대기: critic, llms-analyst — 도착하는 대로 통합
+- llms-analyst 미도착 시 Phase 2 진행 가능 (도착 시 Phase 2에서 통합)
 
 ### Step 5: 불명확한 부분 사전 질문
 
@@ -563,7 +570,7 @@ SendMessage tool:
 - recipient: "pm"
 - content: "Specify 완료, 팀을 해산합니다."
 
-(architect, critic, llms-analyst도 동일 — 생성된 팀메이트만)
+(architect, critic도 동일 — 생성된 팀메이트만. llms-analyst는 독립 Agent이므로 제외)
 ```
 
 ### Step 2: tmux 정리 + 팀 삭제

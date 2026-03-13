@@ -289,7 +289,7 @@ Task tool로 팀메이트를 스폰합니다. prompt에 작업 지시를 직접 
 | backend-dev | claude-team:backend | BACKEND: spring→spring-expert, nestjs→nestjs-expert, fastapi→fastapi-expert |
 | qa | claude-team:tester | (오버라이드 없음) |
 | architect | claude-team:architect | (오버라이드 없음) |
-| llms-advisor | ai-cli-tools:llms | (오버라이드 없음) |
+| llms-advisor | ai-cli-tools:llms (독립 Agent — 팀 외부) | (오버라이드 없음) |
 
 프레임워크 감지 결과(Step 2.7)에 따라 에이전트 타입을 동적으로 선택합니다.
 예: BACKEND_FRAMEWORK=spring → developer의 subagent_type이 `claude-team:spring-expert`로 변경
@@ -312,13 +312,14 @@ Task tool:
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 
     **먼저 plan.md의 Part 1을 Read하여 FR/AC(합격 기준)를 파악하세요.**
-    plan.md의 체크리스트를 순서대로 구현해주세요.
+    plan.md의 전체 체크리스트를 자율적으로 구현해주세요. Group별 리더 지시를 기다리지 않고, 전체를 자율 실행합니다.
     재사용 분석 섹션을 먼저 확인하고, 기존 코드 패턴을 따르세요.
     **각 체크박스 완료 시 해당 FR의 AC 기준 충족 여부를 자가 확인하세요.**
     완료된 항목은 plan.md 체크박스를 업데이트해주세요.
     qa 팀메이트와 구현 완료 시 검증을 협의하세요.
     **완료 보고 시 FR 충족 상태(N/M)도 포함해주세요.**
-    완료되면 리더에게 변경 파일 목록과 결과를 보고해주세요.
+    에러 발생 시 자체적으로 해결을 시도하세요. 3회 이상 실패 시에만 리더에게 보고해주세요.
+    **모든 체크박스 완료 후** 리더에게 최종 보고를 해주세요. 중간 Group별 보고는 불필요합니다.
 ```
 
 **Large non-fullstack (2명):** `developer-1`, `developer-2`로 스폰
@@ -335,13 +336,14 @@ Task tool:
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 
     **먼저 plan.md의 Part 1을 Read하여 FR/AC(합격 기준)를 파악하세요.**
-    plan.md의 체크리스트를 순서대로 구현해주세요.
+    plan.md의 전체 체크리스트를 자율적으로 구현해주세요. Group별 리더 지시를 기다리지 않고, 전체를 자율 실행합니다.
     재사용 분석 섹션을 먼저 확인하고, 기존 코드 패턴을 따르세요.
     **각 체크박스 완료 시 해당 FR의 AC 기준 충족 여부를 자가 확인하세요.**
     완료된 항목은 plan.md 체크박스를 업데이트해주세요.
     qa 팀메이트와 구현 완료 시 검증을 협의하세요.
     **완료 보고 시 FR 충족 상태(N/M)도 포함해주세요.**
-    완료되면 리더에게 변경 파일 목록과 결과를 보고해주세요.
+    에러 발생 시 자체적으로 해결을 시도하세요. 3회 이상 실패 시에만 리더에게 보고해주세요.
+    **모든 체크박스 완료 후** 리더에게 최종 보고를 해주세요. 중간 Group별 보고는 불필요합니다.
 
 Task tool:
 - subagent_type: "claude-team:{DETECTED_AGENT}"
@@ -354,13 +356,14 @@ Task tool:
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 
     **먼저 plan.md의 Part 1을 Read하여 FR/AC(합격 기준)를 파악하세요.**
-    plan.md의 체크리스트를 순서대로 구현해주세요.
+    plan.md의 전체 체크리스트를 자율적으로 구현해주세요. Group별 리더 지시를 기다리지 않고, 전체를 자율 실행합니다.
     재사용 분석 섹션을 먼저 확인하고, 기존 코드 패턴을 따르세요.
     **각 체크박스 완료 시 해당 FR의 AC 기준 충족 여부를 자가 확인하세요.**
     완료된 항목은 plan.md 체크박스를 업데이트해주세요.
     qa 팀메이트와 구현 완료 시 검증을 협의하세요.
     **완료 보고 시 FR 충족 상태(N/M)도 포함해주세요.**
-    완료되면 리더에게 변경 파일 목록과 결과를 보고해주세요.
+    에러 발생 시 자체적으로 해결을 시도하세요. 3회 이상 실패 시에만 리더에게 보고해주세요.
+    **모든 체크박스 완료 후** 리더에게 최종 보고를 해주세요. 중간 Group별 보고는 불필요합니다.
 ```
 
 **frontend-dev 생성 (fullstack 프로젝트, Large):**
@@ -377,7 +380,7 @@ Task tool:
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 
     **먼저 plan.md의 Part 1을 Read하여 FR/AC(합격 기준)를 파악하세요.**
-    plan.md의 체크리스트 중 프론트엔드 관련 항목을 순서대로 구현해주세요.
+    plan.md의 체크리스트 중 프론트엔드 관련 항목을 전체 자율적으로 구현해주세요. Group별 리더 지시를 기다리지 않고, 전체를 자율 실행합니다.
     재사용 분석 섹션을 먼저 확인하고, 기존 코드 패턴을 따르세요.
     담당 영역: UI 컴포넌트, 페이지, 클라이언트 상태 관리, API 호출 레이어
     백엔드 코드는 직접 수정하지 마세요 (backend-dev 담당).
@@ -385,7 +388,8 @@ Task tool:
     완료된 항목은 plan.md 체크박스를 업데이트해주세요.
     qa 팀메이트와 구현 완료 시 검증을 협의하세요.
     **완료 보고 시 FR 충족 상태(N/M)도 포함해주세요.**
-    완료되면 리더에게 변경 파일 목록과 결과를 보고해주세요.
+    에러 발생 시 자체적으로 해결을 시도하세요. 3회 이상 실패 시에만 리더에게 보고해주세요.
+    **모든 체크박스 완료 후** 리더에게 최종 보고를 해주세요. 중간 Group별 보고는 불필요합니다.
 ```
 
 **backend-dev 생성 (fullstack 프로젝트, Large):**
@@ -402,7 +406,7 @@ Task tool:
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 
     **먼저 plan.md의 Part 1을 Read하여 FR/AC(합격 기준)를 파악하세요.**
-    plan.md의 체크리스트 중 백엔드 관련 항목을 순서대로 구현해주세요.
+    plan.md의 체크리스트 중 백엔드 관련 항목을 전체 자율적으로 구현해주세요. Group별 리더 지시를 기다리지 않고, 전체를 자율 실행합니다.
     재사용 분석 섹션을 먼저 확인하고, 기존 코드 패턴을 따르세요.
     담당 영역: API 엔드포인트, 비즈니스 로직, DB 스키마/쿼리, 인증/인가
     프론트엔드 코드는 직접 수정하지 마세요 (frontend-dev 담당).
@@ -410,7 +414,8 @@ Task tool:
     완료된 항목은 plan.md 체크박스를 업데이트해주세요.
     qa 팀메이트와 구현 완료 시 검증을 협의하세요.
     **완료 보고 시 FR 충족 상태(N/M)도 포함해주세요.**
-    완료되면 리더에게 변경 파일 목록과 결과를 보고해주세요.
+    에러 발생 시 자체적으로 해결을 시도하세요. 3회 이상 실패 시에만 리더에게 보고해주세요.
+    **모든 체크박스 완료 후** 리더에게 최종 보고를 해주세요. 중간 Group별 보고는 불필요합니다.
 ```
 
 **qa 생성 (필수):**
@@ -462,34 +467,31 @@ Task tool:
     완료되면 리더에게 결과를 보고해주세요.
 ```
 
-**llms-advisor 스폰 (필수 — 외부 LLM 구현 자문 + 에러 분석):**
+**llms-advisor 스폰 (필수 — 외부 LLM 구현 사전 분석):**
+
+> llms-advisor는 팀 멤버가 아닌 독립 Agent로 실행됩니다.
 
 ```
-Task tool:
+Agent tool:
 - subagent_type: "ai-cli-tools:llms"
-- team_name: "implement-{spec-id}"
-- name: "llms-advisor"
-- description: "llms-advisor: 외부 LLM(Gemini/Codex) 구현 자문 + 에러 분석"
+- description: "llms-advisor: 외부 LLM(Gemini/Codex) 구현 사전 분석"
 - run_in_background: true
 - prompt: |
-    외부 LLM(Gemini/Codex CLI)을 활용한 구현 자문 및 에러 분석을 수행합니다.
-    3-phase 라이프사이클로 운영됩니다.
+    외부 LLM(Gemini/Codex CLI)을 활용한 구현 사전 분석을 수행합니다.
 
     plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
     프로젝트 루트: {PROJECT_ROOT}
 
-    **Phase 1 — 사전 분석 (즉시 수행):**
+    **사전 분석 (즉시 수행):**
     1. plan.md의 Part 1을 Read하여 FR/AC(합격 기준) 파악
     2. plan.md를 Read하여 구현 계획 파악
     3. 수정 대상 기존 코드 파일을 Read
     4. Gemini CLI로 분석:
        - 구현 접근법의 타당성 검증
-       - **AC 기반 구현 타당성 확인 (각 AC가 plan의 체크박스로 커버되는지)**
+       - AC 기반 구현 타당성 확인
        - 잠재적 통합 이슈 식별
        - 따라야 할 코드 패턴 분석
-    4. Codex CLI로 추가 분석 (설치되어 있는 경우):
-       - 동일 관점에서 교차 검증
-    5. 리더에게 사전 분석 결과 보고
+    5. Codex CLI로 추가 분석 (설치되어 있는 경우)
 
     **분석 초점:**
     - 보존해야 할 기존 코드 패턴
@@ -497,23 +499,7 @@ Task tool:
     - 이 유형의 변경에서 흔한 구현 실수
     - 외부 LLM 관점의 구현 팁 및 경고
 
-    **Phase 2 — 에러 분석 (리더 요청 시):**
-    리더가 에러 분석을 요청하면:
-    1. 에러 메시지와 관련 코드를 Read
-    2. Gemini/Codex CLI로 에러 원인 분석
-    3. 수정 가이드를 developer에게 직접 SendMessage로 전달
-    4. 리더에게 분석 완료 보고
-
-    **Phase 3 — 구현 후 리뷰 (리더 요청 시):**
-    리더가 구현 후 리뷰를 요청하면:
-    1. 변경된 파일들을 Read
-    2. Gemini/Codex CLI로 구현 품질 리뷰
-    3. plan.md 대비 구현의 정합성 확인
-    4. 리더에게 리뷰 결과 보고
-
-    한국어로 결과를 보고해주세요.
-    Phase 1을 즉시 수행하고 리더에게 보고해주세요.
-    Phase 2, 3은 리더의 요청이 있을 때 수행합니다.
+    한국어로 결과를 반환해주세요.
 ```
 
 ### Step 4: Plan에서 구현 계획 추출 및 Phase Group 분류
@@ -541,7 +527,7 @@ plan.md에서 구현 단계를 추출하고 논리적 그룹으로 분류:
 
 ### Step 4.5: llms-advisor 사전 분석 결과 공유
 
-llms-advisor의 사전 분석 결과가 도착하면, 핵심 팁과 경고를 developer에게 공유합니다:
+llms-advisor Agent의 결과가 도착하면 (run_in_background 완료 알림), 핵심 팁과 경고를 developer에게 공유합니다:
 
 ```
 SendMessage tool:
@@ -562,65 +548,43 @@ SendMessage tool:
 
 ---
 
-## Phase 2: 구현 루프
+## Phase 2: 자율 구현
 
-각 Phase Group에 대해 반복. 리더는 Group 시작만 알리고, developer와 qa가 직접 소통합니다.
+> **자율 실행 원칙**: developer는 스폰 시 전체 plan을 이미 받았으므로, 리더의 Group별 지시 없이 자율적으로 전체 구현을 수행합니다.
+> 리더는 최종 결과만 수신하며, 에러 시에만 개입합니다.
 
-```
-┌──────────────────────────────────────────────────────┐
-│  Step 1: 현재 Group 표시                               │
-│  Step 2: 구현 + 검증 지시 (developer에게 SendMessage)  │
-│  Step 3: 결과 확인 + 피드백                             │
-│  (모든 Group 완료 시 Phase 3로)                         │
-└──────────────────────────────────────────────────────┘
-```
-
-### Step 1: 현재 Phase Group 표시
+### Step 1: 구현 시작 알림
 
 ```markdown
-## Phase Group N/M 시작
+## Phase 2: 자율 구현 시작
 
-### 현재 Group: [Group 이름]
-- Phase X: [제목] - [설명]
-- Phase Y: [제목] - [설명]
+**구현 방식**: developer가 plan.md 전체를 자율 실행
+**검증 방식**: developer ↔ qa 직접 소통
+**리더 역할**: 최종 결과 수신 + 에러 시 개입
 
-### 진행률
-[████████░░░░░░░░░░░░] 40% (2/5 Groups)
+### 구현 계획 (Plan에서 추출)
+| Group | Phase | 내용 |
+|-------|-------|------|
+| Group 1 | Phase 1-2 | 기반 작업 |
+| Group 2 | Phase 3-4 | 핵심 기능 |
+| Group 3 | Phase 5-6 | 통합 |
 
-### 이번 Group에서 생성/수정할 파일
-- src/types/xxx.ts (생성)
-- src/utils/xxx.ts (생성)
+-> developer가 전체를 자율 구현합니다. 완료까지 대기합니다.
 ```
 
-### Step 2: 구현 + 검증 지시
+> developer는 이미 스폰 시 전체 plan.md 경로와 구현 지시를 받았으므로, 추가 SendMessage 없이 작업을 시작합니다.
+> qa도 이미 스폰 시 검증 지시를 받았으므로, developer의 검증 요청을 기다립니다.
 
-리더는 developer에게만 지시합니다. developer가 구현 완료 후 qa에게 직접 검증을 요청합니다.
+### Step 2: 최종 결과 수신
 
-```
-SendMessage tool:
-- type: "message"
-- recipient: "developer" (Medium) 또는 "developer-1"/"developer-2" (Large non-fullstack) 또는 "frontend-dev"/"backend-dev" (Large fullstack)
-- content: |
-    **Phase Group N 구현 시작**
+developer와 qa의 최종 보고를 대기합니다.
 
-    대상 Phase: Phase X, Y
-    plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
+**자동 모드:**
 
-    구현 완료 후 qa 팀메이트에게 검증을 요청하세요.
-    검증 통과 후 리더에게 결과를 보고해주세요.
-- summary: "Group N 구현 시작"
-```
-
-**developer와 qa의 결과 보고 대기.**
-
-> 리더는 developer와 qa 사이의 중계 역할을 하지 않습니다. 에러 발생 시에만 개입합니다.
-
-### Step 3: 결과 확인 및 피드백
-
-#### 자동 모드
+developer와 qa의 SendMessage 결과를 수신:
 
 ```markdown
-## Phase Group N/M 완료 (자동 진행)
+## 구현 완료
 
 ### 변경 내역
 | 파일 | 작업 | 상태 |
@@ -628,68 +592,55 @@ SendMessage tool:
 | src/types/xxx.ts | 생성 | ok |
 | src/utils/xxx.ts | 생성 | ok |
 
-### 검증 결과
+### FR 충족 상태
 - **FR 충족: N/M** (FR1 ok, FR2 ok, ...)
+
+### 검증 결과
 - 타입 체크: PASS
 - 린트: PASS
-- 테스트: 5/5 통과
-
--> 다음 Group으로 자동 진행
+- 테스트: N/N 통과
 ```
 
 **선택적 중간 리뷰 (자동):**
 
-마지막 Group이 아니고 변경 파일 5개 이상이면, llms-advisor에게 중간 품질 체크를 요청합니다:
+developer/qa 최종 보고 전, llms-advisor 사전 분석에서 높은 리스크가 식별되었다면:
+리더가 새로운 Agent를 스폰하여 중간 품질 체크를 수행할 수 있습니다:
 
 ```
-SendMessage tool:
-- type: "message"
-- recipient: "llms-advisor"
-- content: |
-    **[중간 품질 체크 요청]**
-
-    Group N/{총 Group 수} 완료. 변경 파일 {N}개.
-
-    변경 파일 목록: [developer 보고에서 추출]
-
-    변경된 파일들을 Gemini/Codex로 간단히 확인해주세요:
+Agent tool:
+- subagent_type: "ai-cli-tools:llms"
+- description: "중간 품질 체크"
+- run_in_background: true
+- prompt: |
+    변경된 파일들을 Gemini/Codex로 확인해주세요:
     - 명백한 코드 품질 이슈
-    - 다음 Group에 영향을 줄 수 있는 문제
-
-    이슈 발견 시 developer에게 직접 SendMessage로 알려주세요.
-    리더에게도 결과를 보고해주세요.
-- summary: "중간 품질 체크 요청"
+    - plan.md 대비 누락 항목
+    한국어로 결과를 반환해주세요.
 ```
-
-> 마지막 Group이거나 변경 파일 5개 미만이면 중간 리뷰를 생략합니다.
 
 **자동 모드 에러 처리:**
 
-| 상황 | 자동 처리 |
-|------|----------|
-| 1차 에러 | llms-advisor에게 에러 분석 요청 → 분석 결과와 함께 developer에게 수정 요청 |
-| 2차 에러 | llms-advisor 재분석 → 수정 가이드와 함께 developer에게 재수정 요청 |
-| 3회 실패 | 중단 후 사용자에게 보고 (llms-advisor 분석 이력 포함) |
+developer가 에러를 자체 해결하지 못하고 리더에게 보고한 경우:
 
-**에러 수정 Step 3-A: llms-advisor에게 에러 분석 요청:**
+| 상황 | 처리 |
+|------|------|
+| 1차 에러 | 리더가 llms Agent 스폰하여 에러 분석 → 분석 결과를 developer에게 SendMessage |
+| 2차 에러 | llms Agent 재분석 → 수정 가이드와 함께 developer에게 재전달 |
+| 3회 실패 | 중단 후 사용자에게 보고 |
+
+**에러 분석 Agent 스폰:**
 ```
-SendMessage tool:
-- type: "message"
-- recipient: "llms-advisor"
-- content: |
-    **[Phase 2 에러 분석 요청]**
-
+Agent tool:
+- subagent_type: "ai-cli-tools:llms"
+- description: "에러 분석"
+- prompt: |
     에러 내용: [에러 메시지]
     대상 파일: [에러 발생 파일]
-    에러 유형: [타입/린트/테스트 실패]
-
     Gemini/Codex CLI로 에러 원인을 분석해주세요.
-    분석 완료 후 developer에게 직접 SendMessage로 수정 가이드를 전달해주세요.
-    리더에게도 분석 결과를 보고해주세요.
-- summary: "에러 분석 요청"
+    한국어로 수정 가이드를 반환해주세요.
 ```
 
-**에러 수정 Step 3-B: developer에게 수정 요청 (llms-advisor 분석 후):**
+**에러 분석 결과를 developer에게 전달:**
 ```
 SendMessage tool:
 - type: "message"
@@ -700,45 +651,30 @@ SendMessage tool:
     에러 내용: [에러 메시지]
     대상 파일: [에러 발생 파일]
 
-    llms-advisor(Gemini/Codex)가 에러를 분석했습니다.
-    llms-advisor의 수정 가이드를 참고하여 에러를 수정해주세요.
+    외부 LLM 분석 결과:
+    {llms Agent 분석 결과}
+
+    이 가이드를 참고하여 에러를 수정해주세요.
     수정 후 qa에게 재검증을 요청한 뒤 결과를 보고해주세요.
 - summary: "에러 수정 요청 (LLM 분석 포함)"
 ```
 
-#### 대화형 모드
+**대화형 모드:**
 
-결과 표시 후:
+구현 완료 후:
 ```
 AskUserQuestion:
-- question: "Phase Group N 완료. 어떻게 하시겠어요?"
+- question: "구현이 완료되었습니다. 어떻게 하시겠어요?"
 - options:
-  - "승인 - 다음 Group으로 (권장)"
+  - "승인 - Phase 3로 (권장)"
   - "수정 필요 - 특정 파일 재작성"
   - "테스트 보완 - 케이스 추가"
   - "중단 - 여기까지만"
 ```
 
-#### "수정 필요" 선택 시 (대화형)
+### Step 3: 완료 후 이중 확인
 
-사용자의 수정 요청을 developer에게 SendMessage로 전달 -> developer가 수정 후 qa에게 직접 재검증 요청.
-
-#### "테스트 보완" 선택 시 (대화형)
-
-사용자의 추가 테스트 요청을 qa에게 SendMessage로 전달.
-
-#### "중단" 선택 시 (대화형)
-
-```markdown
-구현 중단 - 진행 상황 저장됨
-- 완료된 Group: N/M
-- 재진입: /oh-my-speckit:implement {spec-id}
-  (완료된 Phase는 스킵됨)
-```
-
-### Step 4: 전 Group 완료 후 이중 확인
-
-모든 Group 완료 후 **체크박스 진행률 + FR 충족률** 이중 확인:
+모든 구현 완료 후 **체크박스 진행률 + FR 충족률** 이중 확인:
 
 ```
 Read tool: plan.md -> [ ] vs [x] 개수 파악
@@ -800,28 +736,27 @@ SendMessage tool:
 - summary: "통합 테스트 실행 요청"
 ```
 
-### Step 1.5: llms-advisor 구현 후 리뷰 요청
+### Step 1.5: 외부 LLM 구현 후 리뷰
 
-구현 완료 후, 통합 테스트와 병렬로 llms-advisor에게 최종 리뷰를 요청합니다:
+구현 완료 후, 통합 테스트와 병렬로 외부 LLM 리뷰 Agent를 스폰합니다:
 
 ```
-SendMessage tool:
-- type: "message"
-- recipient: "llms-advisor"
-- content: |
-    **구현 완료 — 최종 리뷰 요청**
-
-    구현이 완료되었습니다. 최종 결과를 리뷰해주세요:
+Agent tool:
+- subagent_type: "ai-cli-tools:llms"
+- description: "구현 후 External LLM 리뷰"
+- run_in_background: true
+- prompt: |
+    구현이 완료되었습니다. 최종 결과를 리뷰해주세요.
 
     변경 파일 목록: [developer 보고에서 추출]
+    plan.md 경로: ${PROJECT_ROOT}/.specify/specs/{spec-id}/plan.md
 
     1. 변경된 파일들을 Read
     2. Gemini/Codex CLI로 구현 품질 리뷰
     3. plan.md 대비 구현의 정합성 확인
     4. 마무리 전 우려사항 보고
 
-    한국어로 리뷰 결과를 보고해주세요.
-- summary: "구현 후 External LLM 리뷰 요청"
+    한국어로 리뷰 결과를 반환해주세요.
 ```
 
 llms-advisor의 리뷰 결과는 Phase 3 Step 2의 통합 테스트 결과와 함께 표시합니다.
@@ -896,7 +831,7 @@ SendMessage tool:
 - recipient: "developer"
 - content: "Implement 완료, 팀을 해산합니다."
 
-(qa, developer-1/developer-2/frontend-dev/backend-dev, architect, llms-advisor도 동일 — 생성된 팀메이트만)
+(qa, developer-1/developer-2/frontend-dev/backend-dev, architect도 동일 — 생성된 팀메이트만. llms-advisor는 독립 Agent이므로 제외)
 ```
 
 shutdown_request 전송 후 tmux pane/window를 정리하고 팀을 삭제합니다:
